@@ -10,6 +10,7 @@
     <string name="menu_home">Home</string>
     <string name="menu_setting">Setting</string>
     <string name="menu_profile">Profile</string>
+    <string name="menu_subsidy_info">Subsidy Info</string>
 
 
     <string name="title_activity_login">LoginActivity</string>
@@ -51,4 +52,10 @@
     <string name="preference_is_parking_lot">주차장 여부</string>
     <string name="preference_price">가격순</string>
     <string name="preference_company">선호 충전업체</string>
+
+    <string name="ev_car_profile">전기차 정보</string>
+    <string name="subsidy_status">보조금 현황</string>
+    <string name="subsidy_information">보조금 정보</string>
+    <string name="charge_price">충전 가격</string>
+    <string name="outlet_type">충전기 종류</string>
 </resources>

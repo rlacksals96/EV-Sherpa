@@ -6,15 +6,39 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_home"
-            android:icon="@drawable/ic_menu_camera"
+            android:icon="@drawable/ic_menu_home"
             android:title="@string/menu_home" />
         <item
             android:id="@+id/nav_profile"
-            android:icon="@drawable/ic_menu_gallery"
+            android:icon="@drawable/ic_menu_person"
             android:title="profile" />
         <item
             android:id="@+id/nav_setting"
-            android:icon="@drawable/ic_menu_slideshow"
+            android:icon="@drawable/ic_menu_setting"
             android:title="setting" />
+        <item
+            android:id="@+id/nav_ev_car_profile"
+            android:title="@string/ev_car_profile"
+            android:icon="@drawable/ic_menu_car"
+            />
+        <item
+            android:id="@+id/nav_ev_car_outlet_type"
+            android:title="@string/outlet_type"
+            android:icon="@drawable/ic_menu_outlet"
+            />
+        <item
+            android:id="@+id/nav_subsidy_status"
+            android:title="@string/subsidy_status"
+            android:icon="@drawable/ic_menu_money"
+            />
+        <item
+            android:id="@+id/nav_subsidy_info"
+            android:title="@string/subsidy_information"
+            android:icon="@drawable/ic_menu_information"
+            />
+
     </group>
+
+
+
 </menu>
