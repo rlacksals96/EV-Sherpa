@@ -5,6 +5,17 @@
         <item>기아</item>
         <item>테슬라</item>
     </string-array>
+
+
+<!--    회사별로 차량명 채워야 함-->
+    <string-array name="car_model_hyundai">
+        <item>kona</item>
+    </string-array>
+    <string-array name="car_model_tesla">
+        <item>model 3</item>
+    </string-array>
+
+<!--    below string array is for temporary-->
     <string-array name="car_model">
         <item>ionic5</item>
         <item>kona</item>
@@ -13,8 +24,15 @@
         <item>bmw i3</item>
         <item>benz e5</item>
     </string-array>
+<!--    until here-->
+
     <string-array name="car_battery_type">
         <item>normal</item>
         <item>extended</item>
+    </string-array>
+
+<!--    충전소 회사 검색해서 나열하기-->
+    <string-array name="ev_station_company">
+        <item>환경부</item>
     </string-array>
 </resources>

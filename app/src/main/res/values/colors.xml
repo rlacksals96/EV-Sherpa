@@ -12,6 +12,7 @@
     <color name="sky_blue_500">#13cff7</color>
     <color name="sky_blue_700">#009ec4</color>
     <color name="gray_700">#8F8F8F</color>
+    <color name="gray_500">#bfbfbf</color>
     <color name="gray_200">#f5f5f6</color>
 
     <color name="yellow_kakao">#ffe812</color>

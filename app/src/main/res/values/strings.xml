@@ -23,10 +23,12 @@
     <string name="login_failed">"Login failed"</string>
 
 
+
     <string name="sign_up">sign up</string>
     <string name="sign_up_normal">일반 회원가입</string>
     <string name="sign_up_google">Google로 로그인하기</string>
     <string name="sign_up_kakao">Kakao로 로그인하기</string>
+    <string name="sign_up_confirm">Sign Up</string>
 
     <string name="input_email">email을 입력하세요</string>
     <string name="input_nickname">nickname을 입력하세요</string>
@@ -35,9 +37,18 @@
 
     <string name="notice_email_format">email형식이 맞는지 확인해주세요</string>
     <string name="notice_password_match">password가 일치하지 않습니다</string>
-    <string name="sign_up_confirm">Sign Up</string>
 
     <string name="car_company_name">제조사</string>
     <string name="car_model">차량명</string>
     <string name="car_battery_type">배터리 타입</string>
+
+    <string name="confirm">확인</string>
+
+    <string name="preference_rank">선호순위</string>
+    <string name="preference_distance">거리순</string>
+    <string name="preference_fast_charge">고속충전 지원</string>
+    <string name="preference_num_of_charger">충전기 댓수</string>
+    <string name="preference_is_parking_lot">주차장 여부</string>
+    <string name="preference_price">가격순</string>
+    <string name="preference_company">선호 충전업체</string>
 </resources>
