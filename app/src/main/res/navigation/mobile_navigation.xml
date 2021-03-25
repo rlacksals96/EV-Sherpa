@@ -27,4 +27,22 @@
         android:name="com.example.evsherpa.ui.subsidyInfo.SubsidyInfoFragment"
         android:label="@string/menu_subsidy_info"
         tools:layout="@layout/fragment_subsidy_info"/>
+    <fragment
+        android:id="@+id/nav_car_info"
+        android:name="com.example.evsherpa.ui.carInfo.CarInfoFragment"
+        android:label="@string/menu_car_info"
+        tools:layout="@layout/fragment_car_info"/>
+
+    <fragment
+        android:id="@+id/nav_car_outlet"
+        android:name="com.example.evsherpa.ui.carOutlet.CarOutletFragment"
+        android:label="@string/menu_car_outlet"
+        tools:layout="@layout/fragment_car_outlet"
+        />
+    <fragment
+        android:id="@+id/nav_subsidy_status"
+        android:name="com.example.evsherpa.ui.subsidyStatus.SubsidyStatusFragment"
+        android:label="@string/menu_subsidy_status"
+        tools:layout="@layout/fragment_subsidy_status"
+        />
 </navigation>

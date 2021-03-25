@@ -10,7 +10,11 @@
     <string name="menu_home">Home</string>
     <string name="menu_setting">Setting</string>
     <string name="menu_profile">Profile</string>
+
     <string name="menu_subsidy_info">Subsidy Info</string>
+    <string name="menu_car_info">Car Info</string>
+    <string name="menu_car_outlet">Car Outlet</string>
+    <string name="menu_subsidy_status">Subsidy Status</string>
 
 
     <string name="title_activity_login">LoginActivity</string>
