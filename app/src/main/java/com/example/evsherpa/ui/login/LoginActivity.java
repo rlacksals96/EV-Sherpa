@@ -24,9 +24,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.evsherpa.HomeFragment;
+import com.example.evsherpa.MainActivity;
 import com.example.evsherpa.R;
 import com.example.evsherpa.SignUpActivity;
+import com.example.evsherpa.ui.home.HomeActivity;
+import com.example.evsherpa.ui.home.HomeFragment;
+import com.example.evsherpa.ui.home.HomeViewModel;
 import com.example.evsherpa.ui.login.LoginViewModel;
 import com.example.evsherpa.ui.login.LoginViewModelFactory;
 
@@ -117,13 +120,13 @@ public class LoginActivity extends AppCompatActivity {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loadingProgressBar.setVisibility(View.VISIBLE);
-                loginViewModel.login(usernameEditText.getText().toString(),
-                        passwordEditText.getText().toString());
+//                loadingProgressBar.setVisibility(View.VISIBLE);
+//                loginViewModel.login(usernameEditText.getText().toString(),
+//                        passwordEditText.getText().toString());
 
                 //temporary... 구현후 삭제..
-//                Intent intent=new Intent(LoginActivity.this, HomeFragment.class);
-//                startActivity(intent);
+                Intent intent=new Intent(LoginActivity.this, MainActivity.class);
+                startActivity(intent);
             }
         });
 

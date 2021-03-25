@@ -36,4 +36,8 @@
     <string name="notice_email_format">email형식이 맞는지 확인해주세요</string>
     <string name="notice_password_match">password가 일치하지 않습니다</string>
     <string name="sign_up_confirm">Sign Up</string>
+
+    <string name="car_company_name">제조사</string>
+    <string name="car_model">차량명</string>
+    <string name="car_battery_type">배터리 타입</string>
 </resources>

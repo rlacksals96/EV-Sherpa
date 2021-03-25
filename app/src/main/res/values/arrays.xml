@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="car_company_entries">
+        <item>현대</item>
+        <item>기아</item>
+        <item>테슬라</item>
+    </string-array>
+    <string-array name="car_model">
+        <item>ionic5</item>
+        <item>kona</item>
+        <item>model 3</item>
+        <item>model Y</item>
+        <item>bmw i3</item>
+        <item>benz e5</item>
+    </string-array>
+    <string-array name="car_battery_type">
+        <item>normal</item>
+        <item>extended</item>
+    </string-array>
+</resources>
