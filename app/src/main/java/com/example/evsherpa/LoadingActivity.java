@@ -7,7 +7,7 @@ import android.os.Handler;
 
 import com.example.evsherpa.ui.login.LoginActivity;
 
-
+//first page when start app.. launcher
 public class LoadingActivity extends Activity {
 
     @Override

@@ -49,6 +49,8 @@ public class LoginActivity extends AppCompatActivity {
         final Button loginButton = findViewById(R.id.login);
         final ProgressBar loadingProgressBar = findViewById(R.id.loading);
         final Button btnSignUpNormal=findViewById(R.id.btn_sign_up_normal);
+        final Button btnSignUpGoogle=findViewById(R.id.btn_sign_up_google);
+        final Button btnSignUpKakao=findViewById(R.id.btn_sign_up_kakao);
 
         loginViewModel.getLoginFormState().observe(this, new Observer<LoginFormState>() {
             @Override
@@ -134,6 +136,27 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent=new Intent(LoginActivity.this, SignUpActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        btnSignUpGoogle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(LoginActivity.this,"google login",Toast.LENGTH_SHORT).show();
+
+                //need to be changed after implementation
+                Intent intent=new Intent(LoginActivity.this,MainActivity.class);
+                startActivity(intent);
+            }
+        });
+        btnSignUpKakao.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(LoginActivity.this,"kakao login",Toast.LENGTH_SHORT).show();
+
+                //need to be changed after implementation
+                Intent intent=new Intent(LoginActivity.this,MainActivity.class);
                 startActivity(intent);
             }
         });
