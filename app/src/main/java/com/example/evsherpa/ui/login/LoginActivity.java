@@ -1,134 +1,150 @@
 package com.example.evsherpa.ui.login;
 
-import android.app.Activity;
-
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-
 import android.content.Intent;
 import android.os.Bundle;
 
-import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.toolbox.Volley;
+import com.example.evsherpa.LoginRequest;
 import com.example.evsherpa.MainActivity;
 import com.example.evsherpa.R;
 import com.example.evsherpa.SignUpActivity;
-import com.example.evsherpa.ui.home.HomeActivity;
-import com.example.evsherpa.ui.home.HomeFragment;
-import com.example.evsherpa.ui.home.HomeViewModel;
-import com.example.evsherpa.ui.login.LoginViewModel;
-import com.example.evsherpa.ui.login.LoginViewModelFactory;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private LoginViewModel loginViewModel;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        loginViewModel = new ViewModelProvider(this, new LoginViewModelFactory())
-                .get(LoginViewModel.class);
+
 
         final EditText usernameEditText = findViewById(R.id.username);
         final EditText passwordEditText = findViewById(R.id.password);
+
+        final TextView usernameCheckText=findViewById(R.id.txt_email_check);
+        final TextView passwordCheckText=findViewById(R.id.txt_password_check);
+
         final Button loginButton = findViewById(R.id.login);
         final ProgressBar loadingProgressBar = findViewById(R.id.loading);
         final Button btnSignUpNormal=findViewById(R.id.btn_sign_up_normal);
         final Button btnSignUpGoogle=findViewById(R.id.btn_sign_up_google);
         final Button btnSignUpKakao=findViewById(R.id.btn_sign_up_kakao);
 
-        loginViewModel.getLoginFormState().observe(this, new Observer<LoginFormState>() {
-            @Override
-            public void onChanged(@Nullable LoginFormState loginFormState) {
-                if (loginFormState == null) {
-                    return;
-                }
-                loginButton.setEnabled(loginFormState.isDataValid());
-                if (loginFormState.getUsernameError() != null) {
-                    usernameEditText.setError(getString(loginFormState.getUsernameError()));
-                }
-                if (loginFormState.getPasswordError() != null) {
-                    passwordEditText.setError(getString(loginFormState.getPasswordError()));
-                }
-            }
-        });
+        final Boolean[] is_username_input={false};
+        final Boolean[] is_password_input = {false};
 
-        loginViewModel.getLoginResult().observe(this, new Observer<LoginResult>() {
-            @Override
-            public void onChanged(@Nullable LoginResult loginResult) {
-                if (loginResult == null) {
-                    return;
-                }
-                loadingProgressBar.setVisibility(View.GONE);
-                if (loginResult.getError() != null) {
-                    showLoginFailed(loginResult.getError());
-                }
-                if (loginResult.getSuccess() != null) {
-                    updateUiWithUser(loginResult.getSuccess());
-                }
-                setResult(Activity.RESULT_OK);
-
-                //Complete and destroy login activity once successful
-                finish();
-            }
-        });
-
-        TextWatcher afterTextChangedListener = new TextWatcher() {
+        passwordEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                // ignore
+
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                // ignore
+                if(!passwordEditText.getText().toString().isEmpty()){
+                    passwordCheckText.setVisibility(View.INVISIBLE);
+                    is_password_input[0] =true;
+                }else{
+                    passwordCheckText.setVisibility(View.VISIBLE);
+                    is_password_input[0] =false;
+                }
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-                loginViewModel.loginDataChanged(usernameEditText.getText().toString(),
-                        passwordEditText.getText().toString());
+                loginButton.setEnabled(is_password_input[0] && is_username_input[0]);
+//                Log.d("test","password ");
             }
-        };
-        usernameEditText.addTextChangedListener(afterTextChangedListener);
-        passwordEditText.addTextChangedListener(afterTextChangedListener);
-        passwordEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        });
+        usernameEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
 
             @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    loginViewModel.login(usernameEditText.getText().toString(),
-                            passwordEditText.getText().toString());
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(!usernameEditText.getText().toString().contains("@")){
+                    usernameCheckText.setVisibility(View.VISIBLE);
+                    is_username_input[0]=true;
+                }else{
+                    usernameCheckText.setVisibility(View.INVISIBLE);
+                    is_username_input[0]=true;
                 }
-                return false;
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                loginButton.setEnabled(is_password_input[0] && is_username_input[0]);
+
             }
         });
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                loadingProgressBar.setVisibility(View.VISIBLE);
-//                loginViewModel.login(usernameEditText.getText().toString(),
-//                        passwordEditText.getText().toString());
+                //edittext에 입력된 값 가져오기
+                String email=usernameEditText.getText().toString();
+                String password=passwordEditText.getText().toString();
 
+                Response.Listener<String> responseListener=new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+//                        Log.d("before_try_login",response);
+
+                        try {
+
+//                            JSONObject jsonObject=new JSONObject(response);
+                            //boolean success=jsonObject.getBoolean("success");
+                            // 원래는 위의 방식으로 진행하는게 맞으나 서버와 연동이 안되서 자체적으로 success처리!
+                            JSONObject jsonObject=new JSONObject("{\"success\":true}"); // 추후제거
+                            boolean success=true; //추후제거
+
+                            if(success){
+                                Log.d("test","test");
+//                                String email=jsonObject.getString("email");
+//                                String password=jsonObject.getString("userPassword");
+
+                                Toast.makeText(getApplicationContext(),"로그인 성공.."+email+" and "+password,Toast.LENGTH_SHORT).show();
+                                Intent intent=new Intent(LoginActivity.this, MainActivity.class);
+//                                intent.putExtra("email",email);
+//                                intent.putExtra("password",password);
+                                startActivity(intent);
+                            }else{
+                                Toast.makeText(getApplicationContext(),"로그인 실패",Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                };
+
+                // 서버로 volley를 이용해서 요청을 함.
+                LoginRequest loginRequest=new LoginRequest(email,password,responseListener);
+                RequestQueue queue= Volley.newRequestQueue(LoginActivity.this);
+                queue.add(loginRequest);
                 //temporary... 구현후 삭제..
-                Intent intent=new Intent(LoginActivity.this, MainActivity.class);
-                startActivity(intent);
+//                Toast.makeText(LoginActivity.this,"login clicked",Toast.LENGTH_SHORT).show();
+
             }
         });
 
@@ -162,11 +178,7 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private void updateUiWithUser(LoggedInUserView model) {
-        String welcome = getString(R.string.welcome) + model.getDisplayName();
-        // TODO : initiate successful logged in experience
-        Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
-    }
+
 
     private void showLoginFailed(@StringRes Integer errorString) {
         Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_SHORT).show();
