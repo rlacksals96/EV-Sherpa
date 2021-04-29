@@ -1,0 +1,42 @@
+[
+  {
+    "connector_name": "AC단상 5핀(완속)",
+    "connector_image": "https://www.ev.or.kr/portal/_images/sub/ac5con.jpg",
+    "socket_image": "https://www.ev.or.kr/portal/_images/sub/ac5car.jpg",
+    "charge_current": "80A",
+    "charge_voltage": "120 ~ 240 VAC",
+    "charge_power": "0.96 ~ 19.20kW",
+    "charge_level": "1 ~ 2",
+    "available_car": "블루온, 레이, 쏘울, 아이오닉, 코나, 니로, 쏘울, ZOE, SM3 ZE, 스파크, 볼트, i3, Leaf"
+  },
+  {
+    "connector_name": "AC3상 7핀(급속/완속)",
+    "connector_image": "https://www.ev.or.kr/portal/_images/sub/ac7con.jpg",
+    "socket_image": "https://www.ev.or.kr/portal/_images/sub/ac7car.jpg",
+    "charge_current": "32A",
+    "charge_voltage": "220 ~ 440 VAC",
+    "charge_power": "3.52 ~ 14.08kW",
+    "charge_level": "1 ~ 3",
+    "available_car": "SM3 ZE"
+  },
+  {
+    "connector_name": "DC차데모 10핀(급속)",
+    "connector_image": "https://www.ev.or.kr/portal/_images/sub/dc10con.jpg",
+    "socket_image": "https://www.ev.or.kr/portal/_images/sub/dc10car.jpg",
+    "charge_current": "100 ~ 120A",
+    "charge_voltage": "500 VDC",
+    "charge_power": "60kW",
+    "charge_level": 3,
+    "available_car": "블루온, 레이, 쏘울, 아이오닉, Leaf"
+  },
+  {
+    "connector_name": "DC콤보 7핀(급속)",
+    "connector_image": "https://www.ev.or.kr/portal/_images/sub/dc7con.jpg",
+    "socket_image": "https://www.ev.or.kr/portal/_images/sub/dc7car.jpg",
+    "charge_current": "200A",
+    "charge_voltage": "200 ~ 600 VDC",
+    "charge_power": "125kW",
+    "charge_level": 3,
+    "available_car": "ZOE, 스파크, 볼트, i3, Leaf"
+  }
+]

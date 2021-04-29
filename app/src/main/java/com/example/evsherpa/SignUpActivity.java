@@ -60,10 +60,11 @@ public class SignUpActivity extends AppCompatActivity {
 //                        Log.d("before_try",response);
 
                         try {
-                            Log.d("after_try",response);
+//                            Log.d("after_try",response);
 
                             JSONObject jsonObject=new JSONObject(response);
-                            boolean success=jsonObject.getBoolean("success");
+//                            boolean success=jsonObject.getBoolean("success");
+                            boolean success=true; //서버와 연결시 위에 있는 코드로 변경.
 //                            Log.d("find success",success+"");
 //                            Toast.makeText(getApplicationContext(),"access onResponse",Toast.LENGTH_SHORT).show();
 

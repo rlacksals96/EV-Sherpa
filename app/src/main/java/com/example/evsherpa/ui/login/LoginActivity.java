@@ -118,6 +118,7 @@ public class LoginActivity extends AppCompatActivity {
                             JSONObject jsonObject=new JSONObject("{\"success\":true}"); // 추후제거
                             boolean success=true; //추후제거
 
+                            // TODO: 로그인 성공시 sharedPreferences 이용해서 입력했던 정보 자동완성 되도록 만들기.
                             if(success){
                                 Log.d("test","test");
 //                                String email=jsonObject.getString("email");

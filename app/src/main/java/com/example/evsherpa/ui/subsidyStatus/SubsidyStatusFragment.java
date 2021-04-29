@@ -20,16 +20,16 @@ public class SubsidyStatusFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        subsidyStatusViewModel =
-                new ViewModelProvider(this).get(SubsidyStatusViewModel.class);
+//        subsidyStatusViewModel =
+//                new ViewModelProvider(this).get(SubsidyStatusViewModel.class);
         View root = inflater.inflate(R.layout.fragment_subsidy_status, container, false);
-        final TextView textView = root.findViewById(R.id.text_subsidy_status);
-        subsidyStatusViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-                textView.setText(s);
-            }
-        });
+//        final TextView textView = root.findViewById(R.id.text_subsidy_status);
+//        subsidyStatusViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
+//            @Override
+//            public void onChanged(@Nullable String s) {
+//                textView.setText(s);
+//            }
+//        });
         return root;
     }
 }
