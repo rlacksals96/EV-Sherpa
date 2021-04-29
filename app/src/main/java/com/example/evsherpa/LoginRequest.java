@@ -9,6 +9,10 @@ import java.util.Map;
 
 public class LoginRequest extends StringRequest {
     // 서버 url 설정 (php 파일 연동)
+    final static private String ipAddress="localhost";
+    final static private String portNum="8080";
+    final static private String route="/signin";
+//    final static private String URL="http://"+ipAddress+":"+portNum+route
     final static private String URL="http://a4382432.dothome.co.kr/Login.php";
     private final Map<String,String> map;
 

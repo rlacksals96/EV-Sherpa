@@ -11,6 +11,10 @@ import java.util.Map;
 
 public class SignUpRequest extends StringRequest {
     // 서버 url 설정 (php 파일 연동)
+    final static private String ipAddress="localhost";
+    final static private String portNum="8080";
+    final static private String route="/signup";
+    //    final static private String URL="http://"+ipAddress+":"+portNum+route
     final static private String URL="http://a4382432.dothome.co.kr/Register.php";
     private final Map<String,String> map;
 
