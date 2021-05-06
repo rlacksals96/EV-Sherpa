@@ -28,7 +28,6 @@
     <string name="login_failed">"Login failed"</string>
 
 
-
     <string name="sign_up">sign up</string>
     <string name="sign_up_normal">일반 회원가입</string>
     <string name="sign_up_google">Google로 로그인하기</string>
@@ -62,4 +61,5 @@
     <string name="subsidy_information">보조금 정보</string>
     <string name="charge_price">충전 가격</string>
     <string name="outlet_type">충전기 종류</string>
+    <string name="title_activity_maps">Map</string>
 </resources>
