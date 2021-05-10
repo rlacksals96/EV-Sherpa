@@ -38,11 +38,12 @@ public class CarOutletAdapter extends RecyclerView.Adapter<CarOutletAdapter.CarO
     public void onBindViewHolder(@NonNull CarOutletAdapter.CarOutletViewHolder holder, int position) {
         //holder 데이터 초기화하고 action 설정 가능
         holder.outlet_profile.setImageResource(arrayList.get(position).getOutlet_profile());
-        holder.txt_connector_name.setText(arrayList.get(position).getTxt_connector_name());
-        holder.txt_charge_current.setText(arrayList.get(position).getTxt_charge_current());
-        holder.txt_charge_power.setText(arrayList.get(position).getTxt_charge_power());
-        holder.txt_charge_level.setText(arrayList.get(position).getTxt_charge_level());
-        holder.txt_available_car.setText(arrayList.get(position).getTxt_available_car());
+        holder.txt_connector_name.setText("충전기 종류: ".concat(arrayList.get(position).getTxt_connector_name()));
+        holder.txt_charge_current.setText("전류: ".concat(arrayList.get(position).getTxt_charge_current()));
+        holder.txt_charge_voltage.setText("전압: ".concat(arrayList.get(position).getTxt_charge_voltage()));
+        holder.txt_charge_power.setText("저항: ".concat(arrayList.get(position).getTxt_charge_power()));
+        holder.txt_charge_level.setText("충전 레벨: ".concat(arrayList.get(position).getTxt_charge_level()));
+        holder.txt_available_car.setText("사용 가능 차량: ".concat(arrayList.get(position).getTxt_available_car()));
         holder.itemView.setTag(position);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -66,6 +67,7 @@ public class CarOutletAdapter extends RecyclerView.Adapter<CarOutletAdapter.CarO
 
         protected ImageView outlet_profile;
         protected TextView txt_connector_name;
+        protected TextView txt_charge_voltage;
         protected TextView txt_charge_current;
         protected TextView txt_charge_power;
         protected TextView txt_charge_level;
@@ -74,6 +76,7 @@ public class CarOutletAdapter extends RecyclerView.Adapter<CarOutletAdapter.CarO
             super(itemView);
             this.outlet_profile=(ImageView)itemView.findViewById(R.id.outlet_profile);
             this.txt_connector_name=(TextView)itemView.findViewById(R.id.txt_connector_name);
+            this.txt_charge_voltage=(TextView)itemView.findViewById(R.id.txt_charge_voltage);
             this.txt_charge_current=(TextView)itemView.findViewById(R.id.txt_charge_current);
             this.txt_charge_power=(TextView)itemView.findViewById(R.id.txt_charge_power);
             this.txt_charge_level=(TextView)itemView.findViewById(R.id.txt_charge_level);

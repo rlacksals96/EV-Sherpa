@@ -16,20 +16,13 @@ import com.example.evsherpa.R;
 
 public class CarInfoFragment extends Fragment {
 
-    private CarInfoViewModel carInfoViewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-//        carInfoViewModel =
-//                new ViewModelProvider(this).get(CarInfoViewModel.class);
+
         View root = inflater.inflate(R.layout.fragment_car_info, container, false);
-//        final TextView textView = root.findViewById(R.id.text_car_info);
-//        carInfoViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
-//            @Override
-//            public void onChanged(@Nullable String s) {
-//                textView.setText(s);
-//            }
-//        });
+
+        //TODO: car info recycler view 추가하가.
         return root;
     }
 }
