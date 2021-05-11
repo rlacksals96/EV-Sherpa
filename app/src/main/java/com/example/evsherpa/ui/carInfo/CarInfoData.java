@@ -1,5 +1,7 @@
 package com.example.evsherpa.ui.carInfo;
 
+import com.example.evsherpa.R;
+
 public class CarInfoData {
     private int car_profile;
     private String txt_car_name;
@@ -33,7 +35,7 @@ public class CarInfoData {
         this.txt_subsidy = txt_subsidy;
         this.txt_maker_phone_num = txt_maker_phone_num;
 
-        this.car_profile=1;
+        this.car_profile= R.mipmap.ic_launcher;
     }
 
     public int getCar_profile() {

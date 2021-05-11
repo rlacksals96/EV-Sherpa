@@ -70,6 +70,7 @@ public class CarInfoFragment extends Fragment {
             JSONArray arr=obj.getJSONArray("cars");
             carinfoList=new ArrayList<CarInfoData>();
 
+
             for(int i=0;i<arr.length();i++){
                 JSONObject car=arr.getJSONObject(i);
                 String car_name=car.getString("차량명");
