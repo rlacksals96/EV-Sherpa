@@ -29,7 +29,7 @@ public class CarOutletAdapter extends RecyclerView.Adapter<CarOutletAdapter.CarO
     public CarOutletAdapter.CarOutletViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         View view= LayoutInflater.from(parent.getContext()).inflate(R.layout.outlet_list,parent,false);
-        CarOutletViewHolder holder=new CarOutletViewHolder(view);
+        CarOutletViewHolder holder= new CarOutletViewHolder(view);
 
         return holder;
     }
@@ -63,7 +63,7 @@ public class CarOutletAdapter extends RecyclerView.Adapter<CarOutletAdapter.CarO
         return (arrayList !=null ? arrayList.size():0);
     }
 
-    public class CarOutletViewHolder extends RecyclerView.ViewHolder{
+    public static class CarOutletViewHolder extends RecyclerView.ViewHolder{
 
         protected ImageView outlet_profile;
         protected TextView txt_connector_name;
