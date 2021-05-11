@@ -23,6 +23,8 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class CarInfoFragment extends Fragment {
 
@@ -36,7 +38,7 @@ public class CarInfoFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_car_info, container, false);
 
-        //TODO: car info recycler view 추가하가.
+
         ArrayList<CarInfoData> carInfoList=getJsonData();
         recyclerView=(RecyclerView)view.findViewById(R.id.car_info_rv);
         linearLayoutManager=new LinearLayoutManager(getActivity());
@@ -46,6 +48,33 @@ public class CarInfoFragment extends Fragment {
         recyclerView.setAdapter(carInfoAdapter);
 
         return view;
+    }
+    public List<Integer> getCarImages(){
+        List<Integer> cars= Arrays.asList(
+
+                R.drawable.car_soul,
+                R.drawable.car_soul,
+                R.drawable.car_ionic,
+                R.drawable.car_ionic,
+                R.drawable.car_ionic_5,
+                R.drawable.car_ionic_5,
+                R.drawable.car_kona,
+                R.drawable.car_kona,
+                R.drawable.car_niro,
+                R.drawable.car_niro,
+                R.drawable.car_zoe_itens,
+                R.drawable.car_zoe_itens,
+                R.drawable.car_bolt_ev_lt,
+                R.drawable.car_bolt_ev_lt,
+                R.drawable.car_i3_120ah,
+                R.drawable.car_i3_120ah,
+                R.drawable.car_model_3,
+                R.drawable.car_model_3,
+                R.drawable.car_model_3,
+                R.drawable.car_model_y,
+                R.drawable.car_model_y
+        );
+        return cars;
     }
     public String loadJSONFromAsset(){
         String json=null;
@@ -62,9 +91,10 @@ public class CarInfoFragment extends Fragment {
         }
         return json;
     }
+
     public ArrayList<CarInfoData> getJsonData(){
         ArrayList<CarInfoData> carinfoList=null;
-
+        List<Integer> images=getCarImages();
         try{
             JSONObject obj=new JSONObject(loadJSONFromAsset());
             JSONArray arr=obj.getJSONArray("cars");
@@ -85,7 +115,7 @@ public class CarInfoFragment extends Fragment {
                 String car_profile=car.getString("차량이미지");
 
                 carinfoList.add(new CarInfoData(
-                        R.mipmap.ic_launcher,
+                        images.get(i),
                         car_name,
                         car_maker,
                         car_capacity,

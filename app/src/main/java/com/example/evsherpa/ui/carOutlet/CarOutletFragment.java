@@ -1,17 +1,13 @@
 package com.example.evsherpa.ui.carOutlet;
 
-import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -25,7 +21,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 
 public class CarOutletFragment extends Fragment {
@@ -67,11 +62,11 @@ public class CarOutletFragment extends Fragment {
     }
     public List<Integer> getOutletImages(){
         List<Integer> images= Arrays.asList(
-                R.drawable.ac_single_5_pin,
-                R.drawable.ac_three_7_pin,
-                R.drawable.dc_10_pin,
-                R.drawable.dc_7_pin,
-                R.drawable.tesla_pin
+                R.drawable.outlet_ac_single_5_pin,
+                R.drawable.outlet_ac_three_7_pin,
+                R.drawable.outlet_dc_10_pin,
+                R.drawable.outlet_dc_7_pin,
+                R.drawable.outlet_tesla_pin
         );
 
         return images;
@@ -90,7 +85,7 @@ public class CarOutletFragment extends Fragment {
                 JSONObject outlet=arr.getJSONObject(i);
                 String connector_name=outlet.getString("connector_name");
                 String connector_image=outlet.getString("connector_image");
-                //TODO: null 나오는 경우 기본 이미지 나오게 처리해야함.
+
 
                 String charge_current=outlet.getString("charge_current");
                 String charge_voltage=outlet.getString("charge_voltage");
@@ -98,7 +93,6 @@ public class CarOutletFragment extends Fragment {
                 String charge_level=outlet.getString("charge_level");
                 String available_car=outlet.getString("available_car");
 
-                //TODO: 첫번째 파라미터가 충전기 이미지인데 현재 기본 이미지 받으려고 int로 설정한 상황임. 추후 String으로 변경해도 문제 없게 믄들어야 함.
 
                 outletList.add(new CarOutletData(
                         images.get(i),

@@ -49,7 +49,7 @@ public class CarInfoAdapter extends RecyclerView.Adapter<CarInfoAdapter.CarInfoV
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO: 필요기능 생성후 toast는 삭제
+                //TODO: 각 탭 클릭시 이미지 확대되도록 기능 개선
                 String car_name=holder.txt_car_name.getText().toString();
                 Toast.makeText(v.getContext(),car_name,Toast.LENGTH_SHORT).show();
             }
