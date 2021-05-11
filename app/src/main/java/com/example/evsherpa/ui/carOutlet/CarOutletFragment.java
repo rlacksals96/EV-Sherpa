@@ -24,7 +24,9 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 public class CarOutletFragment extends Fragment {
 
@@ -37,40 +39,8 @@ public class CarOutletFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_car_outlet, container, false);
-        ArrayList<CarOutletData> outletList=null;
-        try{
-            JSONObject obj=new JSONObject(loadJSONFromAsset());
-            JSONArray arr=obj.getJSONArray("outlets");
-            outletList=new ArrayList<CarOutletData>();
+        ArrayList<CarOutletData> outletList=getJsonData();
 
-
-            for(int i=0;i<arr.length();i++){
-                JSONObject outlet=arr.getJSONObject(i);
-                String connector_name=outlet.getString("connector_name");
-                String connector_image=outlet.getString("connector_image");
-                //TODO: null 나오는 경우 기본 이미지 나오게 처리해야함.
-
-                String charge_current=outlet.getString("charge_current");
-                String charge_voltage=outlet.getString("charge_voltage");
-                String charge_power=outlet.getString("charge_power");
-                String charge_level=outlet.getString("charge_level");
-                String available_car=outlet.getString("available_car");
-
-                //TODO: 첫번째 파라미터가 충전기 이미지인데 현재 기본 이미지 받으려고 int로 설정한 상황임. 추후 String으로 변경해도 문제 없게 믄들어야 함.
-
-                outletList.add(new CarOutletData(
-                        R.mipmap.ic_launcher,
-                        connector_name,
-                        charge_current,
-                        charge_voltage,
-                        charge_power,
-                        charge_level,
-                        available_car)
-                );
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
         recyclerView=(RecyclerView)view.findViewById(R.id.outlet_rv);
 
         linearLayoutManager=new LinearLayoutManager(getActivity());
@@ -94,6 +64,57 @@ public class CarOutletFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
+    public List<Integer> getOutletImages(){
+        List<Integer> images= Arrays.asList(
+                R.drawable.ac_single_5_pin,
+                R.drawable.ac_three_7_pin,
+                R.drawable.dc_10_pin,
+                R.drawable.dc_7_pin,
+                R.drawable.tesla_pin
+        );
+
+        return images;
+    }
+    public ArrayList<CarOutletData> getJsonData(){
+
+        ArrayList<CarOutletData> outletList=new ArrayList<CarOutletData>();
+        List<Integer> images=getOutletImages();
+        try{
+            JSONObject obj=new JSONObject(loadJSONFromAsset());
+            JSONArray arr=obj.getJSONArray("outlets");
+
+
+
+            for(int i=0;i<arr.length();i++){
+                JSONObject outlet=arr.getJSONObject(i);
+                String connector_name=outlet.getString("connector_name");
+                String connector_image=outlet.getString("connector_image");
+                //TODO: null 나오는 경우 기본 이미지 나오게 처리해야함.
+
+                String charge_current=outlet.getString("charge_current");
+                String charge_voltage=outlet.getString("charge_voltage");
+                String charge_power=outlet.getString("charge_power");
+                String charge_level=outlet.getString("charge_level");
+                String available_car=outlet.getString("available_car");
+
+                //TODO: 첫번째 파라미터가 충전기 이미지인데 현재 기본 이미지 받으려고 int로 설정한 상황임. 추후 String으로 변경해도 문제 없게 믄들어야 함.
+
+                outletList.add(new CarOutletData(
+                        images.get(i),
+                        connector_name,
+                        charge_current,
+                        charge_voltage,
+                        charge_power,
+                        charge_level,
+                        available_car)
+                );
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return outletList;
     }
     public String loadJSONFromAsset(){
         String json=null;
