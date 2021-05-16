@@ -1,24 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<TableLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:stretchColumns="*"
+    android:id="@+id/table_subsidy_status"
     tools:context=".ui.subsidyStatus.SubsidyStatusFragment">
 
-    <TextView
-        android:id="@+id/text_subsidy_status"
+    <TableRow
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="match_parent"
+        tools:ignore="UselessParent"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:background="@color/gray_200"
+        >
+        <TextView
+            android:id="@+id/txt_car_maker"
+            android:text="제조/수입사"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:textSize="20dp"
+            />
+        <TextView
+            android:id="@+id/txt_car_name"
+            android:text="차종"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:textSize="20dp"
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+            />
+        <TextView
+            android:id="@+id/txt_car_subsidy"
+            android:text="보조금"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:textSize="20dp"
+
+            />
+
+    </TableRow>
+
+
+
+
+</TableLayout>

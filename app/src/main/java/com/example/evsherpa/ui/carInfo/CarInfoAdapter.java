@@ -54,6 +54,7 @@ public class CarInfoAdapter extends RecyclerView.Adapter<CarInfoAdapter.CarInfoV
                 Toast.makeText(v.getContext(),car_name,Toast.LENGTH_SHORT).show();
             }
         });
+        //TODO: 롱 클릭시 해당 차량을 선호 차량으로 등록하는 창 만들기.
     }
 
 
