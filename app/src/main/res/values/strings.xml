@@ -69,4 +69,10 @@
     <string name="charge_power">전기 저항: </string>
     <string name="charge_level">충전 레벨: </string>
     <string name="available_car">이용가능 차량: </string>
+    
+    <string name="division">구분</string>
+    <string name="car_type">종류</string>
+    <string name="car_maker">제조/수입사</string>
+    <string name="car_name">차종</string>
+    <string name="subsidy_amount">국고보조금</string>
 </resources>
