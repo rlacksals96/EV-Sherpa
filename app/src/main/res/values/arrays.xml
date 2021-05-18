@@ -3,28 +3,37 @@
     <string-array name="car_company_entries">
         <item>현대</item>
         <item>기아</item>
+        <item>르노삼성</item>
+        <item>한국GM</item>
+        <item>BMW</item>
         <item>테슬라</item>
     </string-array>
 
 
-<!--    회사별로 차량명 채워야 함-->
-    <string-array name="car_model_hyundai">
-        <item>kona</item>
+    <string-array name="hyundai_model">
+        <item>아이오닉</item>
+        <item>코나</item>
     </string-array>
-    <string-array name="car_model_tesla">
-        <item>model 3</item>
+    <string-array name="kia_model">
+        <item>쏘울</item>
+        <item>니로EV</item>
+    </string-array>
+    <string-array name="samsung_model">
+        <item>ZOE INTENS</item>
+        <item>ZOE ITENS</item></string-array>
+    <string-array name="gm_model">
+        <item>BOLT EV LT</item>
+        <item>BOLT EV Primier</item>
+    </string-array>
+    <string-array name="bmw_model">
+        <item>i3 120Ah</item>
+        <item>i3 120Ah Sol+</item>
+    </string-array>
+    <string-array name="tesla_model">
+        <item>Model 3</item>
+        <item>Model Y</item>
     </string-array>
 
-<!--    below string array is for temporary-->
-    <string-array name="car_model">
-        <item>ionic5</item>
-        <item>kona</item>
-        <item>model 3</item>
-        <item>model Y</item>
-        <item>bmw i3</item>
-        <item>benz e5</item>
-    </string-array>
-<!--    until here-->
 
     <string-array name="car_battery_type">
         <item>normal</item>

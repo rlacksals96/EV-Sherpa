@@ -3,6 +3,7 @@ package com.example.evsherpa.ui.profile;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import com.example.evsherpa.CarRegistrationActivity;
 import com.example.evsherpa.R;
 
 import org.json.JSONException;
@@ -90,7 +92,9 @@ public class ProfileFragment extends Fragment {
         btn_change_car.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                //TODO: activity -> fragment로 이동하는 경우도 고민해야함.
+                Intent intent=new Intent(getActivity(), CarRegistrationActivity.class);
+                startActivity(intent);
             }
         });
     }

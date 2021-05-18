@@ -59,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
         String FILE_NAME= "profile.json";
 
         try{
+            //TODO: 이 방식을 쓰면 앱 실행시 무조건 밑의 json 파일로 초기화되기 때문에 서버와 통신해서 업데이트가 되도 의미가 없어짐. 다른 초기화 방법 강구할것
+            // idea. 처음에 서버에 접속해서 데이터 여부 확인후에 있으면 그거로 초기화 하고, 없으면 default_profile로 초기화한다.
 
             InputStream is=this.getAssets().open("default_profile.json");
             int size=is.available();
