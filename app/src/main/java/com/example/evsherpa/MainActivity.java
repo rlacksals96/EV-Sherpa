@@ -1,11 +1,9 @@
 package com.example.evsherpa;
 
+import android.content.Context;
 import android.os.Bundle;
-import android.view.View;
 import android.view.Menu;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 
 import androidx.navigation.NavController;
@@ -15,6 +13,12 @@ import androidx.navigation.ui.NavigationUI;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -45,8 +49,41 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+
+        mkProfile();
+
     }
 
+    public void mkProfile(){
+        FileOutputStream fos=null;
+        String FILE_NAME= "profile.json";
+
+        try{
+
+            InputStream is=this.getAssets().open("default_profile.json");
+            int size=is.available();
+            byte[] buffer=new byte[size];
+            is.read(buffer);
+            is.close();
+            String result=new String(buffer,"UTF-8");
+
+            fos=openFileOutput(FILE_NAME,MODE_PRIVATE);
+            fos.write(result.getBytes());
+
+        }catch(FileNotFoundException fe){
+            fe.printStackTrace();
+        }catch (IOException e) {
+            e.printStackTrace();
+        }finally {
+            if(fos!=null){
+                try{
+                    fos.close();
+                }catch (IOException e){
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
