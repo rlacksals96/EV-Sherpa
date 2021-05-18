@@ -1,0 +1,456 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<RelativeLayout
+
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    >
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/txt_title_electric_sedan"
+        android:text="승용 및 초소형 전기자동차"
+        android:textSize="27sp"
+        />
+    <TableLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/table_electric_sedan"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:stretchColumns="*"
+        android:layout_below="@+id/txt_title_electric_sedan"
+        tools:context=".ui.subsidyStatus.SubsidyStatusFragment"
+        tools:ignore="UselessParent">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:ignore="UselessParent"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:background="@color/gray_200"
+
+            >
+            <TextView
+                android:id="@+id/txt_division"
+                android:text="@string/division"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:textSize="20sp"
+                />
+            <TextView
+                android:id="@+id/txt_car_maker"
+                android:text="@string/car_maker"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:textSize="20sp"
+                />
+            <TextView
+                android:id="@+id/txt_car_name"
+                android:text="@string/car_name"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:textSize="20sp"
+
+                tools:ignore="DuplicateIds" />
+            <TextView
+                android:id="@+id/txt_car_subsidy"
+                android:text="@string/subsidy_amount"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:textSize="20sp"
+
+                tools:ignore="DuplicateIds" />
+
+        </TableRow>
+
+    </TableLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/txt_title_electric_cargo"
+        android:text="전기화물차"
+        android:textSize="27sp"
+        android:layout_below="@+id/table_electric_sedan"
+        />
+    <TableLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/table_electric_cargo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:stretchColumns="*"
+
+        tools:context=".ui.subsidyStatus.SubsidyStatusFragment"
+        tools:ignore="NotSibling,UselessParent"
+        android:layout_below="@+id/txt_title_electric_cargo">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:ignore="UselessParent"
+            android:layout_marginTop="10dp"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:background="@color/gray_200"
+
+            >
+            <TextView
+                android:id="@+id/txt_division"
+                android:text="@string/division"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:textSize="20sp"
+                tools:ignore="DuplicateIds" />
+            <TextView
+                android:id="@+id/txt_type"
+                android:text="@string/car_type"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:textSize="20sp"
+                tools:ignore="DuplicateIds" />
+            <TextView
+                android:id="@+id/txt_car_maker"
+                android:text="@string/car_maker"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:textSize="20sp"
+                tools:ignore="DuplicateIds" />
+            <TextView
+                android:id="@+id/txt_car_name"
+                android:text="@string/car_name"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:textSize="20sp"
+
+                tools:ignore="DuplicateIds" />
+            <TextView
+                android:id="@+id/txt_car_subsidy"
+                android:text="@string/subsidy_amount"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:textSize="20sp"
+
+                tools:ignore="DuplicateIds" />
+
+        </TableRow>
+
+
+
+
+    </TableLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/txt_title_electric_van"
+        android:text="전기승합차"
+        android:textSize="27sp"
+        android:layout_below="@+id/table_electric_cargo"
+        />
+    <TableLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/table_electric_van"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:stretchColumns="*"
+
+        tools:context=".ui.subsidyStatus.SubsidyStatusFragment"
+        tools:ignore="NotSibling,UselessParent"
+        android:layout_below="@+id/txt_title_electric_van">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:ignore="UselessParent"
+            android:layout_marginTop="10dp"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:background="@color/gray_200"
+
+            >
+            <TextView
+                android:id="@+id/txt_division"
+                android:text="@string/division"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:textSize="20sp"
+                tools:ignore="DuplicateIds" />
+            <TextView
+                android:id="@+id/txt_type"
+                android:text="@string/car_type"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:textSize="20sp"
+                tools:ignore="DuplicateIds" />
+            <TextView
+                android:id="@+id/txt_car_maker"
+                android:text="@string/car_maker"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:textSize="20sp"
+                tools:ignore="DuplicateIds" />
+            <TextView
+                android:id="@+id/txt_car_name"
+                android:text="@string/car_name"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:textSize="20sp"
+
+                tools:ignore="DuplicateIds" />
+            <TextView
+                android:id="@+id/txt_car_subsidy"
+                android:text="@string/subsidy_amount"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:textSize="20sp"
+
+                tools:ignore="DuplicateIds" />
+
+        </TableRow>
+
+
+
+
+    </TableLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/txt_title_electric_bike"
+        android:text="전기이륜차"
+        android:textSize="27dp"
+        android:layout_below="@+id/table_electric_van"
+        />
+    <TableLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/table_electric_bike"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:stretchColumns="*"
+        android:layout_below="@+id/txt_title_electric_bike"
+        tools:context=".ui.subsidyStatus.SubsidyStatusFragment"
+        tools:ignore="UselessParent">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:ignore="UselessParent"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:background="@color/gray_200"
+
+            >
+            <TextView
+                android:id="@+id/txt_division"
+                android:text="@string/division"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:textSize="20sp"
+                tools:ignore="DuplicateIds" />
+            <TextView
+                android:id="@+id/txt_car_maker"
+                android:text="@string/car_maker"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:textSize="20sp"
+                tools:ignore="DuplicateIds" />
+            <TextView
+                android:id="@+id/txt_car_name"
+                android:text="@string/car_name"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:textSize="20sp"
+
+                tools:ignore="DuplicateIds" />
+            <TextView
+                android:id="@+id/txt_car_subsidy"
+                android:text="@string/subsidy_amount"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:textSize="20sp"
+
+                tools:ignore="DuplicateIds" />
+
+        </TableRow>
+
+    </TableLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/txt_title_hydro_sedan"
+        android:text="승용 수소연료전지차"
+        android:textSize="27sp"
+        android:layout_below="@+id/table_electric_bike"
+        />
+    <TableLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/table_hydro_sedan"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:stretchColumns="*"
+        android:layout_below="@+id/txt_title_hydro_sedan"
+        tools:context=".ui.subsidyStatus.SubsidyStatusFragment"
+        tools:ignore="UselessParent">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:ignore="UselessParent"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:background="@color/gray_200"
+
+            >
+            <TextView
+                android:id="@+id/txt_division"
+                android:text="@string/division"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:textSize="20sp"
+                tools:ignore="DuplicateIds" />
+            <TextView
+                android:id="@+id/txt_car_maker"
+                android:text="@string/car_maker"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:textSize="20sp"
+                tools:ignore="DuplicateIds" />
+            <TextView
+                android:id="@+id/txt_car_name"
+                android:text="@string/car_name"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:textSize="20sp"
+
+                tools:ignore="DuplicateIds" />
+            <TextView
+                android:id="@+id/txt_car_subsidy"
+                android:text="@string/subsidy_amount"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:textSize="20sp"
+
+                tools:ignore="DuplicateIds" />
+
+        </TableRow>
+
+    </TableLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/txt_title_hydro_van"
+        android:text="승합 수소연료전지차"
+        android:textSize="27sp"
+        android:layout_below="@+id/table_hydro_sedan"
+        />
+    <TableLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/table_hydro_van"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:stretchColumns="*"
+        android:layout_below="@+id/txt_title_hydro_van"
+        tools:context=".ui.subsidyStatus.SubsidyStatusFragment"
+        tools:ignore="UselessParent">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:ignore="UselessParent"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:background="@color/gray_200"
+
+            >
+            <TextView
+                android:id="@+id/txt_division"
+                android:text="@string/division"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:textSize="20sp"
+                tools:ignore="DuplicateIds" />
+            <TextView
+                android:id="@+id/txt_car_maker"
+                android:text="@string/car_maker"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:textSize="20sp"
+                tools:ignore="DuplicateIds" />
+            <TextView
+                android:id="@+id/txt_car_name"
+                android:text="@string/car_name"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:textSize="20sp"
+
+                tools:ignore="DuplicateIds" />
+            <TextView
+                android:id="@+id/txt_car_subsidy"
+                android:text="@string/subsidy_amount"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:textSize="20sp"
+
+                tools:ignore="DuplicateIds" />
+
+        </TableRow>
+
+    </TableLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/txt_title_electric_construction_vehicle"
+        android:text="전기굴착기"
+        android:textSize="27dp"
+        android:layout_below="@+id/table_hydro_van"
+        />
+    <TableLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/table_electric_construction_vehicle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:stretchColumns="*"
+        android:layout_below="@+id/txt_title_electric_construction_vehicle"
+        tools:context=".ui.subsidyStatus.SubsidyStatusFragment"
+        tools:ignore="UselessParent">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:ignore="UselessParent"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:background="@color/gray_200"
+
+            >
+            <TextView
+                android:id="@+id/txt_division"
+                android:text="@string/division"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:textSize="20sp"
+                tools:ignore="DuplicateIds" />
+            <TextView
+                android:id="@+id/txt_car_maker"
+                android:text="@string/car_maker"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:textSize="20sp"
+                tools:ignore="DuplicateIds" />
+            <TextView
+                android:id="@+id/txt_car_name"
+                android:text="@string/car_name"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:textSize="20sp"
+
+                tools:ignore="DuplicateIds" />
+            <TextView
+                android:id="@+id/txt_car_subsidy"
+                android:text="@string/subsidy_amount"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:textSize="20sp"
+
+                tools:ignore="DuplicateIds" />
+
+        </TableRow>
+
+    </TableLayout>
+</RelativeLayout>
+

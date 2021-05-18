@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+//TODO: 제조사 별로 탭이 다르게 나오게 끔 설정해야함.
 public class CarRegistrationActivity extends AppCompatActivity {
 
     @Override

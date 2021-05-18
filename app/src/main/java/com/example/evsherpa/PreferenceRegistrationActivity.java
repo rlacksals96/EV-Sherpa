@@ -201,6 +201,7 @@ public class PreferenceRegistrationActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Toast.makeText(PreferenceRegistrationActivity.this,"confirm clicked",Toast.LENGTH_SHORT).show();
                 //서버 연결되면 전송할수 있게 처리할것..
+
                 Intent intent=new Intent(PreferenceRegistrationActivity.this,MainActivity.class);
                 startActivity(intent);
             }

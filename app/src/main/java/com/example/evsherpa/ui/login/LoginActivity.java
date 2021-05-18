@@ -19,8 +19,10 @@ import android.widget.Toast;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.Volley;
+import com.example.evsherpa.CarRegistrationActivity;
 import com.example.evsherpa.LoginRequest;
 import com.example.evsherpa.MainActivity;
+import com.example.evsherpa.PreferenceRegistrationActivity;
 import com.example.evsherpa.R;
 import com.example.evsherpa.SignUpActivity;
 
@@ -172,8 +174,9 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Toast.makeText(LoginActivity.this,"kakao login",Toast.LENGTH_SHORT).show();
 
-                //need to be changed after implementation
-                Intent intent=new Intent(LoginActivity.this,MainActivity.class);
+                //TODO: need to be changed after implementation
+                //TODO: 현재 차량 선택 탭으로 넘어가게 설저오디어 있음.
+                Intent intent=new Intent(LoginActivity.this, CarRegistrationActivity.class);
                 startActivity(intent);
             }
         });
