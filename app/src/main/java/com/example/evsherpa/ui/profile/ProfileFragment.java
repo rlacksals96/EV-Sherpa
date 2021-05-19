@@ -32,6 +32,7 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 
 public class ProfileFragment extends Fragment {
@@ -69,10 +70,14 @@ public class ProfileFragment extends Fragment {
         //init elements
         img_profile.setImageResource(R.mipmap.ic_launcher);
         try{
+            //profile.json
             JSONObject json=new JSONObject(loadJSON());
             txt_nickname.setText(json.getString("nickname"));
             txt_email.setText(json.getString("email"));
             txt_carname.setText(json.getString("carName"));
+
+            updateCarImage(json.getString("carName"));
+
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -187,8 +192,35 @@ public class ProfileFragment extends Fragment {
                 String strCarModel=car_model.getSelectedItem().toString();
                 String strCarMaker=car_maker.getSelectedItem().toString();
                 String strCarBattery=car_battery.getSelectedItem().toString();
-                //TODO: ok 버튼 누른 후의 기능 추가하기기
-                Toast.makeText(getContext(),strCarMaker+" "+strCarModel+" "+strCarBattery,Toast.LENGTH_SHORT).show();
+
+                try{
+
+                    //json내용 꺼내오고, nickname textview 변경하기
+                    JSONObject profile=new JSONObject(loadJSON());
+                    profile.put("carName",strCarModel);
+                    //변경사항 파일에 저장하기
+                    FileOutputStream fos=getActivity().openFileOutput("profile.json", Context.MODE_PRIVATE);
+                    String tmp=profile.toString();
+                    byte[] result=tmp.getBytes();
+                    fos.write(result);
+
+                    //TODO:(local저장은 구현완료 했고) 서버에 profile.json 파일 저장하는 기능 구현해야한다.
+
+                    txt_carname.setText(profile.get("carName").toString());
+
+                    updateCarImage(strCarModel);
+
+
+                    //TODO: 여기서 프로필 변경시 navigation 부분도 변경 되야 한다.
+
+
+                } catch (JSONException | IOException e) {
+                    e.printStackTrace();
+                }
+
+
+
+
             }
        }).setNegativeButton("cancel", new DialogInterface.OnClickListener() {
             @Override
@@ -208,7 +240,50 @@ public class ProfileFragment extends Fragment {
         }).setCancelable(false);
         return builder;
     }
+    public void updateCarImage(String name){
+        switch (name){
+            case "아이오닉":
+                img_profile.setImageResource(R.drawable.car_ionic);
+                break;
+            case "아이오닉5":
+                img_profile.setImageResource(R.drawable.car_ionic_5);
+                break;
+            case "쏘울":
+                img_profile.setImageResource(R.drawable.car_soul);
+                break;
+            case "코나":
+                img_profile.setImageResource(R.drawable.car_kona);
+                break;
+            case "니로EV":
+                img_profile.setImageResource(R.drawable.car_niro);
+                break;
+            case "ZOE ITENS":
+                img_profile.setImageResource(R.drawable.car_zoe_itens);
+                break;
+            case "ZOE INTENS":
+                img_profile.setImageResource(R.drawable.car_zoe_itens);
+                break;
+            case "BOLT EV LT":
+                img_profile.setImageResource(R.drawable.car_bolt_ev_lt);
+                break;
+            case "BOLT EV Primier":
+                img_profile.setImageResource(R.drawable.car_bolt_ev_lt);
+                break;
+            case "i3 120Ah":
+                img_profile.setImageResource(R.drawable.car_i3_120ah);
+                break;
+            case "i3 120Ah Sol+":
+                img_profile.setImageResource(R.drawable.car_i3_120ah);
+                break;
+            case "Model 3":
+                img_profile.setImageResource(R.drawable.car_model_3);
+                break;
+            case "Model Y":
+                img_profile.setImageResource(R.drawable.car_model_y);
+                break;
 
+        }
+    }
     public AlertDialog.Builder createNicknamePopUp(View view, View popUpPage){
         EditText editNickname=popUpPage.findViewById(R.id.editTextNickname);
 
