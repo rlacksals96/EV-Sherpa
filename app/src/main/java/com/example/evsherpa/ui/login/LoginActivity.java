@@ -175,8 +175,8 @@ public class LoginActivity extends AppCompatActivity {
                 Toast.makeText(LoginActivity.this,"kakao login",Toast.LENGTH_SHORT).show();
 
                 //TODO: need to be changed after implementation
-                //TODO: 현재 차량 선택 탭으로 넘어가게 설저오디어 있음.
-                Intent intent=new Intent(LoginActivity.this, CarRegistrationActivity.class);
+
+                Intent intent=new Intent(LoginActivity.this, PreferenceRegistrationActivity.class);
                 startActivity(intent);
             }
         });

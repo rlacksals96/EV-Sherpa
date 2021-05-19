@@ -29,6 +29,7 @@
             android:layout_below="@id/btn_electric_sedan"
 
             >
+<!--            TODO: zoom in zoom out 구현 -->
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

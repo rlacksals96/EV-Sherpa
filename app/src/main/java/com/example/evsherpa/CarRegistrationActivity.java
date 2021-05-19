@@ -11,13 +11,14 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 
+import com.example.evsherpa.ui.profile.PopUpCarRegistration;
 import com.example.evsherpa.ui.profile.ProfileFragment;
 
 import java.util.Arrays;
 import java.util.List;
 
 //TODO: activity -> fragment로 변경. 잦은 profile <-> car registration 시 에러 발생..
-
+// fragment 제작 완료 .. 추후 삭제하기.
 public class CarRegistrationActivity extends AppCompatActivity {
     private Spinner car_maker;
     private Spinner car_model;
@@ -28,7 +29,7 @@ public class CarRegistrationActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_car_registration);
+        setContentView(R.layout.fragment_car_registration);
 
         profileFragment=new ProfileFragment();
 
@@ -78,15 +79,15 @@ public class CarRegistrationActivity extends AppCompatActivity {
 
 
 
-        Button btn_car_registration_submit=findViewById(R.id.btn_car_registration_submit);
-        btn_car_registration_submit.setOnClickListener(new View.OnClickListener() {
-            @SuppressLint("ResourceType")
-            @Override
-            public void onClick(View v) {
-//                Intent intent=new Intent(CarRegistrationActivity.this,PreferenceRegistrationActivity.class);
-//                startActivity(intent);
-                getSupportFragmentManager().beginTransaction().replace(R.layout.activity_car_registration,profileFragment).commit();
-            }
-        });
+//        Button btn_car_registration_submit=findViewById(R.id.btn_car_registration_submit);
+//        btn_car_registration_submit.setOnClickListener(new View.OnClickListener() {
+//            @SuppressLint("ResourceType")
+//            @Override
+//            public void onClick(View v) {
+////                Intent intent=new Intent(CarRegistrationActivity.this,PreferenceRegistrationActivity.class);
+////                startActivity(intent);
+//                getSupportFragmentManager().beginTransaction().replace(R.layout.fragment_car_registration,profileFragment).commit();
+//            }
+//        });
     }
 }

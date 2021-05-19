@@ -9,16 +9,21 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.example.evsherpa.CarRegistrationActivity;
 import com.example.evsherpa.R;
+import com.example.evsherpa.SignUpActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -92,9 +97,11 @@ public class ProfileFragment extends Fragment {
         btn_change_car.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO: activity -> fragment로 이동하는 경우도 고민해야함.
-                Intent intent=new Intent(getActivity(), CarRegistrationActivity.class);
-                startActivity(intent);
+
+                final View carRegistrationPopup=getLayoutInflater().inflate(R.layout.fragment_car_registration,null);
+                final AlertDialog.Builder builder=createCarRegistrationPopUp(view,carRegistrationPopup);
+                final AlertDialog alertDialog=builder.create();
+                alertDialog.show();
             }
         });
     }
@@ -122,6 +129,86 @@ public class ProfileFragment extends Fragment {
     }
 
 
+    public AlertDialog.Builder createCarRegistrationPopUp(View view,View popUpPage){
+
+        final AlertDialog.Builder builder=new AlertDialog.Builder(getContext());
+        builder.setView(popUpPage);
+
+
+
+        Spinner car_model=popUpPage.findViewById(R.id.spinner_car_model);
+        Spinner car_battery=popUpPage.findViewById(R.id.spinner_car_battery_type);
+        //제조사에 따른 차량 모델 스피너 변경 기능 구현완료.
+        Spinner car_maker=popUpPage.findViewById(R.id.spinner_car_company_name);
+        car_maker.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                if(car_maker.getSelectedItem().equals("현대")){
+//                    arr_model =ArrayAdapter.createFromResource(getActivity(),R.array.hyundai_model, android.R.layout.simple_spinner_dropdown_item);
+                    car_model.setAdapter(ArrayAdapter.createFromResource(getActivity(),
+                            R.array.hyundai_model,android.R.layout.simple_spinner_dropdown_item));
+                }else if(car_maker.getSelectedItem().equals("기아")){
+                    car_model.setAdapter(ArrayAdapter.createFromResource(getActivity(),
+                            R.array.kia_model, android.R.layout.simple_spinner_dropdown_item));
+                }else if(car_maker.getSelectedItem().equals("르노삼성")){
+                    car_model.setAdapter(ArrayAdapter.createFromResource(getActivity(),
+                            R.array.samsung_model, android.R.layout.simple_spinner_dropdown_item));
+                }else if(car_maker.getSelectedItem().equals("한국GM")){
+                    car_model.setAdapter(ArrayAdapter.createFromResource(getActivity(),
+                            R.array.gm_model, android.R.layout.simple_spinner_dropdown_item));
+                }else if(car_maker.getSelectedItem().equals("BMW")){
+                    car_model.setAdapter(ArrayAdapter.createFromResource(getActivity(),
+                            R.array.bmw_model, android.R.layout.simple_spinner_dropdown_item));
+                }else if(car_maker.getSelectedItem().equals("테슬라")){
+                    car_model.setAdapter(ArrayAdapter.createFromResource(getActivity(),
+                            R.array.tesla_model, android.R.layout.simple_spinner_dropdown_item));
+                }
+
+
+
+
+//                arr_model.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+//                car_model.setAdapter(arr_model);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        builder.setTitle("차량 선택")
+        .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String strCarModel=car_model.getSelectedItem().toString();
+                String strCarMaker=car_maker.getSelectedItem().toString();
+                String strCarBattery=car_battery.getSelectedItem().toString();
+                //TODO: ok 버튼 누른 후의 기능 추가하기기
+                Toast.makeText(getContext(),strCarMaker+" "+strCarModel+" "+strCarBattery,Toast.LENGTH_SHORT).show();
+            }
+       }).setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        }).setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+
+            }
+        }).setOnKeyListener(new DialogInterface.OnKeyListener() {
+            @Override
+            public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+                return false;
+            }
+        }).setCancelable(false);
+        return builder;
+    }
+
     public AlertDialog.Builder createNicknamePopUp(View view, View popUpPage){
         EditText editNickname=popUpPage.findViewById(R.id.editTextNickname);
 
@@ -129,7 +216,8 @@ public class ProfileFragment extends Fragment {
 
         final AlertDialog.Builder builder=new AlertDialog.Builder(getContext());
         builder.setView(popUpPage);
-        builder.setPositiveButton("ok", new DialogInterface.OnClickListener() {
+        builder.setTitle("별명 변경")
+                .setPositiveButton("ok", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
@@ -149,19 +237,19 @@ public class ProfileFragment extends Fragment {
                     byte[] result=tmp.getBytes();
                     fos.write(result);
 
-                    //TODO 서버에 profile.json 파일 저장하는 기능 구현해야한다.
+                    //TODO:(local저장은 구현완료 했고) 서버에 profile.json 파일 저장하는 기능 구현해야한다.
 
                 } catch (JSONException | IOException e) {
                     e.printStackTrace();
                 }
             }
         })
-            .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
+        .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
 
-                }
-            }).setOnCancelListener(new DialogInterface.OnCancelListener() {
+            }
+        }).setOnCancelListener(new DialogInterface.OnCancelListener() {
         @Override
         public void onCancel(DialogInterface dialog) {
 

@@ -12,7 +12,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.EVSherpa"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ui.profile.PopUpUpdateNickname"></activity>
+        <activity android:name=".ui.profile.PopUpCarRegistration"></activity>
+        <activity android:name=".ui.profile.PopUpUpdateNickname" />
         <activity android:name=".PreferenceRegistrationActivity" />
         <activity android:name=".ui.setting.SettingActivity" />
         <activity android:name=".ui.profile.ProfileActivity" />
