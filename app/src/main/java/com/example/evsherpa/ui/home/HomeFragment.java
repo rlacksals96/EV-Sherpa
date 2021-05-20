@@ -1,6 +1,11 @@
 package com.example.evsherpa.ui.home;
 
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.location.Location;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -39,7 +44,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
     private final float DEFAULT_ZOOM = 18;
 
-
     private final String KEY_LOCATION = "current_location";
     private final String KEY_CAMERA_POSITION = "camera_position";
 
@@ -56,6 +60,15 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private final int zoomLevelDivider = 5;
     private int zoomLevel;
     private ArrayList<Marker>[] markersByZoomLevel = new ArrayList[3];
+
+    private final int MARKER_WIDTH = 150;
+    private final int MARKER_HEIGHT = 150;
+    private final float MARKER_LABEL_SIZE = 50;
+
+    private final int MARKER_BLUE = 0;
+    private final int MARKER_GREEN = 1;
+    private final int MARKER_YELLOW = 2;
+    private final int MARKER_RED = 3;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -83,7 +96,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 if (task.isSuccessful()) {
                     if (mDeviceLocation != null) {
                         Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(mDeviceLocation.getLatitude(), mDeviceLocation.getLongitude())).title("디바이스 위치")
-                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+                                .icon(BitmapDescriptorFactory.fromBitmap(markerWithLabelIcon("999", MARKER_BLUE))));
                         marker.setTag(0);
 
                         setCameraPosition(mDeviceLocation.getLatitude(), mDeviceLocation.getLongitude(), DEFAULT_ZOOM);
@@ -204,5 +217,42 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         LatLng rightTop = new LatLng(center.latitude + regionRadius, center.longitude + regionRadius);
         LatLngBounds cameraBounds = new LatLngBounds(leftBottom, rightTop);
         setCameraBounds(cameraBounds);
+    }
+
+    private Bitmap markerWithLabelIcon(String str, int markerColor) {
+        Bitmap src = null;
+        switch (markerColor) {
+            case MARKER_BLUE:
+                src = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getContext().getResources(), R.drawable.ic_marker_blue), MARKER_WIDTH, MARKER_HEIGHT, false);
+                break;
+            case MARKER_GREEN:
+                src = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getContext().getResources(), R.drawable.ic_marker_green), MARKER_WIDTH, MARKER_HEIGHT, false);
+                break;
+            case MARKER_YELLOW:
+                src = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getContext().getResources(), R.drawable.ic_marker_yellow), MARKER_WIDTH, MARKER_HEIGHT, false);
+                break;
+            case MARKER_RED:
+                src = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getContext().getResources(), R.drawable.ic_marker_red), MARKER_WIDTH, MARKER_HEIGHT, false);
+                break;
+        }
+
+        if (src != null) {
+            Bitmap markerIcon = Bitmap.createBitmap(MARKER_WIDTH, MARKER_HEIGHT, src.getConfig());
+
+            Canvas canvas = new Canvas(markerIcon);
+            canvas.drawBitmap(src, 0, 0, null);
+
+            Paint paint = new Paint();
+            paint.setColor(Color.WHITE);
+            paint.setTextSize(MARKER_LABEL_SIZE);
+            paint.setTextAlign(Paint.Align.CENTER);
+            paint.setAntiAlias(true);
+            canvas.drawText(str, canvas.getWidth() / 2, canvas.getHeight() / 2, paint);
+
+            return markerIcon;
+        }
+        else {
+            return null;
+        }
     }
 }
