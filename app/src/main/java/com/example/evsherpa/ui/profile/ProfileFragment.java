@@ -22,8 +22,10 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.example.evsherpa.CarRegistrationActivity;
+import com.example.evsherpa.MainActivity;
 import com.example.evsherpa.R;
 import com.example.evsherpa.SignUpActivity;
+import com.google.android.material.navigation.NavigationView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -47,7 +49,7 @@ public class ProfileFragment extends Fragment {
     private Button btn_change_car;
 
     private Button btn_cancel;
-
+    NavigationView navigationView;
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
@@ -64,7 +66,7 @@ public class ProfileFragment extends Fragment {
         txt_nickname=view.findViewById(R.id.txt_nickname);
         txt_email=view.findViewById(R.id.txt_email);
         txt_carname=view.findViewById(R.id.txt_car_name);
-
+        navigationView=view.findViewById(R.id.nav_view);
 
 
         //init elements
@@ -218,7 +220,9 @@ public class ProfileFragment extends Fragment {
                     e.printStackTrace();
                 }
 
-
+                //TODO: 작동은 잘 되나 이런식으로 호출해서 사용해도 되는지 모르겠음..
+                View headerView=((MainActivity)getActivity()).getNavView();
+                ((MainActivity)getActivity()).refreshNavHeader(headerView);
 
 
             }
@@ -317,6 +321,10 @@ public class ProfileFragment extends Fragment {
                 } catch (JSONException | IOException e) {
                     e.printStackTrace();
                 }
+
+                //TODO: 작동은 잘 되나 이런식으로 호출해서 사용해도 되는지 모르겠음..
+                View headerView=((MainActivity)getActivity()).getNavView();
+                ((MainActivity)getActivity()).refreshNavHeader(headerView);
             }
         })
         .setNegativeButton("cancel", new DialogInterface.OnClickListener() {

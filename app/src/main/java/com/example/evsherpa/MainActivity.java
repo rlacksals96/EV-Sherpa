@@ -1,8 +1,7 @@
 package com.example.evsherpa;
 
-import android.content.Context;
 import android.os.Bundle;
-import android.provider.ContactsContract;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.ImageView;
@@ -22,13 +21,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 
 //TODO: nav_header 관련 함수가 전혀 없음. 개인정보 가져와서 내용 변경해주는거 추가하기.
 public class MainActivity extends AppCompatActivity {
@@ -37,22 +35,23 @@ public class MainActivity extends AppCompatActivity {
     private TextView car_name;
     private TextView nickname;
     private ImageView img_profile;
+
+
+    private NavigationView navigationView;
+
+    public NavigationView getNavView(){
+        return navigationView;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-//        FloatingActionButton fab = findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
+
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
@@ -63,16 +62,16 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
 
-//        mkProfile();
+        mkProfile();
 
         //navigation에 있는 프로필 내용 초기화
         View headerView=navigationView.getHeaderView(0);
-        initNavHeader(headerView);
+        refreshNavHeader(headerView);
 
 
 
     }
-    public void initNavHeader(View headerView){
+    public void refreshNavHeader(View headerView){
         car_name=(TextView) headerView.findViewById(R.id.txt_header_car_model);
         nickname=(TextView) headerView.findViewById(R.id.txt_nickname);
         img_profile=(ImageView) headerView.findViewById(R.id.img_profile);
@@ -138,7 +137,6 @@ public class MainActivity extends AppCompatActivity {
         FileInputStream fis;
         StringBuilder sb;
         try{
-//            InputStream is=
             fis=openFileInput("profile.json");
             InputStreamReader  isr=new InputStreamReader(fis);
 
@@ -155,39 +153,48 @@ public class MainActivity extends AppCompatActivity {
         }
         return sb.toString();
     }
-    //추후 제거 예정
-    /*
+
+
     public void mkProfile(){
         FileOutputStream fos=null;
         String FILE_NAME= "profile.json";
+        String FILE_PATH="/data/data/com.example.evsherpa/files/profile.json";
 
-        try{
+        File f=new File(FILE_PATH);
 
-            InputStream is=this.getAssets().open("default_profile.json");
-            int size=is.available();
-            byte[] buffer=new byte[size];
-            is.read(buffer);
-            is.close();
-            String result=new String(buffer,"UTF-8");
 
-            fos=openFileOutput(FILE_NAME,MODE_PRIVATE);
-            fos.write(result.getBytes());
+        if(!f.exists()){
+            try{
 
-        }catch(FileNotFoundException fe){
-            fe.printStackTrace();
-        }catch (IOException e) {
-            e.printStackTrace();
-        }finally {
-            if(fos!=null){
-                try{
-                    fos.close();
-                }catch (IOException e){
-                    e.printStackTrace();
+                InputStream is=this.getAssets().open("default_profile.json");
+                int size=is.available();
+                byte[] buffer=new byte[size];
+                is.read(buffer);
+                is.close();
+                String result=new String(buffer,"UTF-8");
+
+
+
+                fos=openFileOutput(FILE_NAME,MODE_PRIVATE);
+                fos.write(result.getBytes());
+                Log.i("file","create profile.json complete");
+            } catch(IOException fe){
+                fe.printStackTrace();
+            } finally {
+                if(fos!=null){
+                    try{
+                        fos.close();
+                    }catch (IOException e){
+                        e.printStackTrace();
+                    }
                 }
             }
         }
+
+
+
     }
-    */
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
