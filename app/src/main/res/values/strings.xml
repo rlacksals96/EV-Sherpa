@@ -28,7 +28,6 @@
     <string name="login_failed">"Login failed"</string>
 
 
-
     <string name="sign_up">sign up</string>
     <string name="sign_up_normal">일반 회원가입</string>
     <string name="sign_up_google">Google로 로그인하기</string>
@@ -62,14 +61,14 @@
     <string name="subsidy_information">보조금 정보</string>
     <string name="charge_price">충전 가격</string>
     <string name="outlet_type">충전기 종류</string>
-    
+
     <string name="connector_name">충전기 종류: </string>
     <string name="charge_current">전기 전류: </string>
     <string name="charge_voltage">전기 전압: </string>
     <string name="charge_power">전기 저항: </string>
     <string name="charge_level">충전 레벨: </string>
     <string name="available_car">이용가능 차량: </string>
-    
+
     <string name="division">구분</string>
     <string name="car_type">종류</string>
     <string name="car_maker">제조/수입사</string>

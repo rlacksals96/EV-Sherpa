@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+//TODO: 제거 검토 대상
 public class PreferenceRegistrationActivity extends AppCompatActivity {
 
     private Button btn_distance,btn_fast_charge,btn_num_of_charger,btn_is_parking_lot,btn_price,btn_company;
