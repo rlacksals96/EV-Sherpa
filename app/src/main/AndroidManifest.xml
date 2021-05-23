@@ -12,14 +12,16 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.EVSherpa"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ui.profile.PopUpCarRegistration"></activity>
+        <activity android:name=".ui.profile.PopUpUpdateAge"></activity>
+        <activity android:name=".Address_registration" />
+        <activity android:name=".ui.profile.PopUpCarRegistration" />
         <activity android:name=".ui.profile.PopUpUpdateNickname" />
         <activity android:name=".PreferenceRegistrationActivity" />
         <activity android:name=".ui.setting.SettingActivity" />
         <activity android:name=".ui.profile.ProfileActivity" />
         <activity android:name=".ui.home.HomeActivity" />
         <activity android:name=".CarRegistrationActivity" />
-        <activity android:name=".SignUpActivity" />
+        <activity android:name=".ui.signUp.SignUpActivity" />
         <activity
             android:name=".ui.login.LoginActivity"
             android:label="@string/title_activity_login" />

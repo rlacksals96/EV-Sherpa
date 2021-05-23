@@ -3,7 +3,6 @@ package com.example.evsherpa.ui.profile;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -21,10 +20,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import com.example.evsherpa.CarRegistrationActivity;
 import com.example.evsherpa.MainActivity;
 import com.example.evsherpa.R;
-import com.example.evsherpa.SignUpActivity;
 import com.google.android.material.navigation.NavigationView;
 
 import org.json.JSONException;
@@ -34,7 +31,6 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 
 public class ProfileFragment extends Fragment {
@@ -45,8 +41,16 @@ public class ProfileFragment extends Fragment {
     private TextView txt_profile;
     private TextView txt_nickname;
     private TextView txt_carname;
+    private TextView txt_home_addr;
+    private TextView txt_work_addr;
+    private TextView txt_age;
+
+    private Button btn_change_age;
     private Button btn_change_nickname;
     private Button btn_change_car;
+    private Button btn_change_home_addr;
+    private Button btn_change_work_addr;
+
 
     private Button btn_cancel;
     NavigationView navigationView;
@@ -67,6 +71,14 @@ public class ProfileFragment extends Fragment {
         txt_email=view.findViewById(R.id.txt_email);
         txt_carname=view.findViewById(R.id.txt_car_name);
         navigationView=view.findViewById(R.id.nav_view);
+        txt_home_addr=view.findViewById(R.id.txt_home_addr);
+        txt_work_addr=view.findViewById(R.id.txt_work_addr);
+        txt_age=view.findViewById(R.id.txt_age);
+
+        //str to check whether info is typed
+        String str_age="";
+        String str_home_addr="";
+        String str_work_addr="";
 
 
         //init elements
@@ -77,6 +89,17 @@ public class ProfileFragment extends Fragment {
             txt_nickname.setText(json.getString("nickname"));
             txt_email.setText(json.getString("email"));
             txt_carname.setText(json.getString("carName"));
+            txt_age.setText(json.getString("age"));
+            txt_home_addr.setText(json.getString("homeAddr"));
+            txt_work_addr.setText(json.getString("workplaceAddr"));
+
+            if(!json.getString("age").equals(""))
+                str_age=json.getString("age");
+            if(!json.getString("homeAddr").equals(""))
+                str_home_addr=json.getString("homeAddr");
+            if(!json.getString("workplaceAddr").equals(""))
+                str_work_addr=json.getString("workplaceAddr");
+
 
             updateCarImage(json.getString("carName"));
 
@@ -100,6 +123,20 @@ public class ProfileFragment extends Fragment {
             }
         });
 
+        btn_change_age=view.findViewById(R.id.btn_change_age);
+        btn_change_age.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final View agePopup=getLayoutInflater().inflate(R.layout.fragment_pop_up_update_age,null);
+                final AlertDialog.Builder builder=createAgeRegistrationPopUp(view,agePopup);
+                final AlertDialog alertDialog=builder.create();
+                alertDialog.show();
+            }
+        });
+        if(!str_age.equals(""))
+            btn_change_age.setText("변경");
+
+
         btn_change_car=view.findViewById(R.id.btn_change_car);
         btn_change_car.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -111,6 +148,32 @@ public class ProfileFragment extends Fragment {
                 alertDialog.show();
             }
         });
+
+        btn_change_home_addr=view.findViewById(R.id.btn_change_home_addr);
+        btn_change_home_addr.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final View addressRegistrationPopup=getLayoutInflater().inflate(R.layout.activity_address_registration,null);
+                final AlertDialog.Builder builder=createAddrRegistrationPopUp(addressRegistrationPopup,"home");
+                final AlertDialog alertDialog=builder.create();
+                alertDialog.show();
+            }
+        });
+        if(!str_home_addr.equals(""))
+            btn_change_home_addr.setText("변경");
+
+        btn_change_work_addr=view.findViewById(R.id.btn_change_work_addr);
+        btn_change_work_addr.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final View addressRegistrationPopup=getLayoutInflater().inflate(R.layout.activity_address_registration,null);
+                final AlertDialog.Builder builder=createAddrRegistrationPopUp(addressRegistrationPopup,"work");
+                final AlertDialog alertDialog=builder.create();
+                alertDialog.show();
+            }
+        });
+        if(!str_work_addr.equals(""))
+            btn_change_work_addr.setText("변경");
     }
     public String loadJSON(){
         String json=null;
@@ -136,6 +199,67 @@ public class ProfileFragment extends Fragment {
     }
 
 
+    public AlertDialog.Builder createAgeRegistrationPopUp(View view,View popUpPage){
+        EditText editAge=popUpPage.findViewById(R.id.edit_age);
+        TextView txt_age=view.findViewById(R.id.txt_age);
+        final AlertDialog.Builder builder=new AlertDialog.Builder(getContext());
+        builder.setView(popUpPage);
+        builder.setTitle("나이 추가")
+                .setPositiveButton("save", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        try{
+                            JSONObject profile=new JSONObject(loadJSON());
+                            profile.put("age",editAge.getText().toString());
+
+                            //입력값이 없으면 그냥 취소된 걸로 인식.
+                            if(!editAge.getText().toString().equals("")) {
+                                 txt_age.setText(editAge.getText().toString());
+
+                                //변경사항 파일에 저장하기
+                                FileOutputStream fos = getActivity().openFileOutput("profile.json", Context.MODE_PRIVATE);
+                                String tmp = profile.toString();
+                                byte[] result = tmp.getBytes();
+                                fos.write(result);
+                            }else{
+                                Toast.makeText(getContext(),"입력된 값이 없습니다",Toast.LENGTH_SHORT).show();
+                            }
+
+                        }catch(JSONException | IOException e){
+                            e.printStackTrace();
+                        }
+                    }
+                }).setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        return builder;
+    }
+    public AlertDialog.Builder createAddrRegistrationPopUp(View popUpPage,String type){
+        final AlertDialog.Builder builder=new AlertDialog.Builder(getContext());
+        builder.setView(popUpPage);
+
+        builder
+        .setTitle("주소 입력")
+        .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if(type.equals("home")){
+                    //TODO: 집주소 받아오면 json에 저장하기
+                }else{
+                    //TODO: 직장주소 받아오면 json에 저장하기
+                }
+            }
+        }).setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        return builder;
+    }
     public AlertDialog.Builder createCarRegistrationPopUp(View view,View popUpPage){
 
         final AlertDialog.Builder builder=new AlertDialog.Builder(getContext());
@@ -307,8 +431,10 @@ public class ProfileFragment extends Fragment {
                     profile.put("nickname",editNickname.getText().toString());
 
                     //입력값이 없으면 그냥 취소된 걸로 인식.
-                    if(!editNickname.getText().toString().equals(""))
+                    if(!editNickname.getText().toString().equals("")) {
                         nickname.setText(profile.getString("nickname"));
+                        Toast.makeText(getContext(),"입력된 값이 없습니다",Toast.LENGTH_SHORT).show();
+                    }
 
                     //변경사항 파일에 저장하기
                     FileOutputStream fos=getActivity().openFileOutput("profile.json", Context.MODE_PRIVATE);

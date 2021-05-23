@@ -1,5 +1,6 @@
 package com.example.evsherpa.ui.login;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -8,7 +9,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -19,15 +19,19 @@ import android.widget.Toast;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.Volley;
-import com.example.evsherpa.CarRegistrationActivity;
-import com.example.evsherpa.LoginRequest;
 import com.example.evsherpa.MainActivity;
 import com.example.evsherpa.PreferenceRegistrationActivity;
 import com.example.evsherpa.R;
-import com.example.evsherpa.SignUpActivity;
+import com.example.evsherpa.ui.signUp.SignUpActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -103,14 +107,12 @@ public class LoginActivity extends AppCompatActivity {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //edittext에 입력된 값 가져오기
                 String email=usernameEditText.getText().toString();
                 String password=passwordEditText.getText().toString();
 
                 Response.Listener<String> responseListener=new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-//                        Log.d("before_try_login",response);
 
                         try {
 
@@ -118,18 +120,27 @@ public class LoginActivity extends AppCompatActivity {
                             //boolean success=jsonObject.getBoolean("success");
                             // 원래는 위의 방식으로 진행하는게 맞으나 서버와 연동이 안되서 자체적으로 success처리!
                             JSONObject jsonObject=new JSONObject("{\"success\":true}"); // 추후제거
-                            boolean success=true; //추후제거
+                            boolean success=true; //TODO: 서버와 연결시 해당 위치 주석처리
 
-                            // TODO: 로그인 성공시 sharedPreferences 이용해서 입력했던 정보 자동완성 되도록 만들기.
                             if(success){
-                                Log.d("test","test");
-//                                String email=jsonObject.getString("email");
-//                                String password=jsonObject.getString("userPassword");
+
 
                                 Toast.makeText(getApplicationContext(),"로그인 성공.."+email+" and "+password,Toast.LENGTH_SHORT).show();
                                 Intent intent=new Intent(LoginActivity.this, MainActivity.class);
-//                                intent.putExtra("email",email);
-//                                intent.putExtra("password",password);
+
+                                String profileStr=loadJSON();
+                                JSONObject profile=new JSONObject(profileStr);
+                                profile.put("email",email);
+                                try{
+                                    FileOutputStream fos=openFileOutput("profile.json", Context.MODE_PRIVATE);
+                                    String tmp=profile.toString();
+                                    byte[] result=tmp.getBytes();
+                                    fos.write(result);
+                                } catch(IOException fe){
+                                    fe.printStackTrace();
+                                }
+
+
                                 startActivity(intent);
                             }else{
                                 Toast.makeText(getApplicationContext(),"로그인 실패",Toast.LENGTH_SHORT).show();
@@ -186,5 +197,26 @@ public class LoginActivity extends AppCompatActivity {
 
     private void showLoginFailed(@StringRes Integer errorString) {
         Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_SHORT).show();
+    }
+    public String loadJSON(){
+        String json=null;
+        FileInputStream fis;
+        StringBuilder sb;
+        try{
+            fis=openFileInput("profile.json");
+            InputStreamReader isr=new InputStreamReader(fis);
+
+            BufferedReader br=new BufferedReader(isr);
+            sb=new StringBuilder();
+            String text;
+
+            while((text=br.readLine())!=null){
+                sb.append(text);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return sb.toString();
     }
 }

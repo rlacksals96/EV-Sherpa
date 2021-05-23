@@ -1,4 +1,4 @@
-package com.example.evsherpa;
+package com.example.evsherpa.ui.signUp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -16,6 +15,7 @@ import android.widget.Toast;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.Volley;
+import com.example.evsherpa.R;
 import com.example.evsherpa.ui.login.LoginActivity;
 
 import org.json.JSONException;
@@ -70,6 +70,9 @@ public class SignUpActivity extends AppCompatActivity {
 
                             if(success){
                                 Toast.makeText(SignUpActivity.this,"회원가입 성공.."+email+" ,"+password+","+nickname,Toast.LENGTH_SHORT).show();
+
+
+
                                 Intent intent=new Intent(SignUpActivity.this, LoginActivity.class);
 
                                 startActivity(intent);
@@ -136,4 +139,6 @@ public class SignUpActivity extends AppCompatActivity {
             }
         });
     }
+
+
 }
