@@ -10,13 +10,8 @@
     <WebView
         android:id="@+id/webview_address"
         android:layout_width="match_parent"
-        android:layout_height="500dp"
-        />
-    <TextView
-        android:id="@+id/txt_address_result"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="입력된 주소"
-        />
+        android:layout_height="match_parent"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true" />
 
 </LinearLayout>
