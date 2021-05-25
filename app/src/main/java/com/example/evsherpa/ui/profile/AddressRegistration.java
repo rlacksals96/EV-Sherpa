@@ -1,37 +1,43 @@
-package com.example.evsherpa;
+package com.example.evsherpa.ui.profile;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.TextView;
 
-public class Address_registration extends AppCompatActivity {
+import com.example.evsherpa.R;
+
+
+public class AddressRegistration extends AppCompatActivity {
 
     private WebView browser;
     private TextView txt_addr;
     private Handler handler;
 
-    class MyJavaScriptInterface{
+    private class MyJavaScriptInterface{
 
         @JavascriptInterface
         @SuppressWarnings("unused")
-        public void processData(String data){
+        public void processDATA(String data){
             Bundle extra=new Bundle();
             Intent intent=new Intent();
             extra.putString("data",data);
             intent.putExtras(extra);
-            setResult(RESULT_OK,intent);
+            Log.e("before setResult","check");
+            setResult(Activity.RESULT_OK,intent);
             finish();
+
         }
     }
-    @SuppressLint("SetJavaScriptEnabled")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,11 +54,8 @@ public class Address_registration extends AppCompatActivity {
             }
         });
 
+        //TODO: 서버와 연결시 해당 페이지 넘겨 받을 수 있도록 교체하기
         browser.loadUrl("http://a4382432.dothome.co.kr/daum.html");
+
     }
-
-
-
-
-
 }

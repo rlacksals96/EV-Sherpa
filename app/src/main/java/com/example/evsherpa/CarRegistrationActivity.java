@@ -2,20 +2,13 @@ package com.example.evsherpa;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.Spinner;
 
-import com.example.evsherpa.ui.profile.PopUpCarRegistration;
 import com.example.evsherpa.ui.profile.ProfileFragment;
-
-import java.util.Arrays;
-import java.util.List;
 
 //TODO: activity -> fragment로 변경. 잦은 profile <-> car registration 시 에러 발생..
 // fragment 제작 완료 .. 추후 삭제하기.
