@@ -16,8 +16,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.evsherpa.MainActivity;
 import com.example.evsherpa.PreferenceRegistrationActivity;
@@ -116,10 +120,10 @@ public class LoginActivity extends AppCompatActivity {
 
                         try {
 
-//                            JSONObject jsonObject=new JSONObject(response);
+                            JSONObject jsonObject=new JSONObject(response);
                             //boolean success=jsonObject.getBoolean("success");
                             // 원래는 위의 방식으로 진행하는게 맞으나 서버와 연동이 안되서 자체적으로 success처리!
-                            JSONObject jsonObject=new JSONObject("{\"success\":true}"); // 추후제거
+//                            JSONObject jsonObject=new JSONObject("{\"success\":true}"); // 추후제거
                             boolean success=true; //TODO: 서버와 연결시 해당 위치 주석처리
 
                             if(success){
@@ -128,9 +132,32 @@ public class LoginActivity extends AppCompatActivity {
                                 Toast.makeText(getApplicationContext(),"로그인 성공.."+email+" and "+password,Toast.LENGTH_SHORT).show();
                                 Intent intent=new Intent(LoginActivity.this, MainActivity.class);
 
+                                //TODO: 서버와 연결시 되는지 프로필 내용 전체 받아오는지 확인하기.(실제 실행시..밑부분 예시는 주석처리하기)
+                                /*
+                                String email=jsonObject.getString("email");
+                                String nickName=jsonObject.getString("nickname");
+                                String homeAddr=jsonObject.getString("homeAddr");
+                                String workplaceAddr=jsonObject.getString("workplaceAddr");
+                                String carName=jsonObject.getString("carName");
+                                String age=jsonObject.getString("age");
+                                */
+
+                                String email="rlacksals96@gmail.com";
+                                String nickName="dogy master";
+                                String homeAddr="서울시 강남구 대치동";
+                                String workplaceAddr="경기도 성남시 분당구 판교역로";
+                                String carName="tesla model 3";
+                                String age="25";
+
+
                                 String profileStr=loadJSON();
                                 JSONObject profile=new JSONObject(profileStr);
                                 profile.put("email",email);
+                                profile.put("nickname",nickName);
+                                profile.put("homeAddr",homeAddr);
+                                profile.put("workplaceAddr",workplaceAddr);
+                                profile.put("carName",carName);
+                                profile.put("age",age);
                                 try{
                                     FileOutputStream fos=openFileOutput("profile.json", Context.MODE_PRIVATE);
                                     String tmp=profile.toString();
@@ -193,8 +220,61 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    /*
+    public void getProfileFromServer() {
+
+        String url="/account/update";
+        final JsonObjectRequest jsonObjectRequest=new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try{
+                    success=response.getBoolean("success");
+                    if(success){
+                        email=response.getString("email");
+                        nickname=response.getString("nickname");
+                        homeAddr=response.getString("homeAddr");
+                        workplaceAddr=response.getString("workplaceAddr");
+                        carName=response.getString("carName");
+                        age=response.getString("age");
+                        String profileStr=loadJSON();
+                        JSONObject localProfile=new JSONObject(profileStr);
+                        localProfile.put("email",email);
+                        localProfile.put("nickname",nickname);
+                        localProfile.put("homeAddr",homeAddr);
+                        localProfile.put("workplaceAddr",workplaceAddr);
+                        localProfile.put("carName",carName);
+                        localProfile.put("age",age);
 
 
+                        try{
+                            FileOutputStream fos=getActivity().openFileOutput("profile.json", Context.MODE_PRIVATE);
+                            String tmp=localProfile.toString();
+                            byte[] result=tmp.getBytes();
+                            fos.write(result);
+                        } catch(IOException fe){
+                            fe.printStackTrace();
+                        }
+                    }
+                    else{
+                        //호출실패
+                        Toast.makeText(getContext(),"서버로부터 프로필을 받아오지 못했습니다",Toast.LENGTH_SHORT).show();
+                    }
+
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+        jsonObjectRequest.setTag("HOME FRAGMENT");
+        queue.add(jsonObjectRequest);
+
+    }
+*/
     private void showLoginFailed(@StringRes Integer errorString) {
         Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_SHORT).show();
     }

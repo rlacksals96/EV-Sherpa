@@ -12,8 +12,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.EVSherpa"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ui.profile.PopUpUpdateAge"></activity>
-        <activity android:name=".Address_registration" />
+        <activity
+            android:name=".ui.profile.AddressPage"
+            android:label="@string/title_activity_address_page"
+            android:theme="@style/Theme.EVSherpa.NoActionBar"></activity>
+        <activity android:name=".ui.profile.PopUpUpdateAge" />
+        <activity android:name=".ui.profile.AddressRegistration" />
         <activity android:name=".ui.profile.PopUpCarRegistration" />
         <activity android:name=".ui.profile.PopUpUpdateNickname" />
         <activity android:name=".PreferenceRegistrationActivity" />

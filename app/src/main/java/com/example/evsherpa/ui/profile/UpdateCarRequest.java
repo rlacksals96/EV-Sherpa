@@ -1,30 +1,31 @@
-package com.example.evsherpa.ui.login;
+package com.example.evsherpa.ui.profile;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.toolbox.StringRequest;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class LoginRequest extends StringRequest {
+public class UpdateCarRequest extends StringRequest {
     final static private String ipAddress="localhost";
     final static private String portNum="8080";
-    final static private String route="/signin";
+    final static private String route="/account/update/car_info";
     final static private String URL="http://"+ipAddress+":"+portNum+route;
-//    final static private String URL="http://a4382432.dothome.co.kr/Login.php";
     private final Map<String,String> map;
 
-    public LoginRequest(String email, String password, Response.Listener<String> listener){
-        super(Method.POST,URL,listener,null);
+    public UpdateCarRequest(String email,String carName, Response.Listener<String> listener){
+        super(Request.Method.POST,URL,listener,null);
         map=new HashMap<>();
         map.put("email",email);
-        map.put("password",password);
-
+        map.put("carName",carName);
     }
+
 
     @Override
     protected Map<String, String> getParams() throws AuthFailureError {
         return map;
     }
+
 }

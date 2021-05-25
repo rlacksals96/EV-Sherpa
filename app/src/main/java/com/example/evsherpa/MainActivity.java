@@ -1,5 +1,7 @@
 package com.example.evsherpa;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -7,8 +9,11 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.android.volley.RequestQueue;
+import com.example.evsherpa.ui.profile.ProfileFragment;
 import com.google.android.material.navigation.NavigationView;
 
+import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -31,10 +36,13 @@ import java.io.InputStreamReader;
 //TODO: nav_header 관련 함수가 전혀 없음. 개인정보 가져와서 내용 변경해주는거 추가하기.
 public class MainActivity extends AppCompatActivity {
 
+    private static final int SEARCH_ADDRESS_ACTIVITY = 10000;
     private AppBarConfiguration mAppBarConfiguration;
     private TextView car_name;
     private TextView nickname;
     private ImageView img_profile;
+
+
 
 
     private NavigationView navigationView;
@@ -209,4 +217,26 @@ public class MainActivity extends AppCompatActivity {
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
     }
+
+//    @Override
+//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        Log.e("addr","activity result in mainActivity");
+//        View addr=findViewById(R.id.nav_view);
+//        TextView txt_home_addr=addr.findViewById(R.id.txt_home_addr);
+//
+//        int request = SEARCH_ADDRESS_ACTIVITY;
+//
+//        switch (requestCode){
+//            case SEARCH_ADDRESS_ACTIVITY:
+//                if(resultCode==RESULT_OK){
+//                    String d=data.getExtras().getString("data");
+//                    Log.e("addr",d);
+//                    if(d!=null){
+//                        txt_home_addr.setText(d);
+//                    }
+//                }
+//                break;
+//        }
+//    }
 }
