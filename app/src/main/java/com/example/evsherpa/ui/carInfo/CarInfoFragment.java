@@ -44,8 +44,9 @@ public class CarInfoFragment extends Fragment{
         ArrayList<CarInfoData> carInfoList=getJsonData();
         recyclerView=(RecyclerView)view.findViewById(R.id.car_info_rv);
         linearLayoutManager=new LinearLayoutManager(getActivity());
-        recyclerView.setLayoutManager(linearLayoutManager);
-
+        CenterZoomLayoutManager centerZoomLayoutManager=new CenterZoomLayoutManager(getActivity());
+//        recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.setLayoutManager(centerZoomLayoutManager);
         carInfoAdapter=new CarInfoAdapter(carInfoList);
         recyclerView.setAdapter(carInfoAdapter);
 

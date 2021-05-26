@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.evsherpa.R;
+import com.example.evsherpa.ui.carInfo.CenterZoomLayoutManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -38,8 +39,9 @@ public class CarOutletFragment extends Fragment {
 
         recyclerView=(RecyclerView)view.findViewById(R.id.outlet_rv);
 
-        linearLayoutManager=new LinearLayoutManager(getActivity());
-        recyclerView.setLayoutManager(linearLayoutManager);
+//        linearLayoutManager=new LinearLayoutManager(getActivity());
+        CenterZoomLayoutManager centerZoomLayoutManager=new CenterZoomLayoutManager(getActivity());
+        recyclerView.setLayoutManager(centerZoomLayoutManager);
 
 //        arrayList=new ArrayList<>();
         carOutletAdapter=new CarOutletAdapter(outletList);
