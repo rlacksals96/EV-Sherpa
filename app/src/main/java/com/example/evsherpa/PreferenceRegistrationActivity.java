@@ -202,7 +202,7 @@ public class PreferenceRegistrationActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Toast.makeText(PreferenceRegistrationActivity.this,"confirm clicked",Toast.LENGTH_SHORT).show();
                 //서버 연결되면 전송할수 있게 처리할것..
-
+                // TODO: profile.json에 저장되게 만들고, 서버에 전송될 수 있게 기능 추가하기
                 Intent intent=new Intent(PreferenceRegistrationActivity.this,MainActivity.class);
                 startActivity(intent);
             }

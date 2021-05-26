@@ -1,7 +1,12 @@
 package com.example.evsherpa.ui.subsidyInfo;
 
+import android.annotation.SuppressLint;
+import android.graphics.Matrix;
+import android.graphics.PointF;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -15,6 +20,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.evsherpa.R;
+import com.github.chrisbanes.photoview.PhotoView;
 
 public class SubsidyInfoFragment extends Fragment {
 
@@ -26,13 +32,15 @@ public class SubsidyInfoFragment extends Fragment {
     private Button btn_hydro_van;
     private Button btn_construction_vehicle;
 
-    private ImageView img_electric_sedan;
+    private ImageView img_electric_sedan; //xml에서는 PhotoView라는 오픈소스 dom을 쓰긴 했는데 ImageView 확장판이라 그런지 안바꿔도 문제 없음.
     private ImageView img_electric_cargo;
     private ImageView img_electric_van;
     private ImageView img_electric_bike;
     private ImageView img_hydro_sedan;
     private ImageView img_hydro_van;
     private ImageView img_construction_vehicle;
+
+
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -61,8 +69,14 @@ public class SubsidyInfoFragment extends Fragment {
         initElements(view);
         setOnClickBtn();
 
+
+
         return view;
     }
+
+
+
+
     public void setOnClickBtn(){
         btn_electric_sedan.setOnClickListener(new View.OnClickListener() {
             @Override

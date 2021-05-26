@@ -1,5 +1,6 @@
 package com.example.evsherpa.ui.carInfo;
 
+import android.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,8 @@ public class CarInfoAdapter extends RecyclerView.Adapter<CarInfoAdapter.CarInfoV
     public CarInfoAdapter(ArrayList<CarInfoData> arrayList) {
         this.arrayList = arrayList;
     }
+
+
 
     @NonNull
     @Override
@@ -53,7 +56,9 @@ public class CarInfoAdapter extends RecyclerView.Adapter<CarInfoAdapter.CarInfoV
                 String car_name=holder.txt_car_name.getText().toString();
                 Toast.makeText(v.getContext(),car_name,Toast.LENGTH_SHORT).show();
             }
+
         });
+
         //TODO: 롱 클릭시 해당 차량을 선호 차량으로 등록하는 창 만들기.
     }
 

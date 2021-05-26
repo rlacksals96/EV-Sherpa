@@ -18,7 +18,7 @@
             android:textSize="27sp"
             android:backgroundTint="@color/gray_300"
             />
-        <ImageView
+        <com.github.chrisbanes.photoview.PhotoView
             android:id="@+id/img_view_subsidy_status"
             android:layout_below="@+id/txt_title_subsidy_status"
             android:layout_width="match_parent"

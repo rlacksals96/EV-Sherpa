@@ -1,5 +1,7 @@
 package com.example.evsherpa.ui.carInfo;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.evsherpa.R;
+import com.github.chrisbanes.photoview.PhotoView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -26,13 +29,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class CarInfoFragment extends Fragment {
+public class CarInfoFragment extends Fragment{
 
     private ArrayList<CarInfoData> arrayList;
     private CarInfoAdapter carInfoAdapter;
     private RecyclerView recyclerView;
     private LinearLayoutManager linearLayoutManager;
-
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
@@ -131,4 +133,8 @@ public class CarInfoFragment extends Fragment {
         }
         return carinfoList;
     }
+
+
+
+
 }

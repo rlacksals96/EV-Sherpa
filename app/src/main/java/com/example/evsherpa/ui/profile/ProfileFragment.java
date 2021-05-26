@@ -38,6 +38,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+//TODO: 디자인 글자같은거 업그레이드 해주자
 public class ProfileFragment extends Fragment {
 
 
