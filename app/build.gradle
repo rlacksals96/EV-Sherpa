@@ -1,7 +1,7 @@
 plugins {
     id 'com.android.application'
 }
-
+apply plugin: 'com.google.gms.google-services'
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.3"
@@ -44,6 +44,19 @@ dependencies {
     implementation 'com.android.volley:volley:1.1.1'
     implementation 'androidx.recyclerview:recyclerview:1.2.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+
+    //google login+firebase
+    implementation platform('com.google.firebase:firebase-bom:28.0.1')
+    implementation 'com.google.firebase:firebase-analytics'
+    implementation 'com.google.firebase:firebase-core:17.2.1'//firebase core
+    implementation 'com.google.firebase:firebase-auth:19.1.0'//firebase authentication
+    implementation  'com.firebaseui:firebase-ui-auth:4.2.1'//firebase auth2
+    implementation 'com.github.bumptech.glide:glide:4.9.0'//glide image loading
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'//glide img loading2
+
+    //kakao login
+    implementation 'com.kakao.sdk:usermgmt:1.30.0'
+
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'

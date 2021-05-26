@@ -11,7 +11,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.EVSherpa"
-        android:usesCleartextTraffic="true">
+        android:usesCleartextTraffic="true"
+        android:name=".ui.login.CustomApplication"
+        >
+
         <activity
             android:name=".ui.profile.AddressPage"
             android:label="@string/title_activity_address_page"
@@ -46,6 +49,10 @@
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
+        <meta-data
+            android:name="com.kakao.sdk.AppKey"
+            android:value="b3bd3cd3b94f253b40ebeedb726de131"
+            />
     </application>
 
 </manifest>

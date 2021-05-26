@@ -37,6 +37,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 
 //TODO: 디자인 글자같은거 업그레이드 해주자
 public class ProfileFragment extends Fragment {
@@ -79,6 +80,7 @@ public class ProfileFragment extends Fragment {
 
     public void refreshAddress(){
         try {
+
             JSONObject json=new JSONObject(loadJSON());
             txt_home_addr.setText(json.getString("homeAddr"));
             txt_work_addr.setText(json.getString("workplaceAddr"));
@@ -208,7 +210,8 @@ public class ProfileFragment extends Fragment {
         FileInputStream fis;
         StringBuilder sb;
         try {
-            fis = getActivity().openFileInput("profile.json");
+            // TODO: fragment에서openFileInput 자체가 nullpointexectoin 뜬다.. hotfix 필요!!!!
+            fis = getContext().openFileInput("profile.json");
             InputStreamReader isr = new InputStreamReader(fis);
 
             BufferedReader br = new BufferedReader(isr);

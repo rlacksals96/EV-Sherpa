@@ -28,6 +28,7 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -55,6 +56,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+
+
+
+
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -71,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(navigationView, navController);
 
         mkProfile();
+        getInformationFromSocialLogin();
 
         //navigation에 있는 프로필 내용 초기화
         View headerView=navigationView.getHeaderView(0);
@@ -79,6 +88,31 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
+    //login당시 LoginActivity에서 개인정보 받고, intent 통해 넘겨 받은 거임.
+    private void getInformationFromSocialLogin() {
+        Intent intent=getIntent();
+        String email=intent.getStringExtra("email");
+        String nickname=intent.getStringExtra("nickname");
+        Log.e("check mail,nickname",email+","+nickname);
+        try{
+            String jsonProfile=loadJSON();
+            JSONObject profile=new JSONObject(jsonProfile);
+            profile.put("email",email);
+            profile.put("nickname",nickname);
+
+            //변경사항 파일에 저장하기
+            FileOutputStream fos = openFileOutput("profile.json", Context.MODE_PRIVATE);
+            String tmp = profile.toString();
+            byte[] result = tmp.getBytes();
+            fos.write(result);
+        } catch (JSONException | IOException je){
+            je.printStackTrace();
+        }
+
+
+    }
+
     public void refreshNavHeader(View headerView){
         car_name=(TextView) headerView.findViewById(R.id.txt_header_car_model);
         nickname=(TextView) headerView.findViewById(R.id.txt_nickname);
@@ -239,4 +273,6 @@ public class MainActivity extends AppCompatActivity {
 //                break;
 //        }
 //    }
+
+
 }
