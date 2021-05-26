@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<ScrollView android:layout_width="match_parent"
+<ScrollView xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <RelativeLayout
@@ -28,9 +29,9 @@
             android:id="@+id/scroll_electric_sedan"
             android:layout_below="@id/btn_electric_sedan"
 
-            >
+            tools:ignore="NestedScrolling">
 <!--            TODO: zoom in zoom out 구현 -->
-            <ImageView
+            <com.github.chrisbanes.photoview.PhotoView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/img_view_electric_sedan"
@@ -58,10 +59,10 @@
             android:id="@+id/scroll_electric_cargo"
             android:layout_below="@id/btn_electric_cargo"
 
-            >
+            tools:ignore="NestedScrolling">
 
 
-            <ImageView
+            <com.github.chrisbanes.photoview.PhotoView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/img_view_electric_cargo"
@@ -86,10 +87,10 @@
             android:layout_height="wrap_content"
             android:id="@+id/scroll_electric_van"
             android:layout_below="@id/btn_electric_van"
-            >
+            tools:ignore="NestedScrolling">
 
 
-            <ImageView
+            <com.github.chrisbanes.photoview.PhotoView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/img_view_electric_van"
@@ -114,10 +115,10 @@
             android:layout_height="wrap_content"
             android:id="@+id/scroll_electric_bike"
             android:layout_below="@id/btn_electric_bike"
-            >
+            tools:ignore="NestedScrolling">
 
 
-            <ImageView
+            <com.github.chrisbanes.photoview.PhotoView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/img_view_electric_bike"
@@ -142,10 +143,10 @@
             android:layout_height="wrap_content"
             android:id="@+id/scroll_hydro_sedan"
             android:layout_below="@id/btn_hydro_sedan"
-            >
+            tools:ignore="NestedScrolling">
 
 
-            <ImageView
+            <com.github.chrisbanes.photoview.PhotoView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/img_view_hydro_sedan"
@@ -170,10 +171,10 @@
             android:layout_height="wrap_content"
             android:id="@+id/scroll_hydro_van"
             android:layout_below="@id/btn_hydro_van"
-            >
+            tools:ignore="NestedScrolling">
 
 
-            <ImageView
+            <com.github.chrisbanes.photoview.PhotoView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/img_view_hydro_van"
@@ -198,10 +199,10 @@
             android:layout_height="wrap_content"
             android:id="@+id/scroll_electric_construction_vehicle"
             android:layout_below="@id/btn_electric_construction_vehicle"
-            >
+            tools:ignore="NestedScrolling">
 
 
-            <ImageView
+            <com.github.chrisbanes.photoview.PhotoView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/img_view_electric_construction_vehicle"
