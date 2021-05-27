@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity{
         Intent intent=getIntent();
         String email=intent.getStringExtra("email");
         String nickname=intent.getStringExtra("nickname");
-        Log.e("check mail,nickname",email+","+nickname);
+        Log.e("check mail, nickname",email+","+nickname);
         try{
             String jsonProfile=loadJSON();
             JSONObject profile=new JSONObject(jsonProfile);

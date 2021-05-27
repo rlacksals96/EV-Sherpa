@@ -8,5 +8,6 @@
     "workplaceAddr": "",
     "carName": "",
     "email": "",
-     "age": ""
+     "age": "",
+     "preferences": ""
    }

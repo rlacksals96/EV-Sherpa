@@ -53,6 +53,7 @@ public class ProfileFragment extends Fragment{
     private TextView txt_home_addr;
     private TextView txt_work_addr;
     private TextView txt_age;
+    private TextView txt_select_car;
 
     private Button btn_change_age;
     private Button btn_change_nickname;
@@ -103,7 +104,7 @@ public class ProfileFragment extends Fragment{
         txt_home_addr = view.findViewById(R.id.txt_home_addr);
         txt_work_addr = view.findViewById(R.id.txt_work_addr);
         txt_age = view.findViewById(R.id.txt_age);
-
+        txt_select_car=view.findViewById(R.id.txt_select_car);
         //str to check whether info is typed
         String str_age = "";
         String str_home_addr = "";
@@ -129,6 +130,11 @@ public class ProfileFragment extends Fragment{
             if (!json.getString("workplaceAddr").equals(""))
                 str_work_addr = json.getString("workplaceAddr");
 
+            if(json.getString("carName").equals("")){
+                txt_select_car.setVisibility(View.VISIBLE);
+            }else{
+                txt_select_car.setVisibility(View.INVISIBLE);
+            }
 
             updateCarImage(json.getString("carName"));
 
@@ -364,6 +370,9 @@ public class ProfileFragment extends Fragment{
                         String strCarMaker = car_maker.getSelectedItem().toString();
                         String strCarBattery = car_battery.getSelectedItem().toString();
                         str_car_name=car_model.getSelectedItem().toString();
+
+                        txt_select_car.setVisibility(View.INVISIBLE);
+
                         try {
 
                             //json내용 꺼내오고, nickname textview 변경하기
@@ -473,10 +482,10 @@ public class ProfileFragment extends Fragment{
                                 //json내용 꺼내오고, nickname textview 변경하기
                                 JSONObject profile = new JSONObject(loadJSON());
                                 profile.put("nickname", editNickname.getText().toString());
-                                str_email = profile.getString("email");
-                                str_nickname = profile.getString("nickname");
+//                                str_email = profile.getString("email");
+//                                str_nickname = profile.getString("nickname");
                                 //입력값이 없으면 그냥 취소된 걸로 인식.
-                                nickname.setText(profile.getString("nickname"));
+                                nickname.setText(editNickname.getText().toString());
 
 
                                 //변경사항 파일에 저장하기
