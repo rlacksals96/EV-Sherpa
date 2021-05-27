@@ -30,6 +30,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.evsherpa.BackPressCloseHandler;
 import com.example.evsherpa.MainActivity;
 import com.example.evsherpa.PreferenceRegistrationActivity;
 import com.example.evsherpa.R;
@@ -87,9 +88,16 @@ public class LoginActivity extends AppCompatActivity {
 
     private ISessionCallback mSessionCallback;
 
+    private BackPressCloseHandler backPressCloseHandler;
+    @Override
+    public void onBackPressed() {
+        backPressCloseHandler.onBackPressed();
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        backPressCloseHandler=new BackPressCloseHandler(this);
         setContentView(R.layout.activity_login);
         getAppKeyHash();
 
@@ -131,8 +139,9 @@ public class LoginActivity extends AppCompatActivity {
             }
 
         };
-        Session.getCurrentSession().addCallback(mSessionCallback);
-        Session.getCurrentSession().checkAndImplicitOpen();
+        //TODO: 카카오 로그인 활성화 시키려면 밑에 2줄 주석 제거하면 된다.
+//        Session.getCurrentSession().addCallback(mSessionCallback);
+//        Session.getCurrentSession().checkAndImplicitOpen();
 
 
         GoogleSignInOptions googleSignInOptions=new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)

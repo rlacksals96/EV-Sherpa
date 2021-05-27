@@ -8,9 +8,8 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.android.volley.RequestQueue;
-import com.example.evsherpa.ui.profile.ProfileFragment;
 import com.google.android.material.navigation.NavigationView;
 
 import androidx.fragment.app.Fragment;
@@ -28,21 +27,20 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.List;
 
 //TODO: nav_header 관련 함수가 전혀 없음. 개인정보 가져와서 내용 변경해주는거 추가하기.
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity{
 
     private static final int SEARCH_ADDRESS_ACTIVITY = 10000;
     private AppBarConfiguration mAppBarConfiguration;
     private TextView car_name;
     private TextView nickname;
     private ImageView img_profile;
-
 
 
 
@@ -56,12 +54,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
-
-
-
-
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -88,6 +80,9 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
+
+
 
     //login당시 LoginActivity에서 개인정보 받고, intent 통해 넘겨 받은 거임.
     private void getInformationFromSocialLogin() {

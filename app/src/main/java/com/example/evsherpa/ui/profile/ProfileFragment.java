@@ -21,11 +21,14 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.Volley;
 import com.example.evsherpa.MainActivity;
+import com.example.evsherpa.OnBackPressedListener;
 import com.example.evsherpa.R;
 import com.google.android.material.navigation.NavigationView;
 
@@ -40,7 +43,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
 //TODO: 디자인 글자같은거 업그레이드 해주자
-public class ProfileFragment extends Fragment {
+public class ProfileFragment extends Fragment{
 
 
     private ImageView img_profile;
@@ -63,11 +66,13 @@ public class ProfileFragment extends Fragment {
     String str_car_name="";
     NavigationView navigationView;
 
+
+
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
-
         initElements(view);
         return view;
     }
@@ -596,4 +601,6 @@ public class ProfileFragment extends Fragment {
 
         }
     }
+
+
 }
