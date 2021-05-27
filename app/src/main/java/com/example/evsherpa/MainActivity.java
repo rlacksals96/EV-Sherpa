@@ -8,9 +8,8 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.android.volley.RequestQueue;
-import com.example.evsherpa.ui.profile.ProfileFragment;
 import com.google.android.material.navigation.NavigationView;
 
 import androidx.fragment.app.Fragment;
@@ -32,16 +31,16 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.List;
 
 //TODO: nav_header 관련 함수가 전혀 없음. 개인정보 가져와서 내용 변경해주는거 추가하기.
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity{
 
     private static final int SEARCH_ADDRESS_ACTIVITY = 10000;
     private AppBarConfiguration mAppBarConfiguration;
     private TextView car_name;
     private TextView nickname;
     private ImageView img_profile;
-
 
 
 
@@ -55,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -71,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(navigationView, navController);
 
         mkProfile();
+        getInformationFromSocialLogin();
 
         //navigation에 있는 프로필 내용 초기화
         View headerView=navigationView.getHeaderView(0);
@@ -79,6 +80,34 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
+
+
+
+    //login당시 LoginActivity에서 개인정보 받고, intent 통해 넘겨 받은 거임.
+    private void getInformationFromSocialLogin() {
+        Intent intent=getIntent();
+        String email=intent.getStringExtra("email");
+        String nickname=intent.getStringExtra("nickname");
+        Log.e("check mail, nickname",email+","+nickname);
+        try{
+            String jsonProfile=loadJSON();
+            JSONObject profile=new JSONObject(jsonProfile);
+            profile.put("email",email);
+            profile.put("nickname",nickname);
+
+            //변경사항 파일에 저장하기
+            FileOutputStream fos = openFileOutput("profile.json", Context.MODE_PRIVATE);
+            String tmp = profile.toString();
+            byte[] result = tmp.getBytes();
+            fos.write(result);
+        } catch (JSONException | IOException je){
+            je.printStackTrace();
+        }
+
+
+    }
+
     public void refreshNavHeader(View headerView){
         car_name=(TextView) headerView.findViewById(R.id.txt_header_car_model);
         nickname=(TextView) headerView.findViewById(R.id.txt_nickname);
@@ -239,4 +268,6 @@ public class MainActivity extends AppCompatActivity {
 //                break;
 //        }
 //    }
+
+
 }

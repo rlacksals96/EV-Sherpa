@@ -6,12 +6,16 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_main"
+
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/ic_main"
         android:supportsRtl="true"
         android:theme="@style/Theme.EVSherpa"
-        android:usesCleartextTraffic="true">
+        android:usesCleartextTraffic="true"
+        android:name=".ui.login.CustomApplication"
+        >
+
         <activity
             android:name=".ui.profile.AddressPage"
             android:label="@string/title_activity_address_page"
@@ -20,8 +24,7 @@
         <activity android:name=".ui.profile.AddressRegistration" />
         <activity android:name=".ui.profile.PopUpCarRegistration" />
         <activity android:name=".ui.profile.PopUpUpdateNickname" />
-        <activity android:name=".PreferenceRegistrationActivity" />
-        <activity android:name=".ui.setting.SettingActivity" />
+        <activity android:name=".ui.preferenceSetting.PreferenceSettingActivity" />
         <activity android:name=".ui.profile.ProfileActivity" />
         <activity android:name=".ui.home.HomeActivity" />
         <activity android:name=".CarRegistrationActivity" />
@@ -46,6 +49,10 @@
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
+        <meta-data
+            android:name="com.kakao.sdk.AppKey"
+            android:value="b3bd3cd3b94f253b40ebeedb726de131"
+            />
     </application>
 
 </manifest>

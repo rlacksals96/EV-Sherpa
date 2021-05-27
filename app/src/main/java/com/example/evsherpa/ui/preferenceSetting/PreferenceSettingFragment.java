@@ -1,5 +1,6 @@
-package com.example.evsherpa.ui.setting;
+package com.example.evsherpa.ui.preferenceSetting;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -14,10 +15,18 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.example.evsherpa.MainActivity;
-import com.example.evsherpa.PreferenceRegistrationActivity;
 import com.example.evsherpa.R;
 
-public class SettingFragment extends Fragment {
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+public class PreferenceSettingFragment extends Fragment {
     private Button btn_distance,btn_fast_charge,btn_num_of_charger,btn_is_parking_lot,btn_price,btn_company;
     private Button btn_preference_reset,btn_preference_confirm;
     private boolean distance_clicked,fast_charge_clicked,num_of_charger_clicked,is_parking_lot_clicked,
@@ -41,10 +50,7 @@ public class SettingFragment extends Fragment {
             Toast.makeText(getContext(),"우선순위는 최대 3개까지 등록 가능합니다",Toast.LENGTH_SHORT).show();
             return;
         }
-        txt_preference[selected_cnt].setText(new StringBuilder()
-                .append(selected_cnt)
-                .append(". ")
-                .append(str).toString());
+        txt_preference[selected_cnt].setText(str);
     }
     public void setClickListener(){
         btn_distance.setOnClickListener(new View.OnClickListener() {
@@ -208,11 +214,60 @@ public class SettingFragment extends Fragment {
             public void onClick(View v) {
                 Toast.makeText(getContext(),"confirm clicked",Toast.LENGTH_SHORT).show();
                 //TODO: 서버 연결되면 전송할수 있게 처리할것..
-
+                savePreference();
                 Intent intent=new Intent(getContext(), MainActivity.class);
                 startActivity(intent);
             }
         });
+    }
+    void savePreference(){
+        String result=loadJSON();
+        String preferences=txt_preference[1].getText().toString()+","
+                +txt_preference[2].getText().toString()+","
+                +txt_preference[3].getText().toString();
+
+        try{
+            JSONObject profile=new JSONObject(result);
+            profile.put("preferences",preferences);
+            saveJSON(profile);
+        }catch (JSONException je){
+            je.printStackTrace();
+
+        }
+    }
+    public void saveJSON(JSONObject profile) {
+        //변경사항 파일에 저장하기
+        try{
+            FileOutputStream fos = getActivity().openFileOutput("profile.json", Context.MODE_PRIVATE);
+            String tmp = profile.toString();
+            byte[] result = tmp.getBytes();
+            fos.write(result);
+        }catch (IOException ioe){
+            ioe.printStackTrace();
+        }
+
+    }
+    public String loadJSON() {
+        String json = null;
+        FileInputStream fis;
+        StringBuilder sb;
+        try {
+            // TODO: fragment에서openFileInput 자체가 nullpointexectoin 뜬다.. hotfix 필요!!!!
+            fis = getActivity().openFileInput("profile.json");
+            InputStreamReader isr = new InputStreamReader(fis);
+
+            BufferedReader br = new BufferedReader(isr);
+            sb = new StringBuilder();
+            String text;
+
+            while ((text = br.readLine()) != null) {
+                sb.append(text);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return sb.toString();
     }
     public void initElements(View view){
         btn_distance=view.findViewById(R.id.btn_distance);

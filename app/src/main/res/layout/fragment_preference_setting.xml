@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.setting.SettingFragment">
+    tools:context=".ui.preferenceSetting.PreferenceSettingFragment">
 
     <Button
         android:id="@+id/btn_distance"
@@ -67,8 +67,6 @@
         app:layout_constraintTop_toBottomOf="@+id/btn_price" />
 
 
-
-
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline2"
         android:layout_width="wrap_content"
@@ -92,9 +90,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:text="1. "
-        android:textSize="20dp"
-        app:layout_constraintStart_toStartOf="@+id/guideline2"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="@+id/guideline17"
         app:layout_constraintTop_toBottomOf="@+id/txt_title_preference_result" />
 
     <TextView
@@ -102,10 +99,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
-        android:text="2. "
-
-        android:textSize="20dp"
-        app:layout_constraintStart_toStartOf="@+id/guideline2"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="@+id/guideline17"
         app:layout_constraintTop_toBottomOf="@+id/txt_preference_first" />
 
     <TextView
@@ -113,9 +108,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
-        android:text="3. "
-        android:textSize="20dp"
-        app:layout_constraintStart_toStartOf="@+id/guideline2"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="@+id/guideline17"
         app:layout_constraintTop_toBottomOf="@+id/txt_preference_second" />
 
     <Button
@@ -132,8 +126,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="85dp"
-        android:text="Reset"
         android:backgroundTint="@color/gray_500"
+        android:text="Reset"
         android:textAllCaps="false"
         app:layout_constraintBottom_toTopOf="@+id/guideline3"
         app:layout_constraintStart_toStartOf="parent"
@@ -145,4 +139,41 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintGuide_end="62dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline17"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="85dp" />
+
+    <TextView
+        android:id="@+id/textView12"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1  "
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@+id/txt_preference_first"
+        app:layout_constraintStart_toStartOf="@+id/guideline2"
+        app:layout_constraintTop_toTopOf="@+id/txt_preference_first" />
+
+    <TextView
+        android:id="@+id/textView13"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="2. "
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@+id/txt_preference_second"
+        app:layout_constraintStart_toStartOf="@+id/guideline2"
+        app:layout_constraintTop_toTopOf="@+id/txt_preference_second" />
+
+    <TextView
+        android:id="@+id/textView14"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="3. "
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@+id/txt_preference_third"
+        app:layout_constraintStart_toStartOf="@+id/guideline2"
+        app:layout_constraintTop_toTopOf="@+id/txt_preference_third" />
 </androidx.constraintlayout.widget.ConstraintLayout>

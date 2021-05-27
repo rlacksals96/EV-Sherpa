@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "563392901425",
+    "project_id": "ev-sherpa-1e7a9",
+    "storage_bucket": "ev-sherpa-1e7a9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:563392901425:android:6588f46768e69bd1194010",
+        "android_client_info": {
+          "package_name": "com.example.evsherpa"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "563392901425-80svudaiagb91k8175ch08qs6m4ot095.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.evsherpa",
+            "certificate_hash": "7d5a5e99a5447965bd6f5050b471ece497e1db65"
+          }
+        },
+        {
+          "client_id": "563392901425-7apmad8ru3ig7fja1r54fkffi6gfk4kr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAPW49_OnlCoFRxNO5u2nD_DCrhrZTGDX8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "563392901425-7apmad8ru3ig7fja1r54fkffi6gfk4kr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

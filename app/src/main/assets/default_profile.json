@@ -1,10 +1,13 @@
 
    {
-    "email": "",
+
+
     "nickname": "",
     "profile_img": "",
     "homeAddr": "",
     "workplaceAddr": "",
-    "carName": ""
-
-  }
+    "carName": "",
+    "email": "",
+     "age": "",
+     "preferences": ""
+   }

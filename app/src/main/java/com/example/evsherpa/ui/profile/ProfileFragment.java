@@ -21,11 +21,14 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.Volley;
 import com.example.evsherpa.MainActivity;
+import com.example.evsherpa.OnBackPressedListener;
 import com.example.evsherpa.R;
 import com.google.android.material.navigation.NavigationView;
 
@@ -37,9 +40,10 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 
 //TODO: 디자인 글자같은거 업그레이드 해주자
-public class ProfileFragment extends Fragment {
+public class ProfileFragment extends Fragment{
 
 
     private ImageView img_profile;
@@ -49,6 +53,7 @@ public class ProfileFragment extends Fragment {
     private TextView txt_home_addr;
     private TextView txt_work_addr;
     private TextView txt_age;
+    private TextView txt_select_car;
 
     private Button btn_change_age;
     private Button btn_change_nickname;
@@ -62,11 +67,13 @@ public class ProfileFragment extends Fragment {
     String str_car_name="";
     NavigationView navigationView;
 
+
+
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
-
         initElements(view);
         return view;
     }
@@ -79,6 +86,7 @@ public class ProfileFragment extends Fragment {
 
     public void refreshAddress(){
         try {
+
             JSONObject json=new JSONObject(loadJSON());
             txt_home_addr.setText(json.getString("homeAddr"));
             txt_work_addr.setText(json.getString("workplaceAddr"));
@@ -96,7 +104,7 @@ public class ProfileFragment extends Fragment {
         txt_home_addr = view.findViewById(R.id.txt_home_addr);
         txt_work_addr = view.findViewById(R.id.txt_work_addr);
         txt_age = view.findViewById(R.id.txt_age);
-
+        txt_select_car=view.findViewById(R.id.txt_select_car);
         //str to check whether info is typed
         String str_age = "";
         String str_home_addr = "";
@@ -122,6 +130,11 @@ public class ProfileFragment extends Fragment {
             if (!json.getString("workplaceAddr").equals(""))
                 str_work_addr = json.getString("workplaceAddr");
 
+            if(json.getString("carName").equals("")){
+                txt_select_car.setVisibility(View.VISIBLE);
+            }else{
+                txt_select_car.setVisibility(View.INVISIBLE);
+            }
 
             updateCarImage(json.getString("carName"));
 
@@ -208,7 +221,8 @@ public class ProfileFragment extends Fragment {
         FileInputStream fis;
         StringBuilder sb;
         try {
-            fis = getActivity().openFileInput("profile.json");
+            // TODO: fragment에서openFileInput 자체가 nullpointexectoin 뜬다.. hotfix 필요!!!!
+            fis = getContext().openFileInput("profile.json");
             InputStreamReader isr = new InputStreamReader(fis);
 
             BufferedReader br = new BufferedReader(isr);
@@ -356,6 +370,9 @@ public class ProfileFragment extends Fragment {
                         String strCarMaker = car_maker.getSelectedItem().toString();
                         String strCarBattery = car_battery.getSelectedItem().toString();
                         str_car_name=car_model.getSelectedItem().toString();
+
+                        txt_select_car.setVisibility(View.INVISIBLE);
+
                         try {
 
                             //json내용 꺼내오고, nickname textview 변경하기
@@ -465,10 +482,10 @@ public class ProfileFragment extends Fragment {
                                 //json내용 꺼내오고, nickname textview 변경하기
                                 JSONObject profile = new JSONObject(loadJSON());
                                 profile.put("nickname", editNickname.getText().toString());
-                                str_email = profile.getString("email");
-                                str_nickname = profile.getString("nickname");
+//                                str_email = profile.getString("email");
+//                                str_nickname = profile.getString("nickname");
                                 //입력값이 없으면 그냥 취소된 걸로 인식.
-                                nickname.setText(profile.getString("nickname"));
+                                nickname.setText(editNickname.getText().toString());
 
 
                                 //변경사항 파일에 저장하기
@@ -593,4 +610,6 @@ public class ProfileFragment extends Fragment {
 
         }
     }
+
+
 }
