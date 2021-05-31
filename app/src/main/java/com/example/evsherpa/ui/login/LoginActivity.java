@@ -243,22 +243,22 @@ public class LoginActivity extends AppCompatActivity {
                                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
 
                                 //TODO: 서버와 연결시 되는지 프로필 내용 전체 받아오는지 확인하기.(실제 실행시..밑부분 예시는 주석처리하기)
-                                /*
+
                                 String email=jsonObject.getString("email");
                                 String nickName=jsonObject.getString("nickname");
                                 String homeAddr=jsonObject.getString("homeAddr");
                                 String workplaceAddr=jsonObject.getString("workplaceAddr");
                                 String carName=jsonObject.getString("carName");
                                 String age=jsonObject.getString("age");
-                                */
 
+/*
                                 String email = "rlacksals96@gmail.com";
                                 String nickName = "dogy master";
                                 String homeAddr = "서울시 강남구 대치동";
                                 String workplaceAddr = "경기도 성남시 분당구 판교역로";
                                 String carName = "tesla model 3";
                                 String age = "25";
-
+*/
 
                                 String profileStr = loadJSON();
                                 JSONObject profile = new JSONObject(profileStr);

@@ -41,6 +41,12 @@
     </string-array>
 
 <!--    충전소 회사 검색해서 나열하기-->
+    <string-array name="ev_stations">
+        <item>--선택--</item>
+        <item>전체</item>
+        <item>환경부</item>
+    </string-array>
+
     <string-array name="ev_station_company">
         <item>환경부</item>
         <item>한국전력</item>
