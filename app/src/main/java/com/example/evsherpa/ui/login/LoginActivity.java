@@ -290,11 +290,13 @@ public class LoginActivity extends AppCompatActivity {
                 };
 
                 // 서버로 volley를 이용해서 요청을 함.
-                LoginRequest loginRequest = new LoginRequest(email, password, responseListener);
-                RequestQueue queue = Volley.newRequestQueue(LoginActivity.this);
-                queue.add(loginRequest);
+//                LoginRequest loginRequest = new LoginRequest(email, password, responseListener);
+//                RequestQueue queue = Volley.newRequestQueue(LoginActivity.this);
+//                queue.add(loginRequest);
                 //temporary... 구현후 삭제..
-//                Toast.makeText(LoginActivity.this,"login clicked",Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                startActivity(intent);
+                Toast.makeText(LoginActivity.this,"login clicked",Toast.LENGTH_SHORT).show();
 
             }
         });
