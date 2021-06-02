@@ -3,6 +3,7 @@ package com.example.evsherpa.data;
 import android.content.Context;
 import android.util.Log;
 
+import com.example.evsherpa.data.model.ChgerInfo;
 import com.example.evsherpa.data.model.StationInfo;
 
 import org.json.JSONArray;
@@ -11,6 +12,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 
 public class StationInfoParser {
     private Context context;
@@ -40,44 +42,54 @@ public class StationInfoParser {
         return json;
     }
 
-    public StationInfo[] Parse(String jsonStr) {
+    public HashMap<String, StationInfo> Parse(String jsonStr) {
 
-        StationInfo[] stationInfos = null;
+        HashMap<String, StationInfo> stationInfoHashMap = null;
 
         try {
             JSONObject jsonObject = new JSONObject(jsonStr);
             JSONArray jsonArray = jsonObject.getJSONArray("item");
 
-            stationInfos = new StationInfo[jsonArray.length()];
+            stationInfoHashMap = new HashMap<String, StationInfo>();
 
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject object = jsonArray.getJSONObject(i);
 
                 Log.d("ev-sherpa", object.toString());
 
-                StationInfo stationInfo = new StationInfo();
-                stationInfo.setStatNm(object.getString("statNm"));
-                stationInfo.setStatId(object.getString("statId"));
-                stationInfo.setChgerId(Integer.parseInt(object.getString("chgerId")));
-                stationInfo.setChgerType(Integer.parseInt(object.getString("chgerType")));
-                stationInfo.setAddr(object.getString("addr"));
-                stationInfo.setLat(Float.parseFloat(object.getString("lat")));
-                stationInfo.setLng(Float.parseFloat(object.getString("lng")));
-                stationInfo.setUseTime(object.getString("useTime"));
-                stationInfo.setUseTime(object.getString("useTime"));
-                stationInfo.setBusiId(object.getString("busiId"));
-                stationInfo.setBusiNm(object.getString("busiNm"));
-                stationInfo.setBusiCall(object.getString("busiCall"));
-                stationInfo.setZcode(Integer.parseInt(object.getString("zcode")));
-                stationInfo.setParkingFree(object.getString("parkingFree"));
+                String statId = object.getString("statId");
 
-                stationInfos[i] = stationInfo;
+                // 이미 있는 경우 충전기 정보만 추가
+                if(stationInfoHashMap.containsKey(statId)) {
+                    StationInfo stationInfo = stationInfoHashMap.get(statId);
+                    stationInfo.addChger(new ChgerInfo(Integer.parseInt(object.getString("chgerId")), Integer.parseInt(object.getString("chgerType"))));
+                }
+
+                // 없는 경우 새롭게 충전소 정보 추가
+                else {
+                    StationInfo stationInfo = new StationInfo();
+                    stationInfo.setStatNm(object.getString("statNm"));
+                    stationInfo.setStatId(statId);
+                    stationInfo.addChger(new ChgerInfo(Integer.parseInt(object.getString("chgerId")), Integer.parseInt(object.getString("chgerType"))));
+                    stationInfo.setAddr(object.getString("addr"));
+                    stationInfo.setLat(Float.parseFloat(object.getString("lat")));
+                    stationInfo.setLng(Float.parseFloat(object.getString("lng")));
+                    stationInfo.setUseTime(object.getString("useTime"));
+                    stationInfo.setUseTime(object.getString("useTime"));
+                    stationInfo.setBusiId(object.getString("busiId"));
+                    stationInfo.setBusiNm(object.getString("busiNm"));
+                    stationInfo.setBusiCall(object.getString("busiCall"));
+                    stationInfo.setZcode(Integer.parseInt(object.getString("zcode")));
+                    stationInfo.setParkingFree(object.getString("parkingFree"));
+
+                    stationInfoHashMap.put(statId, stationInfo);
+                }
             }
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        return stationInfos;
+        return stationInfoHashMap;
     }
 }

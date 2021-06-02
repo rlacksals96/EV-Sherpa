@@ -1,6 +1,5 @@
 package com.example.evsherpa.ui.home;
 
-
 import android.animation.Animator;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -10,7 +9,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.location.Location;
-
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
@@ -18,25 +16,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-
-
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.RequestFuture;
-import com.example.evsherpa.MainActivity;
-import com.example.evsherpa.OnBackPressedListener;
 import com.example.evsherpa.R;
 import com.example.evsherpa.data.StationInfoParser;
+import com.example.evsherpa.data.model.ChgerInfo;
 import com.example.evsherpa.data.model.StationInfo;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -51,12 +41,10 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class HomeFragment extends Fragment implements OnMapReadyCallback {
-
 
     private final float DEFAULT_ZOOM = 18;
 
@@ -71,7 +59,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private TextView zoomLevelTv;
     private TextView latlngTv;
 
-    private final HashMap<String, StationInfo> stationInfoHashMap = new HashMap<String, StationInfo>();
+    private HashMap<String, StationInfo> stationInfoHashMap = new HashMap<String, StationInfo>();
 
     private float zoom;
 
@@ -108,9 +96,13 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private TextView useTimeTv;
     private TextView busiCallTv;
     private TextView addressTv;
+    private LinearLayout[] chgerInfoLayouts;
+    private ImageView[][] chgerTypeIvs;
 
     private int SCREEN_WIDTH, SCREEN_HEIGHT;
     private final float MIN_MARKER_VISIBLE_ZOOM = 12.8f;
+
+    private float pressedTime;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -119,6 +111,33 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        // 뒤로가기 버튼
+        getActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+
+                // 정보 페이지가 켜져 있다면 페이지 닫기
+                if (infoPage.getVisibility() == View.VISIBLE) {
+                    infoPage.animate().translationY(SCREEN_HEIGHT).setListener(hideAllListener);
+                }
+
+                // 종료할지 한번 더 물어보기
+                else {
+                    if (pressedTime == 0) {
+                        Toast.makeText(getContext(), "한번 더 누르면 종료됩니다", Toast.LENGTH_SHORT).show();
+                        pressedTime = System.currentTimeMillis();
+                    } else {
+                        int seconds = (int) (System.currentTimeMillis() - pressedTime);
+                        if (seconds > 200) {
+                            pressedTime = 0;
+                        } else {
+                            getActivity().finish();
+                        }
+                    }
+                }
+            }
+        });
 
         // 스크린 사이즈 캐싱
         Display display = getActivity().getWindowManager().getDefaultDisplay();
@@ -167,6 +186,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         infoPage.setY(SCREEN_HEIGHT);
         //infoPage.animate().y(SCREEN_HEIGHT);
 
+        // 충전소 정보 페이지 닫기 버튼
         ImageButton closeInfoPageBtn = root.findViewById(R.id.btn_close_page_stationInfo);
         closeInfoPageBtn.setOnClickListener(view -> {
             infoPage.animate().translationY(SCREEN_HEIGHT).setListener(hideAllListener);
@@ -177,6 +197,30 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         useTimeTv = root.findViewById(R.id.text_useTime);
         busiCallTv = root.findViewById(R.id.text_busiCall);
         addressTv = root.findViewById(R.id.text_address);
+
+        chgerInfoLayouts = new LinearLayout[4];
+        chgerInfoLayouts[0] = root.findViewById(R.id.layout_chargerInfo1);
+        chgerInfoLayouts[1] = root.findViewById(R.id.layout_chargerInfo2);
+        chgerInfoLayouts[2] = root.findViewById(R.id.layout_chargerInfo3);
+        chgerInfoLayouts[3] = root.findViewById(R.id.layout_chargerInfo4);
+
+        chgerTypeIvs = new ImageView[4][4];
+        chgerTypeIvs[0][0] = root.findViewById(R.id.image_combo1);
+        chgerTypeIvs[0][1] = root.findViewById(R.id.image_demo1);
+        chgerTypeIvs[0][2] = root.findViewById(R.id.image_ac1);
+        chgerTypeIvs[0][3] = root.findViewById(R.id.image_slowCharge1);
+        chgerTypeIvs[1][0] = root.findViewById(R.id.image_combo2);
+        chgerTypeIvs[1][1] = root.findViewById(R.id.image_demo2);
+        chgerTypeIvs[1][2] = root.findViewById(R.id.image_ac2);
+        chgerTypeIvs[0][3] = root.findViewById(R.id.image_slowCharge1);
+        chgerTypeIvs[2][0] = root.findViewById(R.id.image_combo3);
+        chgerTypeIvs[2][1] = root.findViewById(R.id.image_demo3);
+        chgerTypeIvs[2][2] = root.findViewById(R.id.image_ac3);
+        chgerTypeIvs[0][3] = root.findViewById(R.id.image_slowCharge1);
+        chgerTypeIvs[3][0] = root.findViewById(R.id.image_combo4);
+        chgerTypeIvs[3][1] = root.findViewById(R.id.image_demo4);
+        chgerTypeIvs[3][2] = root.findViewById(R.id.image_ac4);
+        chgerTypeIvs[0][3] = root.findViewById(R.id.image_slowCharge1);
 
         // 페이지 애니메이션 리스너
         showBrieflyListener = new Animator.AnimatorListener() {
@@ -298,16 +342,67 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
             // ...
 
-            Log.i("ev-sherpa", info.getBusiNm());
-            Log.i("ev-sherpa", info.getUseTime());
-            Log.i("ev-sherpa", info.getBusiCall());
-            Log.i("ev-sherpa", info.getAddr());
-
             stationNameTv.setText(info.getStatNm());
             busiNameTv.setText("운경기관  " + info.getBusiNm());
             useTimeTv.setText("운영시간  " + info.getUseTime());
             busiCallTv.setText("전화번호  " + info.getBusiCall());
             addressTv.setText("주소  " + info.getAddr());
+
+            ArrayList<ChgerInfo> chgerInfos = info.getChgers();
+            for (int i = 0; i < chgerInfos.size(); i++) {
+                chgerInfoLayouts[i].setVisibility(View.VISIBLE);
+
+                ChgerInfo chgerInfo = chgerInfos.get(i);
+                ImageView[] ivs = chgerTypeIvs[i];
+                switch (chgerInfo.getChgerType()) {
+                    case 1:
+                        ivs[0].setColorFilter(ContextCompat.getColor(getContext(), R.color.gray_700), android.graphics.PorterDuff.Mode.MULTIPLY);
+                        ivs[1].setColorFilter(ContextCompat.getColor(getContext(), R.color.white), android.graphics.PorterDuff.Mode.MULTIPLY);
+                        ivs[2].setColorFilter(ContextCompat.getColor(getContext(), R.color.gray_700), android.graphics.PorterDuff.Mode.MULTIPLY);
+                        ivs[3].setColorFilter(ContextCompat.getColor(getContext(), R.color.gray_700), android.graphics.PorterDuff.Mode.MULTIPLY);
+                        break;
+                    case 2:
+                        ivs[0].setColorFilter(ContextCompat.getColor(getContext(), R.color.gray_700), android.graphics.PorterDuff.Mode.MULTIPLY);
+                        ivs[1].setColorFilter(ContextCompat.getColor(getContext(), R.color.gray_700), android.graphics.PorterDuff.Mode.MULTIPLY);
+                        ivs[2].setColorFilter(ContextCompat.getColor(getContext(), R.color.gray_700), android.graphics.PorterDuff.Mode.MULTIPLY);
+                        ivs[3].setColorFilter(ContextCompat.getColor(getContext(), R.color.white), android.graphics.PorterDuff.Mode.MULTIPLY);
+                        break;
+                    case 3:
+                        ivs[0].setColorFilter(ContextCompat.getColor(getContext(), R.color.gray_700), android.graphics.PorterDuff.Mode.MULTIPLY);
+                        ivs[1].setColorFilter(ContextCompat.getColor(getContext(), R.color.white), android.graphics.PorterDuff.Mode.MULTIPLY);
+                        ivs[2].setColorFilter(ContextCompat.getColor(getContext(), R.color.white), android.graphics.PorterDuff.Mode.MULTIPLY);
+                        ivs[3].setColorFilter(ContextCompat.getColor(getContext(), R.color.gray_700), android.graphics.PorterDuff.Mode.MULTIPLY);
+                        break;
+                    case 4:
+                        ivs[0].setColorFilter(ContextCompat.getColor(getContext(), R.color.white), android.graphics.PorterDuff.Mode.MULTIPLY);
+                        ivs[1].setColorFilter(ContextCompat.getColor(getContext(), R.color.gray_700), android.graphics.PorterDuff.Mode.MULTIPLY);
+                        ivs[2].setColorFilter(ContextCompat.getColor(getContext(), R.color.gray_700), android.graphics.PorterDuff.Mode.MULTIPLY);
+                        ivs[3].setColorFilter(ContextCompat.getColor(getContext(), R.color.gray_700), android.graphics.PorterDuff.Mode.MULTIPLY);
+                        break;
+                    case 5:
+                        ivs[0].setColorFilter(ContextCompat.getColor(getContext(), R.color.white), android.graphics.PorterDuff.Mode.MULTIPLY);
+                        ivs[1].setColorFilter(ContextCompat.getColor(getContext(), R.color.white), android.graphics.PorterDuff.Mode.MULTIPLY);
+                        ivs[2].setColorFilter(ContextCompat.getColor(getContext(), R.color.gray_700), android.graphics.PorterDuff.Mode.MULTIPLY);
+                        ivs[3].setColorFilter(ContextCompat.getColor(getContext(), R.color.gray_700), android.graphics.PorterDuff.Mode.MULTIPLY);
+                        break;
+                    case 6:
+                        ivs[0].setColorFilter(ContextCompat.getColor(getContext(), R.color.white), android.graphics.PorterDuff.Mode.MULTIPLY);
+                        ivs[1].setColorFilter(ContextCompat.getColor(getContext(), R.color.white), android.graphics.PorterDuff.Mode.MULTIPLY);
+                        ivs[2].setColorFilter(ContextCompat.getColor(getContext(), R.color.white), android.graphics.PorterDuff.Mode.MULTIPLY);
+                        ivs[3].setColorFilter(ContextCompat.getColor(getContext(), R.color.gray_700), android.graphics.PorterDuff.Mode.MULTIPLY);
+                        break;
+                    case 7:
+                        ivs[0].setColorFilter(ContextCompat.getColor(getContext(), R.color.gray_700), android.graphics.PorterDuff.Mode.MULTIPLY);
+                        ivs[1].setColorFilter(ContextCompat.getColor(getContext(), R.color.gray_700), android.graphics.PorterDuff.Mode.MULTIPLY);
+                        ivs[2].setColorFilter(ContextCompat.getColor(getContext(), R.color.white), android.graphics.PorterDuff.Mode.MULTIPLY);
+                        ivs[3].setColorFilter(ContextCompat.getColor(getContext(), R.color.gray_700), android.graphics.PorterDuff.Mode.MULTIPLY);
+                        break;
+                }
+            }
+            for (int i = chgerInfos.size(); i < chgerTypeIvs.length; i++) {
+                chgerInfoLayouts[i].setVisibility(View.INVISIBLE);
+            }
+
 
             // 페이지 애니메이션 실행
             infoPage.animate().translationY(SCREEN_HEIGHT * 0.6f).setListener(showBrieflyListener);
@@ -349,7 +444,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
         super.onSaveInstanceState(outState);
     }
-
 
 
     private void getCurrentLocation(OnCompleteListener onCompleteListener) {
@@ -449,10 +543,15 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     }
 
     private void ParseStationInfoData(String jsonStr) {
-        parser = new StationInfoParser(getContext());
-        StationInfo[] infos = parser.Parse(parser.getJsonString());
 
-        //StationInfo[] infos = new StationInfoParser(getContext()).Parse(jsonStr);
+        //stationInfoHashMap = new StationInfoParser(getContext()).Parse(jsonStr);
+
+        parser = new StationInfoParser(getContext());
+        stationInfoHashMap = parser.Parse(parser.getJsonString());
+        Object[] values = stationInfoHashMap.values().toArray();
+        StationInfo[] infos = new StationInfo[values.length];
+        for (int i = 0; i < values.length; i++)
+            infos[i] = (StationInfo) values[i];
 
         for (int i = 0; i < infos.length; i++) {
 
@@ -488,7 +587,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                     totalCountByRegion[9]++;
                     break;
             }
-            stationInfoHashMap.put(infos[i].getStatId(), infos[i]);
 
             // 마커 생성
             Marker marker = createMarker(infos[i].getLat(), infos[i].getLng(), 3);

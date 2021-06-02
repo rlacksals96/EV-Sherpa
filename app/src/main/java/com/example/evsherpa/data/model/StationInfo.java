@@ -1,10 +1,11 @@
 package com.example.evsherpa.data.model;
 
+import java.util.ArrayList;
+
 public class StationInfo {
     private String statId;
     private String statNm;
-    private int chgerId;
-    private int chgerType;
+    private ArrayList<ChgerInfo> chgers = new ArrayList<ChgerInfo>();
     private String addr;
     private float lat;
     private float lng;
@@ -40,21 +41,11 @@ public class StationInfo {
         this.statNm = statNm;
     }
 
-    public int getChgerId() {
-        return chgerId;
-    }
+    public void addChger(ChgerInfo chger) { this.chgers.add(chger); }
 
-    public void setChgerId(int chgerId) {
-        this.chgerId = chgerId;
-    }
+    public ArrayList<ChgerInfo> getChgers() { return chgers; }
 
-    public int getChgerType() {
-        return chgerType;
-    }
-
-    public void setChgerType(int chgerType) {
-        this.chgerType = chgerType;
-    }
+    public ChgerInfo getChger(int index) { return chgers.get(index); }
 
     public String getAddr() {
         return addr;
