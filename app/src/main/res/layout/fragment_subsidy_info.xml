@@ -1,23 +1,217 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+
+<ScrollView xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.subsidyInfo.SubsidyInfoFragment">
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <RelativeLayout
 
-    <TextView
-        android:id="@+id/text_subsidy_info"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_height="match_parent"
+        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        >
+
+        <Button
+            android:id="@+id/btn_electric_sedan"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="승용 및 초소형 전기차"
+            android:textSize="27sp"
+            android:gravity="left"
+            android:backgroundTint="@color/gray_300"
+            android:textColor="@color/black"
+            />
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/scroll_electric_sedan"
+            android:layout_below="@id/btn_electric_sedan"
+
+            tools:ignore="NestedScrolling">
+<!--            TODO: zoom in zoom out 구현 -->
+            <com.github.chrisbanes.photoview.PhotoView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/img_view_electric_sedan"
+                android:layout_below="@id/btn_electric_sedan"
+                android:adjustViewBounds="true"
+                android:visibility="visible"
+                />
+
+
+        </ScrollView>
+        <Button
+            android:id="@+id/btn_electric_cargo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="전기화물차"
+            android:textSize="27sp"
+            android:gravity="left"
+            android:backgroundTint="@color/gray_300"
+            android:textColor="@color/black"
+            android:layout_below="@+id/scroll_electric_sedan"
+            />
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/scroll_electric_cargo"
+            android:layout_below="@id/btn_electric_cargo"
+
+            tools:ignore="NestedScrolling">
+
+
+            <com.github.chrisbanes.photoview.PhotoView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/img_view_electric_cargo"
+                android:adjustViewBounds="true"
+                android:visibility="gone"
+                />
+        </ScrollView>
+
+        <Button
+            android:id="@+id/btn_electric_van"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="전기승합차"
+            android:textSize="27sp"
+            android:gravity="left"
+            android:backgroundTint="@color/gray_300"
+            android:textColor="@color/black"
+            android:layout_below="@+id/scroll_electric_cargo"
+            />
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/scroll_electric_van"
+            android:layout_below="@id/btn_electric_van"
+            tools:ignore="NestedScrolling">
+
+
+            <com.github.chrisbanes.photoview.PhotoView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/img_view_electric_van"
+                android:adjustViewBounds="true"
+                android:visibility="gone"
+
+                />
+        </ScrollView>
+        <Button
+            android:id="@+id/btn_electric_bike"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="전기이륜차"
+            android:textSize="27sp"
+            android:gravity="left"
+            android:backgroundTint="@color/gray_300"
+            android:textColor="@color/black"
+            android:layout_below="@+id/scroll_electric_van"
+            />
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/scroll_electric_bike"
+            android:layout_below="@id/btn_electric_bike"
+            tools:ignore="NestedScrolling">
+
+
+            <com.github.chrisbanes.photoview.PhotoView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/img_view_electric_bike"
+                android:adjustViewBounds="true"
+                android:visibility="gone"
+
+                />
+        </ScrollView>
+        <Button
+            android:id="@+id/btn_hydro_sedan"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="승용 수소연료전지차"
+            android:textSize="27sp"
+            android:gravity="left"
+            android:backgroundTint="@color/gray_300"
+            android:textColor="@color/black"
+            android:layout_below="@+id/scroll_electric_bike"
+            />
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/scroll_hydro_sedan"
+            android:layout_below="@id/btn_hydro_sedan"
+            tools:ignore="NestedScrolling">
+
+
+            <com.github.chrisbanes.photoview.PhotoView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/img_view_hydro_sedan"
+                android:adjustViewBounds="true"
+                android:visibility="gone"
+
+                />
+        </ScrollView>
+        <Button
+            android:id="@+id/btn_hydro_van"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="승합 수소연료전지차"
+            android:textSize="27sp"
+            android:gravity="left"
+            android:backgroundTint="@color/gray_300"
+            android:textColor="@color/black"
+            android:layout_below="@+id/scroll_hydro_sedan"
+            />
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/scroll_hydro_van"
+            android:layout_below="@id/btn_hydro_van"
+            tools:ignore="NestedScrolling">
+
+
+            <com.github.chrisbanes.photoview.PhotoView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/img_view_hydro_van"
+                android:adjustViewBounds="true"
+                android:visibility="gone"
+
+                />
+        </ScrollView>
+        <Button
+            android:id="@+id/btn_electric_construction_vehicle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="전기굴착기"
+            android:textSize="27sp"
+            android:gravity="left"
+            android:backgroundTint="@color/gray_300"
+            android:textColor="@color/black"
+            android:layout_below="@+id/scroll_hydro_van"
+            />
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/scroll_electric_construction_vehicle"
+            android:layout_below="@id/btn_electric_construction_vehicle"
+            tools:ignore="NestedScrolling">
+
+
+            <com.github.chrisbanes.photoview.PhotoView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/img_view_electric_construction_vehicle"
+                android:adjustViewBounds="true"
+                android:visibility="gone"
+
+                />
+        </ScrollView>
+    </RelativeLayout>
+</ScrollView>
+
+

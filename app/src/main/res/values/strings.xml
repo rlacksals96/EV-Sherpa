@@ -48,7 +48,7 @@
 
     <string name="confirm">확인</string>
 
-    <string name="preference_rank">선호순위</string>
+    <string name="preference_rank">선호조건</string>
     <string name="preference_distance">거리순</string>
     <string name="preference_fast_charge">고속충전 지원</string>
     <string name="preference_num_of_charger">충전기 댓수</string>
@@ -61,5 +61,31 @@
     <string name="subsidy_information">보조금 정보</string>
     <string name="charge_price">충전 가격</string>
     <string name="outlet_type">충전기 종류</string>
+
     <string name="title_activity_maps">Map</string>
+
+    <string name="connector_name">충전기 종류: </string>
+    <string name="charge_current">전기 전류: </string>
+    <string name="charge_voltage">전기 전압: </string>
+    <string name="charge_power">전기 저항: </string>
+    <string name="charge_level">충전 레벨: </string>
+    <string name="available_car">이용가능 차량: </string>
+
+    <string name="division">구분</string>
+    <string name="car_type">종류</string>
+    <string name="car_maker">제조/수입사</string>
+    <string name="car_name">차종</string>
+    <string name="subsidy_amount">국고보조금</string>
+    <string name="title_activity_address_page">AddressPage</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>

@@ -1,5 +1,6 @@
 package com.example.evsherpa.ui.home;
 
+
 import android.animation.Animator;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -9,6 +10,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.location.Location;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
@@ -18,11 +20,21 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.RequestFuture;
+import com.example.evsherpa.MainActivity;
+import com.example.evsherpa.OnBackPressedListener;
 import com.example.evsherpa.R;
 import com.example.evsherpa.data.StationInfoParser;
 import com.example.evsherpa.data.model.StationInfo;
@@ -45,7 +57,8 @@ import java.util.HashMap;
 
 public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
-    private HomeViewModel homeViewModel;
+
+public class HomeFragment extends Fragment {
 
     private final float DEFAULT_ZOOM = 18;
 
@@ -556,4 +569,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             zoom = newZoom;
         }
     }
+
+
+
 }
