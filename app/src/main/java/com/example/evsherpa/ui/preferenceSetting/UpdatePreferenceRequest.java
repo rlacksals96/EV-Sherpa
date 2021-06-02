@@ -1,4 +1,4 @@
-package com.example.evsherpa.ui.signUp;
+package com.example.evsherpa.ui.preferenceSetting;
 
 import androidx.annotation.Nullable;
 
@@ -9,23 +9,19 @@ import com.android.volley.toolbox.StringRequest;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SignUpRequest extends StringRequest {
-    // 서버 url 설정 (php 파일 연동)
+public class UpdatePreferenceRequest extends StringRequest {
     final static private String ipAddress="localhost";
     final static private String portNum="8080";
-    final static private String route="/signup";
-        final static private String URL="http://"+ipAddress+":"+portNum+route;
-//    final static private String URL="http://a4382432.dothome.co.kr/Register.php";
+    final static private String route="/account/update/preference";
+    final static private String URL="http://"+ipAddress+":"+portNum+route;
+
     private final Map<String,String> map;
 
-    public SignUpRequest(String email, String nickname, String password, Response.Listener<String> listener){
+    public UpdatePreferenceRequest(String email,String preferences,Response.Listener<String> listener){
         super(Method.POST,URL,listener,null);
         map=new HashMap<>();
         map.put("email",email);
-        map.put("nickname",nickname);
-        map.put("password",password);
-
-
+        map.put("preferences",preferences);
     }
 
     @Override
