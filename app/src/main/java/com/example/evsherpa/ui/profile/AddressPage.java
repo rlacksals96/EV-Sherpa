@@ -5,18 +5,16 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.toolbox.Volley;
 import com.example.evsherpa.R;
 
 import org.json.JSONException;
@@ -24,7 +22,6 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -36,6 +33,8 @@ public class AddressPage extends AppCompatActivity {
     private TextView txt_address;
 
     private String str_address;
+    private String str_email;
+    private String str_type;
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -61,7 +60,6 @@ public class AddressPage extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 updateAddress();
-                finish();
             }
         });
     }
@@ -71,11 +69,20 @@ public class AddressPage extends AppCompatActivity {
         String json=loadJSON();
         try{
             JSONObject jsonObject=new JSONObject(json);
-            if(in.getStringExtra("type").equals("home"))
-                jsonObject.put("homeAddr",str_address);
-            else{
+
+            if(in.getStringExtra("type").equals("home")) {
+                jsonObject.put("homeAddr", str_address);
+                str_address=jsonObject.getString("homeAddr");
+                str_email=jsonObject.getString("email");
+                str_type=in.getStringExtra("type");
+            }else{
                 jsonObject.put("workplaceAddr",str_address);
+                str_address=jsonObject.getString("workplaceAddr");
+                str_email=jsonObject.getString("email");
+                str_type=in.getStringExtra("type");
             }
+
+
             //변경사항 파일에 저장하기
             FileOutputStream fos = openFileOutput("profile.json", Context.MODE_PRIVATE);
             String tmp = jsonObject.toString();
@@ -87,8 +94,8 @@ public class AddressPage extends AppCompatActivity {
                 public void onResponse(String response) {
                     try{
                         JSONObject jsonObject=new JSONObject(response);
-//                        boolean success=jsonObject.getBoolean("success");
-                        boolean success=true;
+                        boolean success=jsonObject.getBoolean("success");
+//                        boolean success=true;
                         if(!success){
                             Toast.makeText(AddressPage.this,"서버에 변경사항을 저장하지 못했습니다",Toast.LENGTH_SHORT).show();
                             try{
@@ -110,14 +117,48 @@ public class AddressPage extends AppCompatActivity {
                                 e.printStackTrace();
                             }
                         }
+                        else{
+                            Toast.makeText(AddressPage.this, "주소 업데이트 완료", Toast.LENGTH_SHORT).show();
+                        }
+
                     }catch (JSONException je){
                         je.printStackTrace();
                     }
+
                 }
             };
+//            Log.e("address page",in.getStringExtra("type"));
+//            Log.e("address page",str_email);
+//            Log.e("address page",str_address);
+//            UpdateHomeAddressRequest request = new UpdateHomeAddressRequest(str_email, str_address,responseListener);
+//            RequestQueue queue = Volley.newRequestQueue(AddressPage.this);
+//            queue.add(request);
+//            finish();
+            if(in.getStringExtra("type").equals("home")){
+                Log.e("address page",in.getStringExtra("type"));
+                Log.e("address page",str_email);
+                Log.e("address page",str_address);
+                UpdateHomeAddressRequest request = new UpdateHomeAddressRequest(str_email, str_address,responseListener);
+                RequestQueue queue = Volley.newRequestQueue(AddressPage.this);
+                queue.add(request);
+                finish();
+            }else if(in.getStringExtra("type").equals("workplace")){
+                Log.e("address page",in.getStringExtra("type"));
+                Log.e("address page",str_email);
+                Log.e("address page",str_address);
+                UpdateWorkplaceAddressRequest request=new UpdateWorkplaceAddressRequest(str_email,str_address,responseListener);
+                RequestQueue queue = Volley.newRequestQueue(AddressPage.this);
+                queue.add(request);
+                finish();
+            }else{
+                Log.e("type tag","안잡힘..");
+            }
+
+
         } catch (JSONException | IOException je){
             je.printStackTrace();
         }
+
 
     }
     public void onActivityResult(int requestCode, int resultCode, Intent intent)

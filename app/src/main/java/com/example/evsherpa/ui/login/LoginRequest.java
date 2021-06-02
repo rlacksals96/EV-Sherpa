@@ -8,9 +8,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class LoginRequest extends StringRequest {
-    final static private String ipAddress="localhost";
+    final static private String ipAddress="172.20.10.6";
     final static private String portNum="8080";
-    final static private String route="/signin";
+    final static private String route="/account/signin";
     final static private String URL="http://"+ipAddress+":"+portNum+route;
 //    final static private String URL="http://a4382432.dothome.co.kr/Login.php";
     private final Map<String,String> map;
