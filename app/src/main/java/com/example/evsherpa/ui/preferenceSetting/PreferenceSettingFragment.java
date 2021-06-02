@@ -8,14 +8,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.toolbox.Volley;
 import com.example.evsherpa.MainActivity;
 import com.example.evsherpa.R;
+import com.example.evsherpa.ui.profile.UpdateAgeRequest;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -29,6 +34,10 @@ import java.io.InputStreamReader;
 public class PreferenceSettingFragment extends Fragment {
     private Button btn_distance,btn_fast_charge,btn_num_of_charger,btn_is_parking_lot,btn_price,btn_company;
     private Button btn_preference_reset,btn_preference_confirm;
+
+    private Spinner spinner_company;
+    private Button btn_select_company;
+
     private boolean distance_clicked,fast_charge_clicked,num_of_charger_clicked,is_parking_lot_clicked,
             price_clicked,company_clicked;
     private TextView[]txt_preference;
@@ -50,6 +59,7 @@ public class PreferenceSettingFragment extends Fragment {
             Toast.makeText(getContext(),"우선순위는 최대 3개까지 등록 가능합니다",Toast.LENGTH_SHORT).show();
             return;
         }
+
         txt_preference[selected_cnt].setText(str);
     }
     public void setClickListener(){
@@ -74,6 +84,7 @@ public class PreferenceSettingFragment extends Fragment {
                 }
             }
         });
+
         btn_fast_charge.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -175,12 +186,14 @@ public class PreferenceSettingFragment extends Fragment {
 
                     }else {
                         btn_company.setBackgroundColor(Color.GREEN);
-                        selected_cnt++;
-                        setRankText("선호업체");
-                        company_clicked=true;
+
+
 
                         //TODO: 업체명 관련 spinner 추가
-
+                        spinner_company.setVisibility(View.VISIBLE);
+                        spinner_company.setSelection(0);
+                        btn_select_company.setVisibility(View.VISIBLE);
+                        btn_select_company.setEnabled(true);
                     }
                 }
             }
@@ -204,9 +217,14 @@ public class PreferenceSettingFragment extends Fragment {
                 btn_company.setBackgroundColor(Color.GRAY);
 
                 for(int i=1;i<=3;i++){
-                    txt_preference[i].setText(i+". ");
+                    txt_preference[i].setText("");
                 }
                 selected_cnt=0;
+
+                spinner_company.setVisibility(View.INVISIBLE);
+                spinner_company.setSelection(0);
+                btn_select_company.setVisibility(View.INVISIBLE);
+
             }
         });
         btn_preference_confirm.setOnClickListener(new View.OnClickListener() {
@@ -219,8 +237,33 @@ public class PreferenceSettingFragment extends Fragment {
                 startActivity(intent);
             }
         });
+        btn_select_company.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(spinner_company.getSelectedItemPosition()==0) {
+                    Toast.makeText(getContext(), "업체를 선택하지 않았습니다", Toast.LENGTH_SHORT).show();
+                    return;
+
+                }
+                selected_cnt++;
+//                setRankText("선호업체");
+                company_clicked=true;
+
+
+                String company=spinner_company.getSelectedItem().toString();
+                StringBuilder sb=new StringBuilder();
+                sb.append("선호업체")
+                        .append("(")
+                        .append(company)
+                        .append(")");
+                setRankText(sb.toString());
+                btn_select_company.setEnabled(false);
+
+            }
+        });
     }
     void savePreference(){
+        String str_email="";
         String result=loadJSON();
         String preferences=txt_preference[1].getText().toString()+","
                 +txt_preference[2].getText().toString()+","
@@ -228,12 +271,46 @@ public class PreferenceSettingFragment extends Fragment {
 
         try{
             JSONObject profile=new JSONObject(result);
+            str_email=profile.getString("email");
             profile.put("preferences",preferences);
             saveJSON(profile);
         }catch (JSONException je){
             je.printStackTrace();
 
         }
+        Response.Listener<String> responseListener=new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try{
+                    JSONObject jsonObject=new JSONObject(response);
+
+                    //TODO: 서버와 연결시 주석 변경하기
+//                                    boolean success=jsonObject.getBoolean("success");
+                    boolean success=true;
+                    if(!success){
+                        Toast.makeText(getContext(),"서버에 변경사항을 저장하지 못했습니다",Toast.LENGTH_SHORT).show();
+                        try{
+                            JSONObject profile=new JSONObject(loadJSON());
+
+                            //변경사항 파일에 저장하기
+                            FileOutputStream fos = getActivity().openFileOutput("profile.json", Context.MODE_PRIVATE);
+                            String tmp = profile.toString();
+                            byte[] result = tmp.getBytes();
+                            fos.write(result);
+                        } catch (JSONException | IOException e){
+                            e.printStackTrace();
+                        }
+                    }
+                }catch (JSONException je){
+                    je.printStackTrace();
+                }
+            }
+        };
+        UpdatePreferenceRequest preferenceRequest=new UpdatePreferenceRequest(str_email,preferences,responseListener);
+        RequestQueue queue = Volley.newRequestQueue(getContext());
+        queue.add(preferenceRequest);
+
+
     }
     public void saveJSON(JSONObject profile) {
         //변경사항 파일에 저장하기
@@ -293,5 +370,8 @@ public class PreferenceSettingFragment extends Fragment {
         txt_preference[1]=view.findViewById(R.id.txt_preference_first);
         txt_preference[2]=view.findViewById(R.id.txt_preference_second);
         txt_preference[3]=view.findViewById(R.id.txt_preference_third);
+
+        spinner_company=view.findViewById(R.id.spinner_company);
+        btn_select_company=view.findViewById(R.id.btn_select_company);
     }
 }
