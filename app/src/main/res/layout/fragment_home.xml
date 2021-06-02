@@ -56,6 +56,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="top"
         android:background="@color/white"
+        android:visibility="invisible"
         android:orientation="vertical" >
 
         <LinearLayout

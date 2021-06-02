@@ -17,6 +17,11 @@
         android:icon="@mipmap/ic_main"
 
         android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_main"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.EVSherpa"
+        android:usesCleartextTraffic="true"
+        android:name=".ui.login.CustomApplication">
 
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
@@ -29,13 +34,6 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
-
-        android:roundIcon="@mipmap/ic_main"
-        android:supportsRtl="true"
-        android:theme="@style/Theme.EVSherpa"
-        android:usesCleartextTraffic="true"
-        android:name=".ui.login.CustomApplication"
-        >
 
         <activity
             android:name=".ui.profile.AddressPage"

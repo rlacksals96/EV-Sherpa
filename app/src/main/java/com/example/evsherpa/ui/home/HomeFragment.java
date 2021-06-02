@@ -58,8 +58,6 @@ import java.util.HashMap;
 public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
 
-public class HomeFragment extends Fragment {
-
     private final float DEFAULT_ZOOM = 18;
 
     private final String KEY_LOCATION = "current_location";
@@ -166,7 +164,8 @@ public class HomeFragment extends Fragment {
         infoPage.setOnClickListener(view -> {
             infoPage.animate().translationY(0).setListener(showAllListener);
         });
-        infoPage.animate().y(SCREEN_HEIGHT);
+        infoPage.setY(SCREEN_HEIGHT);
+        //infoPage.animate().y(SCREEN_HEIGHT);
 
         ImageButton closeInfoPageBtn = root.findViewById(R.id.btn_close_page_stationInfo);
         closeInfoPageBtn.setOnClickListener(view -> {
@@ -311,17 +310,14 @@ public class HomeFragment extends Fragment {
             addressTv.setText("주소  " + info.getAddr());
 
             // 페이지 애니메이션 실행
-            if (infoPage.getVisibility() == View.INVISIBLE) {
-                infoPage.animate().translationY(SCREEN_HEIGHT * 0.6f).setListener(showBrieflyListener);
-            }
+            infoPage.animate().translationY(SCREEN_HEIGHT * 0.6f).setListener(showBrieflyListener);
 
             return true;
         });
 
         //
         mMap.setOnMapClickListener(latLng -> {
-            if (infoPage.getVisibility() == View.VISIBLE)
-                infoPage.animate().translationY(SCREEN_HEIGHT).setListener(hideBrieflyListener);
+            infoPage.animate().translationY(SCREEN_HEIGHT).setListener(hideBrieflyListener);
         });
 
         mMap.setOnCameraMoveListener(() -> {
@@ -353,6 +349,8 @@ public class HomeFragment extends Fragment {
 
         super.onSaveInstanceState(outState);
     }
+
+
 
     private void getCurrentLocation(OnCompleteListener onCompleteListener) {
         if (ContextCompat.checkSelfPermission(getContext().getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
@@ -569,7 +567,4 @@ public class HomeFragment extends Fragment {
             zoom = newZoom;
         }
     }
-
-
-
 }
