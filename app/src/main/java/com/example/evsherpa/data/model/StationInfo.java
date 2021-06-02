@@ -1,8 +1,8 @@
-package com.example.evsherpa;
+package com.example.evsherpa.data.model;
 
 public class StationInfo {
+    private String statId;
     private String statNm;
-    private int statId;
     private int chgerId;
     private int chgerType;
     private String addr;
@@ -12,16 +12,25 @@ public class StationInfo {
     private String busiId;
     private String busiNm;
     private String busiCall;
-    private int stat;
-    private int statUpdDt;
-    private String powerType;
     private int zcode;
-    private boolean parkingFree;
-    private String note;
-    private boolean limitYn;
-    private String limitDetail;
-    private boolean delYn;
-    private String delDetail;
+    private String parkingFree;
+
+    //private int stat;
+    //private int statUpdDt;
+    //private String powerType;
+    //private String note;
+    //private boolean limitYn;
+    //private String limitDetail;
+    //private boolean delYn;
+    //private String delDetail;
+
+    public String getStatId() {
+        return statId;
+    }
+
+    public void setStatId(String statId) {
+        this.statId = statId;
+    }
 
     public String getStatNm() {
         return statNm;
@@ -29,14 +38,6 @@ public class StationInfo {
 
     public void setStatNm(String statNm) {
         this.statNm = statNm;
-    }
-
-    public int getStatId() {
-        return statId;
-    }
-
-    public void setStatId(int statId) {
-        this.statId = statId;
     }
 
     public int getChgerId() {
@@ -111,30 +112,6 @@ public class StationInfo {
         this.busiCall = busiCall;
     }
 
-    public int getStat() {
-        return stat;
-    }
-
-    public void setStat(int stat) {
-        this.stat = stat;
-    }
-
-    public int getStatUpdDt() {
-        return statUpdDt;
-    }
-
-    public void setStatUpdDt(int statUpdDt) {
-        this.statUpdDt = statUpdDt;
-    }
-
-    public String getPowerType() {
-        return powerType;
-    }
-
-    public void setPowerType(String powerType) {
-        this.powerType = powerType;
-    }
-
     public int getZcode() {
         return zcode;
     }
@@ -143,51 +120,11 @@ public class StationInfo {
         this.zcode = zcode;
     }
 
-    public boolean getParkingFree() {
+    public String getParkingFree() {
         return parkingFree;
     }
 
-    public void setParkingFree(boolean parkingFree) {
+    public void setParkingFree(String parkingFree) {
         this.parkingFree = parkingFree;
-    }
-
-    public String getNote() {
-        return note;
-    }
-
-    public void setNote(String note) {
-        this.note = note;
-    }
-
-    public boolean getLimitYn() {
-        return limitYn;
-    }
-
-    public void setLimitYn(boolean limitYn) {
-        this.limitYn = limitYn;
-    }
-
-    public String getLimitDetail() {
-        return limitDetail;
-    }
-
-    public void setLimitDetail(String limitDetail) {
-        this.limitDetail = limitDetail;
-    }
-
-    public boolean getDelYn() {
-        return delYn;
-    }
-
-    public void setDelYn(boolean delYn) {
-        this.delYn = delYn;
-    }
-
-    public String getDelDetail() {
-        return delDetail;
-    }
-
-    public void setDelDetail(String delDetail) {
-        this.delDetail = delDetail;
     }
 }

@@ -4,8 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.home.HomeFragment">
+    tools:context=".ui.home.HomeFragment" >
 
+    <!-- 구글맵 -->
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:map="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
@@ -15,20 +16,481 @@
         android:layout_height="match_parent"
         tools:context=".ui.home.HomeActivity" />
 
+    <!-- 현재 GPS 위치 -->
+    <ImageButton
+        android:id="@+id/btn_curLocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding = "0dp"
+        android:layout_gravity="top|right"
+        android:layout_marginTop="50dp"
+        android:layout_marginRight="15dp"
+        android:src="@drawable/common_google_signin_btn_icon_dark_normal"/>
+
+    <!-- 줌 디버깅 -->
     <TextView
-        android:id="@+id/text_log"
+        android:id="@+id/text_log_zoom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
-        android:text="hi hello "
-        android:textAlignment="center"
-        android:textSize="36sp" />
+        android:text="text log zoom"
+        android:gravity="center"
+        android:textSize="36sp"
+        android:visibility="invisible" />
 
-    <Button
-        android:id="@+id/btn_curLocation"
+    <!-- 현재 카메라 위치 디버깅 -->
+    <TextView
+        android:id="@+id/text_log_latlng"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="current_location" />
+        android:layout_marginTop="80dp"
+        android:text="text log lat lng"
+        android:gravity="center"
+        android:textSize="36sp"
+        android:visibility="invisible" />
+
+    <!-- 충전소 정보 페이지 -->
+    <LinearLayout
+        android:id="@+id/page_stationInfo"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="top"
+        android:background="@color/white"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@color/white">
+
+            <!-- 운영 기관 아이콘 -->
+            <ImageView
+                android:id="@+id/image_busi"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/common_google_signin_btn_icon_light_normal"/>
+
+            <!-- 충전소 이름 -->
+            <TextView
+                android:id="@+id/text_stationName"
+                android:layout_width="290dp"
+                android:layout_height="50dp"
+                android:layout_marginLeft="10dp"
+                android:text="hi hello"
+                android:gravity="center"
+                android:textSize="27dp"/>
+
+            <ImageButton
+                android:id="@+id/btn_close_page_stationInfo"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="10dp"
+                android:layout_gravity="center"
+                android:src="@drawable/common_google_signin_btn_icon_dark_normal"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:paddingLeft="10dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/text_combo"
+                android:layout_width="90dp"
+                android:layout_height="30dp"
+                android:text="DC콤보"
+                android:textSize="20dp"
+                android:gravity="center"
+                android:textColor="@color/gray_500"
+                android:background="@color/sky_blue_500"/>
+
+            <TextView
+                android:id="@+id/text_demo"
+                android:layout_width="90dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="5dp"
+                android:text="DC차데모"
+                android:textSize="20dp"
+                android:gravity="center"
+                android:background="@color/sky_blue_500"/>
+
+            <TextView
+                android:id="@+id/text_ac"
+                android:layout_width="90dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="5dp"
+                android:text="AC 3상"
+                android:textSize="20dp"
+                android:gravity="center"
+                android:background="@color/sky_blue_500"/>
+
+            <TextView
+                android:id="@+id/text_slowCharge"
+                android:layout_width="90dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="5dp"
+                android:text="완속"
+                android:textSize="20dp"
+                android:gravity="center"
+                android:background="@color/sky_blue_500"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:paddingLeft="10dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/text_chargeSpeed"
+                android:layout_width="120dp"
+                android:layout_height="30dp"
+                android:text="충전속도 200kWh"
+                android:gravity="center"
+                android:textSize="15dp"/>
+
+            <TextView
+                android:id="@+id/text_chargePay"
+                android:layout_width="120dp"
+                android:layout_height="30dp"
+                android:text="충전가격 유료"
+                android:gravity="center"
+                android:textSize="15dp"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/list_chargers"
+            android:layout_width="match_parent"
+            android:layout_height="280dp"
+            android:orientation="vertical"
+            android:layout_marginTop="20dp"
+            android:paddingLeft="10dp">
+
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="30dp"
+                android:text="충전기 정보"
+                android:textSize="18dp"
+                android:textStyle="bold"
+                android:gravity="center_vertical"/>
+
+            <LinearLayout
+                android:id="@+id/layout_chargerInfo1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/text_chargerState1"
+                    android:layout_width="60dp"
+                    android:layout_height="40dp"
+                    android:text="대기중"
+                    android:textSize="13dp"
+                    android:gravity="center"/>
+
+                <ImageView
+                    android:id="@+id/image_combo1"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="20dp"
+                    android:src="@drawable/common_google_signin_btn_icon_light_normal"
+                    android:tintMode="multiply"
+                    app:tint="@color/gray_700" />
+
+                <ImageView
+                    android:id="@+id/image_demo1"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/common_google_signin_btn_icon_light_normal"
+                    android:tintMode="multiply"
+                    app:tint="@color/gray_700" />
+
+                <ImageView
+                    android:id="@+id/image_ac1"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/common_google_signin_btn_icon_light_normal"
+                    android:tintMode="multiply"
+                    app:tint="@color/gray_700" />
+
+                <ImageView
+                    android:id="@+id/image_slowCharge1"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/common_google_signin_btn_icon_light_normal"
+                    android:tintMode="multiply"
+                    app:tint="@color/gray_700" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_chargerInfo2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/text_chargerState2"
+                    android:layout_width="60dp"
+                    android:layout_height="40dp"
+                    android:text="대기중"
+                    android:textSize="13dp"
+                    android:gravity="center"/>
+
+                <ImageView
+                    android:id="@+id/image_combo2"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="20dp"
+                    android:src="@drawable/common_google_signin_btn_icon_light_normal"
+                    android:tintMode="multiply"
+                    app:tint="@color/gray_700" />
+
+                <ImageView
+                    android:id="@+id/image_demo2"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/common_google_signin_btn_icon_light_normal"
+                    android:tintMode="multiply"
+                    app:tint="@color/gray_700" />
+
+                <ImageView
+                    android:id="@+id/image_ac2"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/common_google_signin_btn_icon_light_normal"
+                    android:tintMode="multiply"
+                    app:tint="@color/gray_700" />
+
+                <ImageView
+                    android:id="@+id/image_slowCharge2"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/common_google_signin_btn_icon_light_normal"
+                    android:tintMode="multiply"
+                    app:tint="@color/gray_700" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_chargerInfo3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/text_chargerState3"
+                    android:layout_width="60dp"
+                    android:layout_height="40dp"
+                    android:text="대기중"
+                    android:textSize="13dp"
+                    android:gravity="center"/>
+
+                <ImageView
+                    android:id="@+id/image_combo3"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="20dp"
+                    android:src="@drawable/common_google_signin_btn_icon_light_normal"
+                    android:tintMode="multiply"
+                    app:tint="@color/gray_700" />
+
+                <ImageView
+                    android:id="@+id/image_demo3"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/common_google_signin_btn_icon_light_normal"
+                    android:tintMode="multiply"
+                    app:tint="@color/gray_700" />
+
+                <ImageView
+                    android:id="@+id/image_ac3"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/common_google_signin_btn_icon_light_normal"
+                    android:tintMode="multiply"
+                    app:tint="@color/gray_700" />
+
+                <ImageView
+                    android:id="@+id/image_slowCharge3"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/common_google_signin_btn_icon_light_normal"
+                    android:tintMode="multiply"
+                    app:tint="@color/gray_700" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_chargerInfo4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/text_chargerState4"
+                    android:layout_width="60dp"
+                    android:layout_height="40dp"
+                    android:text="대기중"
+                    android:textSize="13dp"
+                    android:gravity="center"/>
+
+                <ImageView
+                    android:id="@+id/image_combo4"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="20dp"
+                    android:src="@drawable/common_google_signin_btn_icon_light_normal"
+                    android:tintMode="multiply"
+                    app:tint="@color/gray_700" />
+
+                <ImageView
+                    android:id="@+id/image_demo4"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/common_google_signin_btn_icon_light_normal"
+                    android:tintMode="multiply"
+                    app:tint="@color/gray_700" />
+
+                <ImageView
+                    android:id="@+id/image_ac4"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/common_google_signin_btn_icon_light_normal"
+                    android:tintMode="multiply"
+                    app:tint="@color/gray_700" />
+
+                <ImageView
+                    android:id="@+id/image_slowCharge4"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/common_google_signin_btn_icon_light_normal"
+                    android:tintMode="multiply"
+                    app:tint="@color/gray_700" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_chargerInfo5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/text_chargerState5"
+                    android:layout_width="60dp"
+                    android:layout_height="40dp"
+                    android:text="대기중"
+                    android:textSize="13dp"
+                    android:gravity="center"/>
+
+                <ImageView
+                    android:id="@+id/image_combo5"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="20dp"
+                    android:src="@drawable/common_google_signin_btn_icon_light_normal"
+                    android:tintMode="multiply"
+                    app:tint="@color/gray_700" />
+
+                <ImageView
+                    android:id="@+id/image_demo5"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/common_google_signin_btn_icon_light_normal"
+                    android:tintMode="multiply"
+                    app:tint="@color/gray_700" />
+
+                <ImageView
+                    android:id="@+id/image_ac5"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/common_google_signin_btn_icon_light_normal"
+                    android:tintMode="multiply"
+                    app:tint="@color/gray_700" />
+
+                <ImageView
+                    android:id="@+id/image_slowCharge5"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/common_google_signin_btn_icon_light_normal"
+                    android:tintMode="multiply"
+                    app:tint="@color/gray_700" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/stationInfo"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:orientation="vertical"
+            android:layout_marginTop="20dp"
+            android:paddingLeft="10dp">
+
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="30dp"
+                android:text="충전소 정보"
+                android:textSize="18dp"
+                android:textStyle="bold"
+                android:gravity="center_vertical"/>
+
+            <TextView
+                android:id="@+id/text_busiName"
+                android:layout_width="100dp"
+                android:layout_height="30dp"
+                android:textSize="13dp"
+                android:text="운영기관 환경부"
+                android:layout_marginLeft="10dp"
+                android:gravity="center_vertical"/>
+
+            <TextView
+                android:id="@+id/text_useTime"
+                android:layout_width="200dp"
+                android:layout_height="30dp"
+                android:textSize="13dp"
+                android:text="운영시간 24시간"
+                android:layout_marginLeft="10dp"
+                android:gravity="center_vertical"/>
+
+            <TextView
+                android:id="@+id/text_busiCall"
+                android:layout_width="200dp"
+                android:layout_height="30dp"
+                android:textSize="13dp"
+                android:text="전화번호 1661-9408"
+                android:layout_marginLeft="10dp"
+                android:gravity="center_vertical"/>
+
+            <TextView
+                android:id="@+id/text_address"
+                android:layout_width="300dp"
+                android:layout_height="30dp"
+                android:textSize="13dp"
+                android:text="주소 경기도 시흥시 시흥대로 869"
+                android:layout_marginLeft="10dp"
+                android:gravity="center_vertical"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
 
     <!--
     <TextView

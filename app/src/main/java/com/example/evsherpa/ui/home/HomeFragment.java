@@ -1,26 +1,31 @@
 package com.example.evsherpa.ui.home;
 
+import android.animation.Animator;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.evsherpa.R;
-import com.example.evsherpa.StationInfo;
+import com.example.evsherpa.data.StationInfoParser;
+import com.example.evsherpa.data.model.StationInfo;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -52,17 +57,24 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private Location mDeviceLocation;
     private FusedLocationProviderClient mFusedLocationProviderClient;
 
-    private TextView tv;
-    private Button btn;
+    private TextView zoomLevelTv;
+    private TextView latlngTv;
 
-    private HashMap<Integer, StationInfo> stationInfoHashMap = new HashMap<Integer, StationInfo>();
+    private final HashMap<String, StationInfo> stationInfoHashMap = new HashMap<String, StationInfo>();
 
-    private final int zoomLevelDivider = 5;
-    private int zoomLevel;
-    private ArrayList<Marker>[] markersByZoomLevel = new ArrayList[3];
+    private float zoom;
 
-    private final int MARKER_WIDTH = 150;
-    private final int MARKER_HEIGHT = 150;
+    private final ArrayList<Marker>[][] markersBySector = new ArrayList[46][92];
+    private int curSectorX, curSectorY;
+    private final float SECTOR_WIDTH = 0.07801f;
+    private final float SECTOR_HEIGHT = 0.11707f;
+    private final float FAR_SOUTH = 33.0643f;
+    private final float FAR_WEST = 124.3636f;
+
+    private double lat, lng;
+
+    private final int MARKER_WIDTH = 100;
+    private final int MARKER_HEIGHT = 100;
     private final float MARKER_LABEL_SIZE = 50;
 
     private final int MARKER_BLUE = 0;
@@ -70,11 +82,184 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private final int MARKER_YELLOW = 2;
     private final int MARKER_RED = 3;
 
+    private final int[] totalCountByRegion = new int[10];
+
+    private StationInfoParser parser;
+
+    private Animator.AnimatorListener showBrieflyListener;
+    private Animator.AnimatorListener showAllListener;
+    private Animator.AnimatorListener hideBrieflyListener;
+    private Animator.AnimatorListener hideAllListener;
+
+    private LinearLayout infoPage;
+    private TextView stationNameTv;
+    private TextView busiNameTv;
+    private TextView useTimeTv;
+    private TextView busiCallTv;
+    private TextView addressTv;
+
+    private int SCREEN_WIDTH, SCREEN_HEIGHT;
+    private final float MIN_MARKER_VISIBLE_ZOOM = 12.8f;
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
+
+        View root = inflater.inflate(R.layout.fragment_home, container, false);
+
+        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
+
+        // 스크린 사이즈 캐싱
+        Display display = getActivity().getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        SCREEN_WIDTH = size.x;
+        SCREEN_HEIGHT = size.y;
+
+        // 현재 줌 레벨 표시 텍스트
+        zoomLevelTv = root.findViewById(R.id.text_log_zoom);
+
+        // 현재 카메라 위치 표시 텍스트
+        latlngTv = root.findViewById(R.id.text_log_latlng);
+
+        // 현재 GPS 위치
+        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getContext());
+
+        ImageButton moveToCurLocationBtn = root.findViewById(R.id.btn_curLocation);
+        moveToCurLocationBtn.setOnClickListener(view -> {
+            getCurrentLocation(task -> {
+                if (task.isSuccessful()) {
+                    if (mDeviceLocation != null) {
+                        checkAroundMarkers(false);
+                        setCameraPosition(mDeviceLocation.getLatitude(), mDeviceLocation.getLongitude(), DEFAULT_ZOOM);
+                    } else {
+                        Log.d("ev-sherpa", "location null");
+                    }
+                } else {
+                    Log.d("ev-sherpa", "get current location1 failed");
+                }
+            });
+        });
+        moveToCurLocationBtn.performClick();
+
+        // 맵 정보 임시 저장
+        if (savedInstanceState != null) {
+            mCurLocation = savedInstanceState.getParcelable((KEY_LOCATION));
+            mMap.moveCamera(savedInstanceState.getParcelable((KEY_CAMERA_POSITION)));
+        }
+
+        // 충전소 정보 페이지
+        infoPage = root.findViewById(R.id.page_stationInfo);
+        infoPage.setOnClickListener(view -> {
+            infoPage.animate().translationY(0).setListener(showAllListener);
+        });
+        infoPage.animate().y(SCREEN_HEIGHT);
+
+        ImageButton closeInfoPageBtn = root.findViewById(R.id.btn_close_page_stationInfo);
+        closeInfoPageBtn.setOnClickListener(view -> {
+            infoPage.animate().translationY(SCREEN_HEIGHT).setListener(hideAllListener);
+        });
+
+        stationNameTv = root.findViewById(R.id.text_stationName);
+        busiNameTv = root.findViewById(R.id.text_busiName);
+        useTimeTv = root.findViewById(R.id.text_useTime);
+        busiCallTv = root.findViewById(R.id.text_busiCall);
+        addressTv = root.findViewById(R.id.text_address);
+
+        // 페이지 애니메이션 리스너
+        showBrieflyListener = new Animator.AnimatorListener() {
+
+            @Override
+            public void onAnimationStart(Animator animator) {
+                infoPage.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animator) {
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animator) {
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animator) {
+            }
+        };
+        showAllListener = new Animator.AnimatorListener() {
+
+            @Override
+            public void onAnimationStart(Animator animator) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animator) {
+
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animator) {
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animator) {
+            }
+        };
+        hideBrieflyListener = new Animator.AnimatorListener() {
+
+            @Override
+            public void onAnimationStart(Animator animator) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animator) {
+                infoPage.setVisibility(View.INVISIBLE);
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animator) {
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animator) {
+            }
+        };
+        hideAllListener = new Animator.AnimatorListener() {
+
+            @Override
+            public void onAnimationStart(Animator animator) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animator) {
+                infoPage.setVisibility(View.INVISIBLE);
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animator) {
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animator) {
+            }
+        };
+
+        // StationInfoParser 생성
+
+        // markersBySector 할당
+        for (int y = 0; y < markersBySector.length; y++) {
+            for (int x = 0; x < markersBySector[0].length; x++) {
+                markersBySector[y][x] = new ArrayList<>();
+            }
+        }
+
+        return root;
+
 //        homeViewModel =
 //                new ViewModelProvider(this).get(HomeViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_home, container, false);
 //        final TextView textView = root.findViewById(R.id.text_home);
 //        homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
 //            @Override
@@ -82,83 +267,67 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 //                textView.setText(s);
 //            }
 //        });
-
-        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
-
-        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getContext());
-
-        tv = root.findViewById(R.id.text_log);
-        btn = root.findViewById(R.id.btn_curLocation);
-
-        btn.setOnClickListener(view -> {
-            getCurrentLocation(task -> {
-                if (task.isSuccessful()) {
-                    if (mDeviceLocation != null) {
-                        Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(mDeviceLocation.getLatitude(), mDeviceLocation.getLongitude())).title("디바이스 위치")
-                                .icon(BitmapDescriptorFactory.fromBitmap(markerWithLabelIcon("999", MARKER_BLUE))));
-                        marker.setTag(0);
-
-                        setCameraPosition(mDeviceLocation.getLatitude(), mDeviceLocation.getLongitude(), DEFAULT_ZOOM);
-                    }
-                }
-            });
-        });
-
-        if (savedInstanceState != null) {
-            mCurLocation = savedInstanceState.getParcelable((KEY_LOCATION));
-            mMap.moveCamera(savedInstanceState.getParcelable((KEY_CAMERA_POSITION)));
-        }
-
-        return root;
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        // 로컬의 파일을 읽어와 충전소에 대한 정보를 전부 로드하고 해당 정보를 바탕으로 Marker 생성
-        /*
-        ArrayList<StationInfo> infos = new StationInfoParser().Parse("file.xml");
-        for (int i = 0; i < infos.size(); i++) {
-            StationInfo info = infos.get(i);
-            Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(info.getLat(), info.getLng())).title(info.getStatNm())
-                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))); // 원하는 색상
-            marker.setTag(info.getStatId());
-
-            stationInfoHashMap.put(info.getStatId(), info);
-        }
-        */
+        ParseStationInfoData("");
 
         // 마커 클릭 시 해당 위치의 충전소 정보 표시
         mMap.setOnMarkerClickListener(marker -> {
+            // 해당 마커를 최상단으로 표시
             marker.setZIndex(Float.MAX_VALUE);
 
             // stationId를 활용해 충전소에 대한 정보를 얻어와 UI에 충전소 정보 표시
-            int stationId = (int) marker.getTag();
+            String stationId = marker.getTag().toString();
             StationInfo info = stationInfoHashMap.get(stationId);
 
-            String text = String.format("Tag : %d, Lat : %f, Lng : %f, Title : %s", (int) marker.getTag(), marker.getPosition().latitude, marker.getPosition().longitude, marker.getTitle());
-            Toast.makeText(getContext(), text, Toast.LENGTH_SHORT).show();
+            // ...
+
+            Log.i("ev-sherpa", info.getBusiNm());
+            Log.i("ev-sherpa", info.getUseTime());
+            Log.i("ev-sherpa", info.getBusiCall());
+            Log.i("ev-sherpa", info.getAddr());
+
+            stationNameTv.setText(info.getStatNm());
+            busiNameTv.setText("운경기관  " + info.getBusiNm());
+            useTimeTv.setText("운영시간  " + info.getUseTime());
+            busiCallTv.setText("전화번호  " + info.getBusiCall());
+            addressTv.setText("주소  " + info.getAddr());
+
+            // 페이지 애니메이션 실행
+            if (infoPage.getVisibility() == View.INVISIBLE) {
+                infoPage.animate().translationY(SCREEN_HEIGHT * 0.6f).setListener(showBrieflyListener);
+            }
 
             return true;
         });
 
-        // 카메라 줌 정도에 따라 마커 활성화/비활성화
+        //
+        mMap.setOnMapClickListener(latLng -> {
+            if (infoPage.getVisibility() == View.VISIBLE)
+                infoPage.animate().translationY(SCREEN_HEIGHT).setListener(hideBrieflyListener);
+        });
+
         mMap.setOnCameraMoveListener(() -> {
-            int newZoomLevel = (int) mMap.getCameraPosition().zoom / zoomLevelDivider;
 
-            if (newZoomLevel != zoomLevel) {
-                //ArrayList<Marker> markers = markersByZoomLevel[zoomLevel];
-                //for (int i = 0; i < markers.size(); i++)
-                //    markers.get(i).setVisible(false);
+            // 현재 카메라 위치에 따라 현재 구역 계산
+            lat = mMap.getCameraPosition().target.latitude;
+            lng = mMap.getCameraPosition().target.longitude;
 
-                //markers = markersByZoomLevel[newZoomLevel];
-                //for (int i = 0; i < markers.size(); i++)
-                //    markers.get(i).setVisible(true);
-            }
+            curSectorX = (int) ((lng - FAR_WEST) / SECTOR_WIDTH);
+            curSectorY = (int) ((lat - FAR_SOUTH) / SECTOR_HEIGHT);
 
-            tv.setText("Zoom : " + mMap.getCameraPosition().zoom);
+            checkZoom();
+            checkAroundMarkers(true);
+
+            // 현재 줌 레벨 표시
+            zoomLevelTv.setText("Zoom : " + mMap.getCameraPosition().zoom);
+
+            // 현재 카메라 위치 표시
+            latlngTv.setText("LatLng : " + lat + ", " + lng);
         });
     }
 
@@ -178,10 +347,22 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             locationResult.addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     mDeviceLocation = task.getResult();
+                } else {
+                    Log.d("ev-sherpa", "get current location failed");
                 }
             });
             locationResult.addOnCompleteListener(onCompleteListener);
         }
+    }
+
+    private Marker createMarker(double lat, double lng, int count) {
+        int color = count > 4 ? MARKER_GREEN : count > 2 ? MARKER_YELLOW : MARKER_RED;
+
+        Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(lat, lng)).
+                icon(BitmapDescriptorFactory.fromBitmap(markerWithLabelIcon(Integer.toString(count), color))));
+        marker.setVisible(false);
+
+        return marker;
     }
 
     public void setCameraPosition(double lat, double lng, float zoom) {
@@ -243,16 +424,136 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             canvas.drawBitmap(src, 0, 0, null);
 
             Paint paint = new Paint();
-            paint.setColor(Color.WHITE);
+            paint.setColor(Color.BLACK);
             paint.setTextSize(MARKER_LABEL_SIZE);
             paint.setTextAlign(Paint.Align.CENTER);
             paint.setAntiAlias(true);
             canvas.drawText(str, canvas.getWidth() / 2, canvas.getHeight() / 2, paint);
 
             return markerIcon;
-        }
-        else {
+        } else {
+            Log.d("ev-sherpa", "fail to make marker");
             return null;
+        }
+    }
+
+    private void ParseStationInfoData(String jsonStr) {
+        parser = new StationInfoParser(getContext());
+        StationInfo[] infos = parser.Parse(parser.getJsonString());
+
+        //StationInfo[] infos = new StationInfoParser(getContext()).Parse(jsonStr);
+
+        for (int i = 0; i < infos.length; i++) {
+
+            switch (infos[i].getZcode()) {
+                case 11:
+                    totalCountByRegion[0]++;
+                    break;
+                case 41:
+                    totalCountByRegion[1]++;
+                    break;
+                case 42:
+                    totalCountByRegion[2]++;
+                    break;
+                case 43:
+                    totalCountByRegion[3]++;
+                    break;
+                case 44:
+                    totalCountByRegion[4]++;
+                    break;
+                case 45:
+                    totalCountByRegion[5]++;
+                    break;
+                case 46:
+                    totalCountByRegion[6]++;
+                    break;
+                case 47:
+                    totalCountByRegion[7]++;
+                    break;
+                case 48:
+                    totalCountByRegion[8]++;
+                    break;
+                case 50:
+                    totalCountByRegion[9]++;
+                    break;
+            }
+            stationInfoHashMap.put(infos[i].getStatId(), infos[i]);
+
+            // 마커 생성
+            Marker marker = createMarker(infos[i].getLat(), infos[i].getLng(), 3);
+            marker.setTag(infos[i].getStatId());
+
+            // 위도/경도 위치를 계산해서 알맞은 Sector의 ArrayList에 마커 추가
+            // 위도/경도 값이 0부터 시작하는게 아니라서 가장 왼쪽/하단 값을 알아야 한다.
+            // 가장 왼쪽/하단 값이 20/10 이라고 한다면 이 값을 빼고 나눠야 0번부터 저장하는게 유효해진다
+
+            int sectorX = (int) ((infos[i].getLng() - FAR_WEST) / SECTOR_WIDTH);
+            int sectorY = (int) ((infos[i].getLat() - FAR_SOUTH) / SECTOR_HEIGHT);
+            markersBySector[sectorY][sectorX].add(marker);
+        }
+    }
+
+    private void checkAroundMarkers(boolean visible) {
+        // 카메라 위치에 따라 마커 활성화/비활성화
+        // 현재 위치한 구역의 주변 구역들을 검사해서 해당 마커가 화면 범위 내에 있는지 밖에 있는지 계산하여 마커 활성화/비활성화 결정
+        if (zoom > MIN_MARKER_VISIBLE_ZOOM) {
+            if (0 <= curSectorX && curSectorX < markersBySector.length && 0 <= curSectorY && curSectorY < markersBySector[0].length) {
+                for (int y = -1; y <= 1; y++) {
+                    for (int x = -1; x <= 1; x++) {
+                        int sectorX = curSectorX + x;
+                        int sectorY = curSectorY + y;
+
+                        if (0 <= sectorX && sectorX < markersBySector.length && 0 <= sectorY && sectorY < markersBySector[0].length) {
+                            ArrayList<Marker> markers = markersBySector[sectorY][sectorX];
+                            for (int i = 0; i < markers.size(); i++) {
+                                LatLng latlng = markers.get(i).getPosition();
+                                if (lat - SECTOR_WIDTH / 2 < latlng.latitude && latlng.latitude < lat + SECTOR_WIDTH / 2
+                                        && lng - SECTOR_HEIGHT / 2 < latlng.longitude && latlng.longitude < lng + SECTOR_HEIGHT / 2)
+                                    markers.get(i).setVisible(visible);
+                                else {
+                                    markers.get(i).setVisible(false);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void checkZoom() {
+        // 카메라 줌 정도에 따라 마커 활성화/비활성화
+        if (0 <= curSectorX && curSectorX < markersBySector.length && 0 <= curSectorY && curSectorY < markersBySector[0].length) {
+            float newZoom = mMap.getCameraPosition().zoom;
+            if (zoom < MIN_MARKER_VISIBLE_ZOOM && newZoom > MIN_MARKER_VISIBLE_ZOOM) {
+                for (int y = -1; y <= 1; y++) {
+                    for (int x = -1; x <= 1; x++) {
+                        int sectorX = curSectorX + x;
+                        int sectorY = curSectorY + y;
+
+                        if (0 <= sectorX && sectorX < markersBySector.length && 0 <= sectorY && sectorY < markersBySector[0].length) {
+                            ArrayList<Marker> markers = markersBySector[sectorY][sectorX];
+                            for (int i = 0; i < markers.size(); i++)
+                                markers.get(i).setVisible(true);
+                        }
+                    }
+                }
+            } else if (zoom > MIN_MARKER_VISIBLE_ZOOM && newZoom < MIN_MARKER_VISIBLE_ZOOM) {
+                for (int y = -1; y <= 1; y++) {
+                    for (int x = -1; x <= 1; x++) {
+                        int sectorX = curSectorX + x;
+                        int sectorY = curSectorY + y;
+
+                        if (0 <= sectorX && sectorX < markersBySector.length && 0 <= sectorY && sectorY < markersBySector[0].length) {
+                            ArrayList<Marker> markers = markersBySector[sectorY][sectorX];
+                            for (int i = 0; i < markers.size(); i++)
+                                markers.get(i).setVisible(false);
+                        }
+                    }
+                }
+            }
+
+            zoom = newZoom;
         }
     }
 }
