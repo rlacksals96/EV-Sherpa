@@ -17,11 +17,12 @@
         >
 
         <activity
-            android:name=".ui.profile.AddressPage"
+            android:name=".ui.profile.HomeAddressPage"
             android:label="@string/title_activity_address_page"
             android:theme="@style/Theme.EVSherpa.NoActionBar"></activity>
+        <activity android:name=".ui.profile.WorkplaceAddressPage"></activity>
         <activity android:name=".ui.profile.PopUpUpdateAge" />
-        <activity android:name=".ui.profile.AddressRegistration" />
+        <activity android:name=".ui.profile.HomeAddressRegistration" />
         <activity android:name=".ui.profile.PopUpCarRegistration" />
         <activity android:name=".ui.profile.PopUpUpdateNickname" />
         <activity android:name=".ui.preferenceSetting.PreferenceSettingActivity" />
