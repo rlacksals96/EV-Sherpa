@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class LoginRequest extends StringRequest {
-    final static private String ipAddress="172.20.10.6";
+    final static private String ipAddress="192.168.35.63";
     final static private String portNum="8080";
     final static private String route="/account/signin";
     final static private String URL="http://"+ipAddress+":"+portNum+route;
