@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class UpdateAgeRequest extends StringRequest {
-    final static private String ipAddress="localhost";
+    final static private String ipAddress="172.20.10.6";
     final static private String portNum="8080";
     final static private String route="/account/update/age";
     final static private String URL="http://"+ipAddress+":"+portNum+route;

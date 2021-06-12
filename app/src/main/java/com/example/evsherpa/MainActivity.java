@@ -198,7 +198,7 @@ public class MainActivity extends AppCompatActivity{
         String FILE_PATH="/data/data/com.example.evsherpa/files/profile.json";
 
         File f=new File(FILE_PATH);
-
+        Log.e("file check",String.valueOf(f.exists()));
 
         if(!f.exists()){
             try{
