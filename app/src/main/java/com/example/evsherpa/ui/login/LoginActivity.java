@@ -51,9 +51,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.security.MessageDigest;
 
@@ -231,17 +233,17 @@ public class LoginActivity extends AppCompatActivity {
                         try {
 
                             JSONObject jsonObject = new JSONObject(response);
-                            //boolean success=jsonObject.getBoolean("success");
+                            boolean success=jsonObject.getBoolean("success");
                             // 원래는 위의 방식으로 진행하는게 맞으나 서버와 연동이 안되서 자체적으로 success처리!
 //                            JSONObject jsonObject=new JSONObject("{\"success\":true}"); // 추후제거
-                            boolean success = true; //TODO: 서버와 연결시 해당 위치 주석처리
+//                            boolean success = true; //TODO: 서버와 연결시 해당 위치 주석처리
 
                             if (success) {
 
-
+                                mkProfile();
                                 Toast.makeText(getApplicationContext(), "로그인 성공.." + email + " and " + password, Toast.LENGTH_SHORT).show();
                                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-
+                                intent.putExtra("email",email);
                                 //TODO: 서버와 연결시 되는지 프로필 내용 전체 받아오는지 확인하기.(실제 실행시..밑부분 예시는 주석처리하기)
 
                                 String email=jsonObject.getString("email");
@@ -290,12 +292,12 @@ public class LoginActivity extends AppCompatActivity {
                 };
 
                 // 서버로 volley를 이용해서 요청을 함.
-//                LoginRequest loginRequest = new LoginRequest(email, password, responseListener);
-//                RequestQueue queue = Volley.newRequestQueue(LoginActivity.this);
-//                queue.add(loginRequest);
+                LoginRequest loginRequest = new LoginRequest(email, password, responseListener);
+                RequestQueue queue = Volley.newRequestQueue(LoginActivity.this);
+                queue.add(loginRequest);
                 //temporary... 구현후 삭제..
-                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                startActivity(intent);
+//                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+//                startActivity(intent);
                 Toast.makeText(LoginActivity.this,"login clicked",Toast.LENGTH_SHORT).show();
 
             }
@@ -451,5 +453,44 @@ public class LoginActivity extends AppCompatActivity {
         } catch (Exception e) {
             Log.e("name not found", e.toString());
         }
+    }
+    public void mkProfile(){
+        FileOutputStream fos=null;
+        String FILE_NAME= "profile.json";
+        String FILE_PATH="/data/data/com.example.evsherpa/files/profile.json";
+
+        File f=new File(FILE_PATH);
+        Log.e("file check",String.valueOf(f.exists()));
+
+        if(!f.exists()){
+            try{
+
+                InputStream is=this.getAssets().open("default_profile.json");
+                int size=is.available();
+                byte[] buffer=new byte[size];
+                is.read(buffer);
+                is.close();
+                String result=new String(buffer,"UTF-8");
+
+
+
+                fos=openFileOutput(FILE_NAME,MODE_PRIVATE);
+                fos.write(result.getBytes());
+                Log.i("file","create profile.json complete");
+            } catch(IOException fe){
+                fe.printStackTrace();
+            } finally {
+                if(fos!=null){
+                    try{
+                        fos.close();
+                    }catch (IOException e){
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+
+
+
     }
 }

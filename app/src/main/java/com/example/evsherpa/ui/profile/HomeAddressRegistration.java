@@ -17,7 +17,7 @@ import android.widget.TextView;
 import com.example.evsherpa.R;
 
 
-public class AddressRegistration extends AppCompatActivity {
+public class HomeAddressRegistration extends AppCompatActivity {
 
     private WebView browser;
     private TextView txt_addr;

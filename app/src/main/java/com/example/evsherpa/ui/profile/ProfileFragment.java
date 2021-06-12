@@ -21,14 +21,11 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.Volley;
 import com.example.evsherpa.MainActivity;
-import com.example.evsherpa.OnBackPressedListener;
 import com.example.evsherpa.R;
 import com.google.android.material.navigation.NavigationView;
 
@@ -40,7 +37,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 
 //TODO: 디자인 글자같은거 업그레이드 해주자
 public class ProfileFragment extends Fragment{
@@ -191,8 +187,8 @@ public class ProfileFragment extends Fragment{
 
 
                 // TODO: 추후 시도할때는 filezila키고 실행하고, 완성되면 주환이한테 페이지 뿌리는 기능추가하라 해야함.
-                Intent i=new Intent(getContext(),AddressPage.class);
-                i.putExtra("type","home");
+                Intent i=new Intent(getContext(), HomeAddressPage.class);
+//                i.putExtra("type","home");
                 startActivity(i);
 
 
@@ -205,8 +201,8 @@ public class ProfileFragment extends Fragment{
         btn_change_work_addr.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i=new Intent(getContext(),AddressPage.class);
-                i.putExtra("type","workplace");
+                Intent i=new Intent(getContext(), WorkplaceAddressPage.class);
+//                i.putExtra("type","workplace");
                 startActivity(i);
 //                refreshAddress();
             }
@@ -278,8 +274,8 @@ public class ProfileFragment extends Fragment{
                                     JSONObject jsonObject=new JSONObject(response);
 
                                     //TODO: 서버와 연결시 주석 변경하기
-//                                    boolean success=jsonObject.getBoolean("success");
-                                    boolean success=true;
+                                    boolean success=jsonObject.getBoolean("success");
+//                                    boolean success=true;
                                     if(!success){
                                         Toast.makeText(getContext(),"서버에 변경사항을 저장하지 못했습니다",Toast.LENGTH_SHORT).show();
                                         try{
@@ -402,8 +398,8 @@ public class ProfileFragment extends Fragment{
                             public void onResponse(String response) {
                                 try{
                                     JSONObject jsonObject=new JSONObject(response);
-                                    //boolean success=jsonObject.getBoolean("success");
-                                    boolean success=true;
+                                    boolean success=jsonObject.getBoolean("success");
+//                                    boolean success=true;
                                     // TODO: 서버와 연결시 주석 변경
 
                                     if(!success){
@@ -482,8 +478,8 @@ public class ProfileFragment extends Fragment{
                                 //json내용 꺼내오고, nickname textview 변경하기
                                 JSONObject profile = new JSONObject(loadJSON());
                                 profile.put("nickname", editNickname.getText().toString());
-//                                str_email = profile.getString("email");
-//                                str_nickname = profile.getString("nickname");
+                                str_email = profile.getString("email");
+                                str_nickname = profile.getString("nickname");
                                 //입력값이 없으면 그냥 취소된 걸로 인식.
                                 nickname.setText(editNickname.getText().toString());
 
@@ -508,8 +504,8 @@ public class ProfileFragment extends Fragment{
                                         JSONObject jsonObject = new JSONObject(response);
 
                                         //TODO: 서버와 연결시 주석 변경하기.
-//                            boolean success=jsonObject.getBoolean("success");
-                                        boolean success = true;
+                                        boolean success=jsonObject.getBoolean("success");
+//                                        boolean success = true;
 
 
                                         if(!success){
@@ -527,6 +523,8 @@ public class ProfileFragment extends Fragment{
                                             } catch (JSONException | IOException e){
                                                 e.printStackTrace();
                                             }
+                                        }else{
+                                            Toast.makeText(getContext(), "변경하였습니다", Toast.LENGTH_SHORT).show();
                                         }
 
                                     } catch (JSONException e) {
@@ -534,6 +532,8 @@ public class ProfileFragment extends Fragment{
                                     }
                                 }
                             };
+                            Log.e("check",str_email);
+                            Log.e("check2",str_nickname);
                             UpdateNicknameRequest nicknameRequest = new UpdateNicknameRequest(str_email, str_nickname, responseListener);
                             RequestQueue queue = Volley.newRequestQueue(getContext());
                             queue.add(nicknameRequest);
