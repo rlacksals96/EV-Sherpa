@@ -49,6 +49,22 @@
         android:textSize="36sp"
         android:visibility="invisible" />
 
+    <!-- 서버 테스트 -->
+    <Button
+        android:id="@+id/btn_server_test1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="120dp"
+        android:text="충전소 정보"/>
+
+    <!-- 서버 테스트 -->
+    <Button
+        android:id="@+id/btn_server_test2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="170dp"
+        android:text="충전기 상태 정보"/>
+
     <!-- 충전소 정보 페이지 -->
     <LinearLayout
         android:id="@+id/page_stationInfo"
@@ -95,6 +111,7 @@
 
         </LinearLayout>
 
+        <!-- 충전소 타입(?)
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -143,6 +160,7 @@
                 android:background="@color/sky_blue_500"/>
 
         </LinearLayout>
+        -->
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -468,5 +486,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/text_home" />
         -->
+
+    <ImageButton
+        android:id="@+id/btn_cancelShowFiltered"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding = "0dp"
+        android:layout_gravity="top|right"
+        android:layout_marginTop="50dp"
+        android:layout_marginRight="15dp"
+        android:visibility="invisible"
+        android:src="@drawable/common_google_signin_btn_icon_dark_normal"/>
 
 </FrameLayout>

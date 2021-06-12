@@ -15,6 +15,7 @@ import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -24,9 +25,18 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.example.evsherpa.BackPressCloseHandler;
 import com.example.evsherpa.R;
+import com.example.evsherpa.data.ChargerStatusInfoParser;
 import com.example.evsherpa.data.StationInfoParser;
-import com.example.evsherpa.data.model.ChgerInfo;
+import com.example.evsherpa.data.model.ChargerInfo;
 import com.example.evsherpa.data.model.StationInfo;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -83,8 +93,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
     private final int[] totalCountByRegion = new int[10];
 
-    private StationInfoParser parser;
-
     private Animator.AnimatorListener showBrieflyListener;
     private Animator.AnimatorListener showAllListener;
     private Animator.AnimatorListener hideBrieflyListener;
@@ -96,13 +104,21 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private TextView useTimeTv;
     private TextView busiCallTv;
     private TextView addressTv;
-    private LinearLayout[] chgerInfoLayouts;
-    private ImageView[][] chgerTypeIvs;
+    private LinearLayout[] chargerInfoLayouts;
+    private TextView[] chargerStatTvs;
+    private ImageView[][] chargerTypeIvs;
 
     private int SCREEN_WIDTH, SCREEN_HEIGHT;
     private final float MIN_MARKER_VISIBLE_ZOOM = 12.8f;
 
-    private float pressedTime;
+    //private float pressedTime;
+
+    private boolean showFiltered;
+    private final String GET_STATIONINFO_URL = "http://192.168.35.63:8080/api";
+    private final String GET_CHARGERSTATUSINFO_URL = "http://";
+    private final String GET_FILTEREDSTATIONLIST_URL = "http://";
+    private ArrayList<Marker> filteredMarkers = new ArrayList<Marker>();
+    private ImageButton cancelShowFiltered;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -111,6 +127,37 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        cancelShowFiltered = root.findViewById(R.id.btn_cancelShowFiltered);
+        cancelShowFiltered.setOnClickListener(view -> {
+            for(int i=0; i<filteredMarkers.size(); i++) {
+                filteredMarkers.get(i).remove();
+            }
+        });
+
+        // **************************
+        // **************************
+        // **************************
+        Button test1 = root.findViewById(R.id.btn_server_test1);
+        test1.setOnClickListener(view -> {
+
+            GetStationInfo();
+            Toast.makeText(getContext(), "Get Station Info", Toast.LENGTH_SHORT).show();
+
+
+            /*
+            Marker[] markers = new Marker[filteredMarkers.size()];
+            for(int i = 0; i< filteredMarkers.size(); i++){
+                markers[i] = filteredMarkers.get(i);
+            }
+            setCameraBounds(markers, 0);
+            */
+        });
+        Button test2 = root.findViewById(R.id.btn_server_test2);
+        test2.setOnClickListener(view -> {
+            GetChargerStatusInfo();
+            Toast.makeText(getContext(), "Get Charger Status Info", Toast.LENGTH_SHORT).show();
+        });
 
         // 뒤로가기 버튼
         getActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
@@ -124,6 +171,10 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
                 // 종료할지 한번 더 물어보기
                 else {
+                    BackPressCloseHandler handler = new BackPressCloseHandler(getActivity());
+                    handler.onBackPressed();
+
+                    /*
                     if (pressedTime == 0) {
                         Toast.makeText(getContext(), "한번 더 누르면 종료됩니다", Toast.LENGTH_SHORT).show();
                         pressedTime = System.currentTimeMillis();
@@ -135,6 +186,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                             getActivity().finish();
                         }
                     }
+                    */
                 }
             }
         });
@@ -170,7 +222,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 }
             });
         });
-        moveToCurLocationBtn.performClick();
+        //moveToCurLocationBtn.performClick();
 
         // 맵 정보 임시 저장
         if (savedInstanceState != null) {
@@ -198,29 +250,35 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         busiCallTv = root.findViewById(R.id.text_busiCall);
         addressTv = root.findViewById(R.id.text_address);
 
-        chgerInfoLayouts = new LinearLayout[4];
-        chgerInfoLayouts[0] = root.findViewById(R.id.layout_chargerInfo1);
-        chgerInfoLayouts[1] = root.findViewById(R.id.layout_chargerInfo2);
-        chgerInfoLayouts[2] = root.findViewById(R.id.layout_chargerInfo3);
-        chgerInfoLayouts[3] = root.findViewById(R.id.layout_chargerInfo4);
+        chargerInfoLayouts = new LinearLayout[4];
+        chargerInfoLayouts[0] = root.findViewById(R.id.layout_chargerInfo1);
+        chargerInfoLayouts[1] = root.findViewById(R.id.layout_chargerInfo2);
+        chargerInfoLayouts[2] = root.findViewById(R.id.layout_chargerInfo3);
+        chargerInfoLayouts[3] = root.findViewById(R.id.layout_chargerInfo4);
 
-        chgerTypeIvs = new ImageView[4][4];
-        chgerTypeIvs[0][0] = root.findViewById(R.id.image_combo1);
-        chgerTypeIvs[0][1] = root.findViewById(R.id.image_demo1);
-        chgerTypeIvs[0][2] = root.findViewById(R.id.image_ac1);
-        chgerTypeIvs[0][3] = root.findViewById(R.id.image_slowCharge1);
-        chgerTypeIvs[1][0] = root.findViewById(R.id.image_combo2);
-        chgerTypeIvs[1][1] = root.findViewById(R.id.image_demo2);
-        chgerTypeIvs[1][2] = root.findViewById(R.id.image_ac2);
-        chgerTypeIvs[0][3] = root.findViewById(R.id.image_slowCharge1);
-        chgerTypeIvs[2][0] = root.findViewById(R.id.image_combo3);
-        chgerTypeIvs[2][1] = root.findViewById(R.id.image_demo3);
-        chgerTypeIvs[2][2] = root.findViewById(R.id.image_ac3);
-        chgerTypeIvs[0][3] = root.findViewById(R.id.image_slowCharge1);
-        chgerTypeIvs[3][0] = root.findViewById(R.id.image_combo4);
-        chgerTypeIvs[3][1] = root.findViewById(R.id.image_demo4);
-        chgerTypeIvs[3][2] = root.findViewById(R.id.image_ac4);
-        chgerTypeIvs[0][3] = root.findViewById(R.id.image_slowCharge1);
+        chargerStatTvs = new TextView[4];
+        chargerStatTvs[0] = root.findViewById(R.id.text_chargerState1);
+        chargerStatTvs[1] = root.findViewById(R.id.text_chargerState2);
+        chargerStatTvs[2] = root.findViewById(R.id.text_chargerState3);
+        chargerStatTvs[3] = root.findViewById(R.id.text_chargerState4);
+
+        chargerTypeIvs = new ImageView[4][4];
+        chargerTypeIvs[0][0] = root.findViewById(R.id.image_combo1);
+        chargerTypeIvs[0][1] = root.findViewById(R.id.image_demo1);
+        chargerTypeIvs[0][2] = root.findViewById(R.id.image_ac1);
+        chargerTypeIvs[0][3] = root.findViewById(R.id.image_slowCharge1);
+        chargerTypeIvs[1][0] = root.findViewById(R.id.image_combo2);
+        chargerTypeIvs[1][1] = root.findViewById(R.id.image_demo2);
+        chargerTypeIvs[1][2] = root.findViewById(R.id.image_ac2);
+        chargerTypeIvs[0][3] = root.findViewById(R.id.image_slowCharge1);
+        chargerTypeIvs[2][0] = root.findViewById(R.id.image_combo3);
+        chargerTypeIvs[2][1] = root.findViewById(R.id.image_demo3);
+        chargerTypeIvs[2][2] = root.findViewById(R.id.image_ac3);
+        chargerTypeIvs[0][3] = root.findViewById(R.id.image_slowCharge1);
+        chargerTypeIvs[3][0] = root.findViewById(R.id.image_combo4);
+        chargerTypeIvs[3][1] = root.findViewById(R.id.image_demo4);
+        chargerTypeIvs[3][2] = root.findViewById(R.id.image_ac4);
+        chargerTypeIvs[0][3] = root.findViewById(R.id.image_slowCharge1);
 
         // 페이지 애니메이션 리스너
         showBrieflyListener = new Animator.AnimatorListener() {
@@ -330,9 +388,16 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         mMap = googleMap;
 
         ParseStationInfoData("");
+        ParseChargerStatusInfoData("");
 
         // 마커 클릭 시 해당 위치의 충전소 정보 표시
         mMap.setOnMarkerClickListener(marker -> {
+
+            //***************************
+            //***************************
+            //***************************
+            Log.i("ev-sherpa", "lat: " + marker.getPosition().latitude + "lng: " + marker.getPosition().longitude);
+
             // 해당 마커를 최상단으로 표시
             marker.setZIndex(Float.MAX_VALUE);
 
@@ -348,13 +413,40 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             busiCallTv.setText("전화번호  " + info.getBusiCall());
             addressTv.setText("주소  " + info.getAddr());
 
-            ArrayList<ChgerInfo> chgerInfos = info.getChgers();
-            for (int i = 0; i < chgerInfos.size(); i++) {
-                chgerInfoLayouts[i].setVisibility(View.VISIBLE);
+            Object[] values = info.getChargerInfoHashMap().values().toArray();
+            ChargerInfo[] chargerInfos = new ChargerInfo[values.length];
+            for (int i = 0; i < values.length; i++)
+                chargerInfos[i] = (ChargerInfo) values[i];
 
-                ChgerInfo chgerInfo = chgerInfos.get(i);
-                ImageView[] ivs = chgerTypeIvs[i];
-                switch (chgerInfo.getChgerType()) {
+            for (int i = 0; i < chargerInfos.length; i++) {
+                chargerInfoLayouts[i].setVisibility(View.VISIBLE);
+
+                ChargerInfo chargerInfo = chargerInfos[i];
+
+                TextView tv = chargerStatTvs[i];
+                switch (chargerInfo.getStatus()) {
+                    case 1:
+                        tv.setText("통신 이상");
+                        break;
+                    case 2:
+                        tv.setText("충전 대기");
+                        break;
+                    case 3:
+                        tv.setText("충전중");
+                        break;
+                    case 4:
+                        tv.setText("운영 중지");
+                        break;
+                    case 5:
+                        tv.setText("점검중");
+                        break;
+                    case 9:
+                        tv.setText("상태 미확인");
+                        break;
+                }
+
+                ImageView[] ivs = chargerTypeIvs[i];
+                switch (chargerInfo.getType()) {
                     case 1:
                         ivs[0].setColorFilter(ContextCompat.getColor(getContext(), R.color.gray_700), android.graphics.PorterDuff.Mode.MULTIPLY);
                         ivs[1].setColorFilter(ContextCompat.getColor(getContext(), R.color.white), android.graphics.PorterDuff.Mode.MULTIPLY);
@@ -399,10 +491,9 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                         break;
                 }
             }
-            for (int i = chgerInfos.size(); i < chgerTypeIvs.length; i++) {
-                chgerInfoLayouts[i].setVisibility(View.INVISIBLE);
+            for (int i = chargerInfos.length; i < chargerTypeIvs.length; i++) {
+                chargerInfoLayouts[i].setVisibility(View.INVISIBLE);
             }
-
 
             // 페이지 애니메이션 실행
             infoPage.animate().translationY(SCREEN_HEIGHT * 0.6f).setListener(showBrieflyListener);
@@ -464,8 +555,16 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         int color = count > 4 ? MARKER_GREEN : count > 2 ? MARKER_YELLOW : MARKER_RED;
 
         Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(lat, lng)).
-                icon(BitmapDescriptorFactory.fromBitmap(markerWithLabelIcon(Integer.toString(count), color))));
+                icon(BitmapDescriptorFactory.fromBitmap(markerIconWithLabel(Integer.toString(count), color))));
         marker.setVisible(false);
+
+        return marker;
+    }
+
+    private Marker createFilteredMarkr(double lat, double lng, int color) {
+        Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(lat, lng)).
+                icon(BitmapDescriptorFactory.fromBitmap(markerIcon(color))));
+        marker.setVisible(true);
 
         return marker;
     }
@@ -480,6 +579,26 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
     public void setCameraBounds(LatLngBounds bounds) {
         mMap.moveCamera((CameraUpdateFactory.newLatLngBounds(bounds, 0)));
+    }
+
+    public void setCameraBounds(Marker[] markers, int padding) {
+        double left = Double.MAX_VALUE;
+        double right = Double.MIN_VALUE;
+        double top = Double.MIN_VALUE;
+        double bottom = Double.MAX_VALUE;
+
+        for (int i = 0; i < markers.length; i++) {
+            double lat = markers[i].getPosition().latitude;
+            double lng = markers[i].getPosition().longitude;
+
+            if (lat > top) top = lat;
+            if (lat < bottom) bottom = lat;
+            if (lng > right) right = lng;
+            if (lng < left) left = lng;
+        }
+
+        LatLngBounds bounds = new LatLngBounds(new LatLng(bottom, left), new LatLng(top, right));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(bounds.getCenter(), 12));
     }
 
     public void setCameraBounds(LatLngBounds bounds, int padding) {
@@ -505,7 +624,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         setCameraBounds(cameraBounds);
     }
 
-    private Bitmap markerWithLabelIcon(String str, int markerColor) {
+    private Bitmap markerIconWithLabel(String str, int markerColor) {
         Bitmap src = null;
         switch (markerColor) {
             case MARKER_BLUE:
@@ -542,11 +661,38 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
+    private Bitmap markerIcon(int markerColor) {
+        Bitmap src = null;
+        switch (markerColor) {
+            case MARKER_BLUE:
+                src = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getContext().getResources(), R.drawable.ic_marker_blue), MARKER_WIDTH, MARKER_HEIGHT, false);
+                break;
+            case MARKER_GREEN:
+                src = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getContext().getResources(), R.drawable.ic_marker_green), MARKER_WIDTH, MARKER_HEIGHT, false);
+                break;
+            case MARKER_YELLOW:
+                src = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getContext().getResources(), R.drawable.ic_marker_yellow), MARKER_WIDTH, MARKER_HEIGHT, false);
+                break;
+            case MARKER_RED:
+                src = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getContext().getResources(), R.drawable.ic_marker_red), MARKER_WIDTH, MARKER_HEIGHT, false);
+                break;
+        }
+
+        if(src != null) {
+            Bitmap markerIcon = Bitmap.createBitmap(MARKER_WIDTH, MARKER_HEIGHT, src.getConfig());
+            return markerIcon;
+        }
+        else {
+            Log.d("ev-sherpa", "fail to make marker");
+            return null;
+        }
+    }
+
     private void ParseStationInfoData(String jsonStr) {
 
         //stationInfoHashMap = new StationInfoParser(getContext()).Parse(jsonStr);
 
-        parser = new StationInfoParser(getContext());
+        StationInfoParser parser = new StationInfoParser(getContext());
         stationInfoHashMap = parser.Parse(parser.getJsonString());
         Object[] values = stationInfoHashMap.values().toArray();
         StationInfo[] infos = new StationInfo[values.length];
@@ -599,13 +745,23 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             int sectorX = (int) ((infos[i].getLng() - FAR_WEST) / SECTOR_WIDTH);
             int sectorY = (int) ((infos[i].getLat() - FAR_SOUTH) / SECTOR_HEIGHT);
             markersBySector[sectorY][sectorX].add(marker);
+
+            filteredMarkers.add(marker);
         }
+    }
+
+    private void ParseChargerStatusInfoData(String jsonStr) {
+
+        //new StationInfoParser(getContext()).Parse(jsonStr, stationInfoHashMap);
+
+        ChargerStatusInfoParser parser = new ChargerStatusInfoParser(getContext());
+        parser.Parse(parser.getJsonString(), stationInfoHashMap);
     }
 
     private void checkAroundMarkers(boolean visible) {
         // 카메라 위치에 따라 마커 활성화/비활성화
         // 현재 위치한 구역의 주변 구역들을 검사해서 해당 마커가 화면 범위 내에 있는지 밖에 있는지 계산하여 마커 활성화/비활성화 결정
-        if (zoom > MIN_MARKER_VISIBLE_ZOOM) {
+        if (!showFiltered && zoom > MIN_MARKER_VISIBLE_ZOOM) {
             if (0 <= curSectorX && curSectorX < markersBySector.length && 0 <= curSectorY && curSectorY < markersBySector[0].length) {
                 for (int y = -1; y <= 1; y++) {
                     for (int x = -1; x <= 1; x++) {
@@ -634,7 +790,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         // 카메라 줌 정도에 따라 마커 활성화/비활성화
         if (0 <= curSectorX && curSectorX < markersBySector.length && 0 <= curSectorY && curSectorY < markersBySector[0].length) {
             float newZoom = mMap.getCameraPosition().zoom;
-            if (zoom < MIN_MARKER_VISIBLE_ZOOM && newZoom > MIN_MARKER_VISIBLE_ZOOM) {
+            if (!showFiltered && zoom < MIN_MARKER_VISIBLE_ZOOM && newZoom > MIN_MARKER_VISIBLE_ZOOM) {
                 for (int y = -1; y <= 1; y++) {
                     for (int x = -1; x <= 1; x++) {
                         int sectorX = curSectorX + x;
@@ -664,5 +820,59 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
             zoom = newZoom;
         }
+    }
+
+    private void GetStationInfo() {
+        RequestQueue queue = Volley.newRequestQueue(getContext());
+        StringRequest request = new StringRequest(Request.Method.GET, GET_STATIONINFO_URL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.i("ev-sherpa", "GetStationInfo: " + response);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getContext(), "fail to get station info", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        queue.add(request);
+    }
+
+    private void GetChargerStatusInfo() {
+        RequestQueue queue = Volley.newRequestQueue(getContext());
+        StringRequest request = new StringRequest(Request.Method.GET, GET_CHARGERSTATUSINFO_URL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.i("ev-sherpa", "GetChargerStatusInfo: " + response);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getContext(), "fail to get station info", Toast.LENGTH_SHORT).show();
+                Log.e("ev-sherpa", error.getMessage());
+            }
+        });
+
+        queue.add(request);
+    }
+
+    private void GetFilteredStationList() {
+        RequestQueue queue = Volley.newRequestQueue(getContext());
+        StringRequest request = new StringRequest(Request.Method.GET, GET_FILTEREDSTATIONLIST_URL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.i("ev-sherpa", "GetFilteredStationList: " + response);
+
+                showFiltered = true;
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getContext(), "fail to get filtered station list", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        queue.add(request);
     }
 }

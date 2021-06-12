@@ -3,7 +3,7 @@ package com.example.evsherpa.data;
 import android.content.Context;
 import android.util.Log;
 
-import com.example.evsherpa.data.model.ChgerInfo;
+import com.example.evsherpa.data.model.ChargerInfo;
 import com.example.evsherpa.data.model.StationInfo;
 
 import org.json.JSONArray;
@@ -37,7 +37,7 @@ public class StationInfoParser {
             ex.printStackTrace();
         }
 
-        Log.d("ev-sherpa", json);
+        //Log.d("ev-sherpa", json);
 
         return json;
     }
@@ -55,14 +55,14 @@ public class StationInfoParser {
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject object = jsonArray.getJSONObject(i);
 
-                Log.d("ev-sherpa", object.toString());
+                //Log.d("ev-sherpa", object.toString());
 
                 String statId = object.getString("statId");
 
                 // 이미 있는 경우 충전기 정보만 추가
                 if(stationInfoHashMap.containsKey(statId)) {
                     StationInfo stationInfo = stationInfoHashMap.get(statId);
-                    stationInfo.addChger(new ChgerInfo(Integer.parseInt(object.getString("chgerId")), Integer.parseInt(object.getString("chgerType"))));
+                    stationInfo.addChargerInfo(new ChargerInfo(Integer.parseInt(object.getString("chgerId")), Integer.parseInt(object.getString("chgerType"))));
                 }
 
                 // 없는 경우 새롭게 충전소 정보 추가
@@ -70,7 +70,7 @@ public class StationInfoParser {
                     StationInfo stationInfo = new StationInfo();
                     stationInfo.setStatNm(object.getString("statNm"));
                     stationInfo.setStatId(statId);
-                    stationInfo.addChger(new ChgerInfo(Integer.parseInt(object.getString("chgerId")), Integer.parseInt(object.getString("chgerType"))));
+                    stationInfo.addChargerInfo(new ChargerInfo(Integer.parseInt(object.getString("chgerId")), Integer.parseInt(object.getString("chgerType"))));
                     stationInfo.setAddr(object.getString("addr"));
                     stationInfo.setLat(Float.parseFloat(object.getString("lat")));
                     stationInfo.setLng(Float.parseFloat(object.getString("lng")));

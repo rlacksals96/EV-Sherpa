@@ -1,11 +1,12 @@
 package com.example.evsherpa.data.model;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 public class StationInfo {
     private String statId;
     private String statNm;
-    private ArrayList<ChgerInfo> chgers = new ArrayList<ChgerInfo>();
+    private HashMap<Integer, ChargerInfo> chargerInfoHashMap = new HashMap<Integer, ChargerInfo>();
+    //private ArrayList<ChargerInfo> chgers = new ArrayList<ChargerInfo>();
     private String addr;
     private float lat;
     private float lng;
@@ -41,11 +42,11 @@ public class StationInfo {
         this.statNm = statNm;
     }
 
-    public void addChger(ChgerInfo chger) { this.chgers.add(chger); }
+    public void addChargerInfo(ChargerInfo charger) { this.chargerInfoHashMap.put(charger.getId(), charger); }
 
-    public ArrayList<ChgerInfo> getChgers() { return chgers; }
+    public HashMap<Integer, ChargerInfo> getChargerInfoHashMap() { return chargerInfoHashMap; }
 
-    public ChgerInfo getChger(int index) { return chgers.get(index); }
+    public ChargerInfo getChargerInfo(int id) { return chargerInfoHashMap.get(id); }
 
     public String getAddr() {
         return addr;
