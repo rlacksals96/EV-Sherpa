@@ -8,6 +8,13 @@
       "busiId": "ME"
     },
     {
+      "chgerId": "02",
+      "statId": "ME000001",
+      "stat": 2,
+      "statUpdDt": 20210602140933,
+      "busiId": "ME"
+    },
+    {
       "chgerId": "01",
       "statId": "ME000002",
       "stat": 2,

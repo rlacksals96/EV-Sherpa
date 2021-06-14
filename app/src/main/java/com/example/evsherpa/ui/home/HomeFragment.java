@@ -1,6 +1,7 @@
 package com.example.evsherpa.ui.home;
 
 import android.animation.Animator;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -9,6 +10,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
@@ -30,11 +32,10 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.evsherpa.BackPressCloseHandler;
 import com.example.evsherpa.R;
 import com.example.evsherpa.data.ChargerStatusInfoParser;
+import com.example.evsherpa.data.FilteredStationInfoParser;
 import com.example.evsherpa.data.StationInfoParser;
 import com.example.evsherpa.data.model.ChargerInfo;
 import com.example.evsherpa.data.model.StationInfo;
@@ -51,11 +52,15 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
+    private int SCREEN_WIDTH, SCREEN_HEIGHT;
+    private final float MIN_MARKER_VISIBLE_ZOOM = 12.8f;
     private final float DEFAULT_ZOOM = 18;
 
     private final String KEY_LOCATION = "current_location";
@@ -65,27 +70,30 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private Location mCurLocation;
     private Location mDeviceLocation;
     private FusedLocationProviderClient mFusedLocationProviderClient;
+    private ImageButton moveToCurLocationBtn;
 
-    private TextView zoomLevelTv;
-    private TextView latlngTv;
+    //private TextView zoomLevelTv;
+    //private TextView latlngTv;
+
+    private double lat, lng;
+    private float zoom;
+
+    private StationInfoParser stationInfoParser;
+    private ChargerStatusInfoParser chargerStatusInfoParser;
+    private FilteredStationInfoParser filteredStationInfoParser;
 
     private HashMap<String, StationInfo> stationInfoHashMap = new HashMap<String, StationInfo>();
 
-    private float zoom;
-
-    private final ArrayList<Marker>[][] markersBySector = new ArrayList[46][92];
     private int curSectorX, curSectorY;
     private final float SECTOR_WIDTH = 0.07801f;
     private final float SECTOR_HEIGHT = 0.11707f;
     private final float FAR_SOUTH = 33.0643f;
     private final float FAR_WEST = 124.3636f;
-
-    private double lat, lng;
+    private final ArrayList<Marker>[][] markersBySector = new ArrayList[46][92];
 
     private final int MARKER_WIDTH = 100;
     private final int MARKER_HEIGHT = 100;
     private final float MARKER_LABEL_SIZE = 50;
-
     private final int MARKER_BLUE = 0;
     private final int MARKER_GREEN = 1;
     private final int MARKER_YELLOW = 2;
@@ -108,17 +116,25 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     private TextView[] chargerStatTvs;
     private ImageView[][] chargerTypeIvs;
 
-    private int SCREEN_WIDTH, SCREEN_HEIGHT;
-    private final float MIN_MARKER_VISIBLE_ZOOM = 12.8f;
-
-    //private float pressedTime;
-
     private boolean showFiltered;
+    private ArrayList<Marker> filteredMarkers = new ArrayList<Marker>();
+    private ImageButton cancelShowFilteredBtn;
+    private ImageButton filteringBtn;
+
     private final String GET_STATIONINFO_URL = "http://192.168.35.63:8080/api";
     private final String GET_CHARGERSTATUSINFO_URL = "http://";
     private final String GET_FILTEREDSTATIONLIST_URL = "http://";
-    private ArrayList<Marker> filteredMarkers = new ArrayList<Marker>();
-    private ImageButton cancelShowFiltered;
+
+    private Bitmap blueMarkerIcon;
+    private Bitmap greenMarkerIcon;
+    private Bitmap yellowMarkerIcon;
+    private Bitmap redMarkerIcon;
+
+    private float pressedTime;
+
+    private Button searchPathBtn;
+
+    private StationInfo selectedStationInfo;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -128,30 +144,17 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        cancelShowFiltered = root.findViewById(R.id.btn_cancelShowFiltered);
-        cancelShowFiltered.setOnClickListener(view -> {
-            for(int i=0; i<filteredMarkers.size(); i++) {
-                filteredMarkers.get(i).remove();
-            }
-        });
+        stationInfoParser = new StationInfoParser(getContext());
+        chargerStatusInfoParser = new ChargerStatusInfoParser(getContext());
+        filteredStationInfoParser = new FilteredStationInfoParser(getContext());
 
         // **************************
         // **************************
         // **************************
         Button test1 = root.findViewById(R.id.btn_server_test1);
         test1.setOnClickListener(view -> {
-
             GetStationInfo();
             Toast.makeText(getContext(), "Get Station Info", Toast.LENGTH_SHORT).show();
-
-
-            /*
-            Marker[] markers = new Marker[filteredMarkers.size()];
-            for(int i = 0; i< filteredMarkers.size(); i++){
-                markers[i] = filteredMarkers.get(i);
-            }
-            setCameraBounds(markers, 0);
-            */
         });
         Button test2 = root.findViewById(R.id.btn_server_test2);
         test2.setOnClickListener(view -> {
@@ -171,10 +174,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
                 // 종료할지 한번 더 물어보기
                 else {
-                    BackPressCloseHandler handler = new BackPressCloseHandler(getActivity());
-                    handler.onBackPressed();
-
-                    /*
                     if (pressedTime == 0) {
                         Toast.makeText(getContext(), "한번 더 누르면 종료됩니다", Toast.LENGTH_SHORT).show();
                         pressedTime = System.currentTimeMillis();
@@ -186,7 +185,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                             getActivity().finish();
                         }
                     }
-                    */
                 }
             }
         });
@@ -198,21 +196,27 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         SCREEN_WIDTH = size.x;
         SCREEN_HEIGHT = size.y;
 
+        // 맵 정보 임시 저장
+        if (savedInstanceState != null) {
+            mCurLocation = savedInstanceState.getParcelable((KEY_LOCATION));
+            mMap.moveCamera(savedInstanceState.getParcelable((KEY_CAMERA_POSITION)));
+        }
+
         // 현재 줌 레벨 표시 텍스트
-        zoomLevelTv = root.findViewById(R.id.text_log_zoom);
+        //zoomLevelTv = root.findViewById(R.id.text_log_zoom);
 
         // 현재 카메라 위치 표시 텍스트
-        latlngTv = root.findViewById(R.id.text_log_latlng);
+        //latlngTv = root.findViewById(R.id.text_log_latlng);
 
         // 현재 GPS 위치
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getContext());
 
-        ImageButton moveToCurLocationBtn = root.findViewById(R.id.btn_curLocation);
+        moveToCurLocationBtn = root.findViewById(R.id.btn_curLocation);
         moveToCurLocationBtn.setOnClickListener(view -> {
             getCurrentLocation(task -> {
                 if (task.isSuccessful()) {
                     if (mDeviceLocation != null) {
-                        checkAroundMarkers(false);
+                        setAroundMarkersVisibility(false);
                         setCameraPosition(mDeviceLocation.getLatitude(), mDeviceLocation.getLongitude(), DEFAULT_ZOOM);
                     } else {
                         Log.d("ev-sherpa", "location null");
@@ -222,13 +226,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                 }
             });
         });
-        //moveToCurLocationBtn.performClick();
-
-        // 맵 정보 임시 저장
-        if (savedInstanceState != null) {
-            mCurLocation = savedInstanceState.getParcelable((KEY_LOCATION));
-            mMap.moveCamera(savedInstanceState.getParcelable((KEY_CAMERA_POSITION)));
-        }
+        moveToCurLocationBtn.performClick();
 
         // 충전소 정보 페이지
         infoPage = root.findViewById(R.id.page_stationInfo);
@@ -236,7 +234,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             infoPage.animate().translationY(0).setListener(showAllListener);
         });
         infoPage.setY(SCREEN_HEIGHT);
-        //infoPage.animate().y(SCREEN_HEIGHT);
 
         // 충전소 정보 페이지 닫기 버튼
         ImageButton closeInfoPageBtn = root.findViewById(R.id.btn_close_page_stationInfo);
@@ -270,15 +267,15 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         chargerTypeIvs[1][0] = root.findViewById(R.id.image_combo2);
         chargerTypeIvs[1][1] = root.findViewById(R.id.image_demo2);
         chargerTypeIvs[1][2] = root.findViewById(R.id.image_ac2);
-        chargerTypeIvs[0][3] = root.findViewById(R.id.image_slowCharge1);
+        chargerTypeIvs[1][3] = root.findViewById(R.id.image_slowCharge1);
         chargerTypeIvs[2][0] = root.findViewById(R.id.image_combo3);
         chargerTypeIvs[2][1] = root.findViewById(R.id.image_demo3);
         chargerTypeIvs[2][2] = root.findViewById(R.id.image_ac3);
-        chargerTypeIvs[0][3] = root.findViewById(R.id.image_slowCharge1);
+        chargerTypeIvs[2][3] = root.findViewById(R.id.image_slowCharge1);
         chargerTypeIvs[3][0] = root.findViewById(R.id.image_combo4);
         chargerTypeIvs[3][1] = root.findViewById(R.id.image_demo4);
         chargerTypeIvs[3][2] = root.findViewById(R.id.image_ac4);
-        chargerTypeIvs[0][3] = root.findViewById(R.id.image_slowCharge1);
+        chargerTypeIvs[3][3] = root.findViewById(R.id.image_slowCharge1);
 
         // 페이지 애니메이션 리스너
         showBrieflyListener = new Animator.AnimatorListener() {
@@ -370,33 +367,52 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             }
         }
 
+        // 필터링 버튼
+        filteringBtn = root.findViewById(R.id.btn_filtering);
+        filteringBtn.setOnClickListener(view -> {
+            GetFilteredStationList();
+            cancelShowFilteredBtn.setVisibility(View.VISIBLE);
+            filteringBtn.setVisibility(View.INVISIBLE);
+        });
+
+        // 필터링 취소 버튼
+        cancelShowFilteredBtn = root.findViewById(R.id.btn_cancelShowFiltered);
+        cancelShowFilteredBtn.setOnClickListener(view -> {
+            for (int i = 0; i < filteredMarkers.size(); i++) {
+                filteredMarkers.get(i).remove();
+            }
+            setAroundMarkersVisibility(true);
+
+            cancelShowFilteredBtn.setVisibility(View.INVISIBLE);
+            filteringBtn.setVisibility(View.VISIBLE);
+        });
+
+        // 길찾기 버튼
+        searchPathBtn = root.findViewById(R.id.btn_searchPath);
+        searchPathBtn.setOnClickListener(view -> {
+            findPathByKakaoMap(selectedStationInfo.getLat(), selectedStationInfo.getLng());
+        });
+
         return root;
 
-//        homeViewModel =
-//                new ViewModelProvider(this).get(HomeViewModel.class);
-//        final TextView textView = root.findViewById(R.id.text_home);
-//        homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
-//            @Override
-//            public void onChanged(@Nullable String s) {
-//                textView.setText(s);
-//            }
-//        });
+        /*
+        homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
+        final TextView textView = root.findViewById(R.id.text_home);
+        homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
+            @Override
+            public void onChanged(@Nullable String s) {
+                textView.setText(s);
+            }
+        });
+         */
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        ParseStationInfoData("");
-        ParseChargerStatusInfoData("");
-
         // 마커 클릭 시 해당 위치의 충전소 정보 표시
         mMap.setOnMarkerClickListener(marker -> {
-
-            //***************************
-            //***************************
-            //***************************
-            Log.i("ev-sherpa", "lat: " + marker.getPosition().latitude + "lng: " + marker.getPosition().longitude);
 
             // 해당 마커를 최상단으로 표시
             marker.setZIndex(Float.MAX_VALUE);
@@ -405,103 +421,104 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             String stationId = marker.getTag().toString();
             StationInfo info = stationInfoHashMap.get(stationId);
 
-            // ...
+            selectedStationInfo = info;
 
-            stationNameTv.setText(info.getStatNm());
-            busiNameTv.setText("운경기관  " + info.getBusiNm());
-            useTimeTv.setText("운영시간  " + info.getUseTime());
-            busiCallTv.setText("전화번호  " + info.getBusiCall());
-            addressTv.setText("주소  " + info.getAddr());
+            if (info != null) {
+                stationNameTv.setText(info.getStatNm());
+                busiNameTv.setText("운경기관  " + info.getBusiNm());
+                useTimeTv.setText("운영시간  " + info.getUseTime());
+                busiCallTv.setText("전화번호  " + info.getBusiCall());
+                addressTv.setText("주소  " + info.getAddr());
 
-            Object[] values = info.getChargerInfoHashMap().values().toArray();
-            ChargerInfo[] chargerInfos = new ChargerInfo[values.length];
-            for (int i = 0; i < values.length; i++)
-                chargerInfos[i] = (ChargerInfo) values[i];
+                Object[] values = info.getChargerInfoHashMap().values().toArray();
+                ChargerInfo[] chargerInfos = new ChargerInfo[values.length];
+                for (int i = 0; i < values.length; i++)
+                    chargerInfos[i] = (ChargerInfo) values[i];
 
-            for (int i = 0; i < chargerInfos.length; i++) {
-                chargerInfoLayouts[i].setVisibility(View.VISIBLE);
+                for (int i = 0; i < chargerInfos.length; i++) {
+                    chargerInfoLayouts[i].setVisibility(View.VISIBLE);
 
-                ChargerInfo chargerInfo = chargerInfos[i];
+                    ChargerInfo chargerInfo = chargerInfos[i];
 
-                TextView tv = chargerStatTvs[i];
-                switch (chargerInfo.getStatus()) {
-                    case 1:
-                        tv.setText("통신 이상");
-                        break;
-                    case 2:
-                        tv.setText("충전 대기");
-                        break;
-                    case 3:
-                        tv.setText("충전중");
-                        break;
-                    case 4:
-                        tv.setText("운영 중지");
-                        break;
-                    case 5:
-                        tv.setText("점검중");
-                        break;
-                    case 9:
-                        tv.setText("상태 미확인");
-                        break;
+                    TextView tv = chargerStatTvs[i];
+                    switch (chargerInfo.getStatus()) {
+                        case 1:
+                            tv.setText("통신 이상");
+                            break;
+                        case 2:
+                            tv.setText("충전 대기");
+                            break;
+                        case 3:
+                            tv.setText("충전중");
+                            break;
+                        case 4:
+                            tv.setText("운영 중지");
+                            break;
+                        case 5:
+                            tv.setText("점검중");
+                            break;
+                        case 9:
+                            tv.setText("상태 미확인");
+                            break;
+                    }
+
+                    ImageView[] ivs = chargerTypeIvs[i];
+                    switch (chargerInfo.getType()) {
+                        case 1:
+                            ivs[0].setBackgroundColor(ContextCompat.getColor(getContext(), R.color.gray_700));
+                            ivs[1].setBackgroundColor(ContextCompat.getColor(getContext(), R.color.white));
+                            ivs[2].setBackgroundColor(ContextCompat.getColor(getContext(), R.color.gray_700));
+                            ivs[3].setBackgroundColor(ContextCompat.getColor(getContext(), R.color.gray_700));
+                            break;
+                        case 2:
+                            ivs[0].setBackgroundColor(ContextCompat.getColor(getContext(), R.color.gray_700));
+                            ivs[1].setBackgroundColor(ContextCompat.getColor(getContext(), R.color.gray_700));
+                            ivs[2].setBackgroundColor(ContextCompat.getColor(getContext(), R.color.gray_700));
+                            ivs[3].setBackgroundColor(ContextCompat.getColor(getContext(), R.color.white));
+                            break;
+                        case 3:
+                            ivs[0].setBackgroundColor(ContextCompat.getColor(getContext(), R.color.gray_700));
+                            ivs[1].setBackgroundColor(ContextCompat.getColor(getContext(), R.color.white));
+                            ivs[2].setBackgroundColor(ContextCompat.getColor(getContext(), R.color.white));
+                            ivs[3].setBackgroundColor(ContextCompat.getColor(getContext(), R.color.gray_700));
+                            break;
+                        case 4:
+                            ivs[0].setBackgroundColor(ContextCompat.getColor(getContext(), R.color.white));
+                            ivs[1].setBackgroundColor(ContextCompat.getColor(getContext(), R.color.gray_700));
+                            ivs[2].setBackgroundColor(ContextCompat.getColor(getContext(), R.color.gray_700));
+                            ivs[3].setBackgroundColor(ContextCompat.getColor(getContext(), R.color.gray_700));
+                            break;
+                        case 5:
+                            ivs[0].setBackgroundColor(ContextCompat.getColor(getContext(), R.color.white));
+                            ivs[1].setBackgroundColor(ContextCompat.getColor(getContext(), R.color.white));
+                            ivs[2].setBackgroundColor(ContextCompat.getColor(getContext(), R.color.gray_700));
+                            ivs[3].setBackgroundColor(ContextCompat.getColor(getContext(), R.color.gray_700));
+                            break;
+                        case 6:
+                            ivs[0].setBackgroundColor(ContextCompat.getColor(getContext(), R.color.white));
+                            ivs[1].setBackgroundColor(ContextCompat.getColor(getContext(), R.color.white));
+                            ivs[2].setBackgroundColor(ContextCompat.getColor(getContext(), R.color.white));
+                            ivs[3].setBackgroundColor(ContextCompat.getColor(getContext(), R.color.gray_700));
+                            break;
+                        case 7:
+                            ivs[0].setBackgroundColor(ContextCompat.getColor(getContext(), R.color.gray_700));
+                            ivs[1].setBackgroundColor(ContextCompat.getColor(getContext(), R.color.gray_700));
+                            ivs[2].setBackgroundColor(ContextCompat.getColor(getContext(), R.color.white));
+                            ivs[3].setBackgroundColor(ContextCompat.getColor(getContext(), R.color.gray_700));
+                            break;
+                    }
+                }
+                for (int i = chargerInfos.length; i < chargerTypeIvs.length; i++) {
+                    chargerInfoLayouts[i].setVisibility(View.INVISIBLE);
                 }
 
-                ImageView[] ivs = chargerTypeIvs[i];
-                switch (chargerInfo.getType()) {
-                    case 1:
-                        ivs[0].setColorFilter(ContextCompat.getColor(getContext(), R.color.gray_700), android.graphics.PorterDuff.Mode.MULTIPLY);
-                        ivs[1].setColorFilter(ContextCompat.getColor(getContext(), R.color.white), android.graphics.PorterDuff.Mode.MULTIPLY);
-                        ivs[2].setColorFilter(ContextCompat.getColor(getContext(), R.color.gray_700), android.graphics.PorterDuff.Mode.MULTIPLY);
-                        ivs[3].setColorFilter(ContextCompat.getColor(getContext(), R.color.gray_700), android.graphics.PorterDuff.Mode.MULTIPLY);
-                        break;
-                    case 2:
-                        ivs[0].setColorFilter(ContextCompat.getColor(getContext(), R.color.gray_700), android.graphics.PorterDuff.Mode.MULTIPLY);
-                        ivs[1].setColorFilter(ContextCompat.getColor(getContext(), R.color.gray_700), android.graphics.PorterDuff.Mode.MULTIPLY);
-                        ivs[2].setColorFilter(ContextCompat.getColor(getContext(), R.color.gray_700), android.graphics.PorterDuff.Mode.MULTIPLY);
-                        ivs[3].setColorFilter(ContextCompat.getColor(getContext(), R.color.white), android.graphics.PorterDuff.Mode.MULTIPLY);
-                        break;
-                    case 3:
-                        ivs[0].setColorFilter(ContextCompat.getColor(getContext(), R.color.gray_700), android.graphics.PorterDuff.Mode.MULTIPLY);
-                        ivs[1].setColorFilter(ContextCompat.getColor(getContext(), R.color.white), android.graphics.PorterDuff.Mode.MULTIPLY);
-                        ivs[2].setColorFilter(ContextCompat.getColor(getContext(), R.color.white), android.graphics.PorterDuff.Mode.MULTIPLY);
-                        ivs[3].setColorFilter(ContextCompat.getColor(getContext(), R.color.gray_700), android.graphics.PorterDuff.Mode.MULTIPLY);
-                        break;
-                    case 4:
-                        ivs[0].setColorFilter(ContextCompat.getColor(getContext(), R.color.white), android.graphics.PorterDuff.Mode.MULTIPLY);
-                        ivs[1].setColorFilter(ContextCompat.getColor(getContext(), R.color.gray_700), android.graphics.PorterDuff.Mode.MULTIPLY);
-                        ivs[2].setColorFilter(ContextCompat.getColor(getContext(), R.color.gray_700), android.graphics.PorterDuff.Mode.MULTIPLY);
-                        ivs[3].setColorFilter(ContextCompat.getColor(getContext(), R.color.gray_700), android.graphics.PorterDuff.Mode.MULTIPLY);
-                        break;
-                    case 5:
-                        ivs[0].setColorFilter(ContextCompat.getColor(getContext(), R.color.white), android.graphics.PorterDuff.Mode.MULTIPLY);
-                        ivs[1].setColorFilter(ContextCompat.getColor(getContext(), R.color.white), android.graphics.PorterDuff.Mode.MULTIPLY);
-                        ivs[2].setColorFilter(ContextCompat.getColor(getContext(), R.color.gray_700), android.graphics.PorterDuff.Mode.MULTIPLY);
-                        ivs[3].setColorFilter(ContextCompat.getColor(getContext(), R.color.gray_700), android.graphics.PorterDuff.Mode.MULTIPLY);
-                        break;
-                    case 6:
-                        ivs[0].setColorFilter(ContextCompat.getColor(getContext(), R.color.white), android.graphics.PorterDuff.Mode.MULTIPLY);
-                        ivs[1].setColorFilter(ContextCompat.getColor(getContext(), R.color.white), android.graphics.PorterDuff.Mode.MULTIPLY);
-                        ivs[2].setColorFilter(ContextCompat.getColor(getContext(), R.color.white), android.graphics.PorterDuff.Mode.MULTIPLY);
-                        ivs[3].setColorFilter(ContextCompat.getColor(getContext(), R.color.gray_700), android.graphics.PorterDuff.Mode.MULTIPLY);
-                        break;
-                    case 7:
-                        ivs[0].setColorFilter(ContextCompat.getColor(getContext(), R.color.gray_700), android.graphics.PorterDuff.Mode.MULTIPLY);
-                        ivs[1].setColorFilter(ContextCompat.getColor(getContext(), R.color.gray_700), android.graphics.PorterDuff.Mode.MULTIPLY);
-                        ivs[2].setColorFilter(ContextCompat.getColor(getContext(), R.color.white), android.graphics.PorterDuff.Mode.MULTIPLY);
-                        ivs[3].setColorFilter(ContextCompat.getColor(getContext(), R.color.gray_700), android.graphics.PorterDuff.Mode.MULTIPLY);
-                        break;
-                }
+                // 페이지 열기 애니메이션 실행
+                infoPage.animate().translationY(SCREEN_HEIGHT * 0.6f).setListener(showBrieflyListener);
             }
-            for (int i = chargerInfos.length; i < chargerTypeIvs.length; i++) {
-                chargerInfoLayouts[i].setVisibility(View.INVISIBLE);
-            }
-
-            // 페이지 애니메이션 실행
-            infoPage.animate().translationY(SCREEN_HEIGHT * 0.6f).setListener(showBrieflyListener);
-
             return true;
         });
 
-        //
+        // 지도 클릭시 충전소 정보 페이지 닫기 애니메이션 실행
         mMap.setOnMapClickListener(latLng -> {
             infoPage.animate().translationY(SCREEN_HEIGHT).setListener(hideBrieflyListener);
         });
@@ -515,15 +532,19 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
             curSectorX = (int) ((lng - FAR_WEST) / SECTOR_WIDTH);
             curSectorY = (int) ((lat - FAR_SOUTH) / SECTOR_HEIGHT);
 
-            checkZoom();
-            checkAroundMarkers(true);
+            //checkZoom();
+            //checkAroundMarkers(true);
 
             // 현재 줌 레벨 표시
-            zoomLevelTv.setText("Zoom : " + mMap.getCameraPosition().zoom);
+            //zoomLevelTv.setText("Zoom : " + mMap.getCameraPosition().zoom);
 
             // 현재 카메라 위치 표시
-            latlngTv.setText("LatLng : " + lat + ", " + lng);
+            //latlngTv.setText("LatLng : " + lat + ", " + lng);
         });
+
+        parseStationInfoData(stationInfoParser.getJsonString());
+        parseChargerStatusInfoData(chargerStatusInfoParser.getJsonString());
+        createMarkers();
     }
 
     @Override
@@ -551,19 +572,19 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
-    private Marker createMarker(double lat, double lng, int count) {
+    private Marker createMarker(double lat, double lng, int count, boolean visibility) {
         int color = count > 4 ? MARKER_GREEN : count > 2 ? MARKER_YELLOW : MARKER_RED;
+        MarkerOptions option = new MarkerOptions().position(new LatLng(lat, lng)).icon(BitmapDescriptorFactory.fromBitmap(markerIconWithLabel(Integer.toString(count), color)));
 
-        Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(lat, lng)).
-                icon(BitmapDescriptorFactory.fromBitmap(markerIconWithLabel(Integer.toString(count), color))));
-        marker.setVisible(false);
+        Marker marker = mMap.addMarker(option);
+        marker.setVisible(visibility);
 
         return marker;
     }
 
-    private Marker createFilteredMarkr(double lat, double lng, int color) {
-        Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(lat, lng)).
-                icon(BitmapDescriptorFactory.fromBitmap(markerIcon(color))));
+    private Marker createFilteredMarker(double lat, double lng, int color) {
+        MarkerOptions option = new MarkerOptions().position(new LatLng(lat, lng)).icon(BitmapDescriptorFactory.fromBitmap(getMarkerIcon(color)));
+        Marker marker = mMap.addMarker(option);
         marker.setVisible(true);
 
         return marker;
@@ -575,10 +596,6 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
 
     public void setCameraPosition(LatLng latLng, float zoom) {
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
-    }
-
-    public void setCameraBounds(LatLngBounds bounds) {
-        mMap.moveCamera((CameraUpdateFactory.newLatLngBounds(bounds, 0)));
     }
 
     public void setCameraBounds(Marker[] markers, int padding) {
@@ -601,43 +618,28 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(bounds.getCenter(), 12));
     }
 
-    public void setCameraBounds(LatLngBounds bounds, int padding) {
-        mMap.moveCamera((CameraUpdateFactory.newLatLngBounds(bounds, padding)));
-    }
-
-    public void moveCameraPosition(double lat, double lng, float zoom) {
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lng), zoom));
-    }
-
-    public void moveCameraPosition(LatLng latLng, float zoom) {
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
-    }
-
-    public void setCameraPositionBounds(LatLng center, float regionRadius) {
-        if (mCurLocation.getLatitude() != center.latitude || mCurLocation.getLongitude() != center.longitude) {
-            setCameraPosition(center, DEFAULT_ZOOM);
-        }
-
-        LatLng leftBottom = new LatLng(center.latitude - regionRadius, center.longitude - regionRadius);
-        LatLng rightTop = new LatLng(center.latitude + regionRadius, center.longitude + regionRadius);
-        LatLngBounds cameraBounds = new LatLngBounds(leftBottom, rightTop);
-        setCameraBounds(cameraBounds);
-    }
-
     private Bitmap markerIconWithLabel(String str, int markerColor) {
         Bitmap src = null;
         switch (markerColor) {
             case MARKER_BLUE:
-                src = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getContext().getResources(), R.drawable.ic_marker_blue), MARKER_WIDTH, MARKER_HEIGHT, false);
+                if (blueMarkerIcon == null)
+                    blueMarkerIcon = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getContext().getResources(), R.drawable.ic_marker_blue), MARKER_WIDTH, MARKER_HEIGHT, false);
+                src = blueMarkerIcon;
                 break;
             case MARKER_GREEN:
-                src = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getContext().getResources(), R.drawable.ic_marker_green), MARKER_WIDTH, MARKER_HEIGHT, false);
+                if (greenMarkerIcon == null)
+                    greenMarkerIcon = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getContext().getResources(), R.drawable.ic_marker_green), MARKER_WIDTH, MARKER_HEIGHT, false);
+                src = greenMarkerIcon;
                 break;
             case MARKER_YELLOW:
-                src = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getContext().getResources(), R.drawable.ic_marker_yellow), MARKER_WIDTH, MARKER_HEIGHT, false);
+                if (yellowMarkerIcon == null)
+                    yellowMarkerIcon = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getContext().getResources(), R.drawable.ic_marker_yellow), MARKER_WIDTH, MARKER_HEIGHT, false);
+                src = yellowMarkerIcon;
                 break;
             case MARKER_RED:
-                src = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getContext().getResources(), R.drawable.ic_marker_red), MARKER_WIDTH, MARKER_HEIGHT, false);
+                if (redMarkerIcon == null)
+                    redMarkerIcon = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getContext().getResources(), R.drawable.ic_marker_red), MARKER_WIDTH, MARKER_HEIGHT, false);
+                src = redMarkerIcon;
                 break;
         }
 
@@ -661,46 +663,41 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
-    private Bitmap markerIcon(int markerColor) {
+    private Bitmap getMarkerIcon(int markerColor) {
         Bitmap src = null;
         switch (markerColor) {
             case MARKER_BLUE:
-                src = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getContext().getResources(), R.drawable.ic_marker_blue), MARKER_WIDTH, MARKER_HEIGHT, false);
+                if (blueMarkerIcon == null)
+                    blueMarkerIcon = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getContext().getResources(), R.drawable.ic_marker_blue), MARKER_WIDTH, MARKER_HEIGHT, false);
+                src = blueMarkerIcon;
                 break;
             case MARKER_GREEN:
-                src = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getContext().getResources(), R.drawable.ic_marker_green), MARKER_WIDTH, MARKER_HEIGHT, false);
+                if (greenMarkerIcon == null)
+                    greenMarkerIcon = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getContext().getResources(), R.drawable.ic_marker_green), MARKER_WIDTH, MARKER_HEIGHT, false);
+                src = greenMarkerIcon;
                 break;
             case MARKER_YELLOW:
-                src = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getContext().getResources(), R.drawable.ic_marker_yellow), MARKER_WIDTH, MARKER_HEIGHT, false);
+                if (yellowMarkerIcon == null)
+                    yellowMarkerIcon = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getContext().getResources(), R.drawable.ic_marker_yellow), MARKER_WIDTH, MARKER_HEIGHT, false);
+                src = yellowMarkerIcon;
                 break;
             case MARKER_RED:
-                src = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getContext().getResources(), R.drawable.ic_marker_red), MARKER_WIDTH, MARKER_HEIGHT, false);
+                if (redMarkerIcon == null)
+                    redMarkerIcon = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getContext().getResources(), R.drawable.ic_marker_red), MARKER_WIDTH, MARKER_HEIGHT, false);
+                src = redMarkerIcon;
                 break;
         }
 
-        if(src != null) {
-            Bitmap markerIcon = Bitmap.createBitmap(MARKER_WIDTH, MARKER_HEIGHT, src.getConfig());
-            return markerIcon;
-        }
-        else {
-            Log.d("ev-sherpa", "fail to make marker");
-            return null;
-        }
+        return src == null ? null : Bitmap.createBitmap(MARKER_WIDTH, MARKER_HEIGHT, src.getConfig());
     }
 
-    private void ParseStationInfoData(String jsonStr) {
+    private void parseStationInfoData(String jsonStr) {
+        stationInfoHashMap = stationInfoParser.Parse(jsonStr);
 
-        //stationInfoHashMap = new StationInfoParser(getContext()).Parse(jsonStr);
-
-        StationInfoParser parser = new StationInfoParser(getContext());
-        stationInfoHashMap = parser.Parse(parser.getJsonString());
-        Object[] values = stationInfoHashMap.values().toArray();
-        StationInfo[] infos = new StationInfo[values.length];
-        for (int i = 0; i < values.length; i++)
-            infos[i] = (StationInfo) values[i];
+        StationInfo[] infos = new StationInfo[stationInfoHashMap.values().size()];
+        stationInfoHashMap.values().toArray(infos);
 
         for (int i = 0; i < infos.length; i++) {
-
             switch (infos[i].getZcode()) {
                 case 11:
                     totalCountByRegion[0]++;
@@ -734,31 +731,69 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                     break;
             }
 
-            // 마커 생성
-            Marker marker = createMarker(infos[i].getLat(), infos[i].getLng(), 3);
-            marker.setTag(infos[i].getStatId());
-
-            // 위도/경도 위치를 계산해서 알맞은 Sector의 ArrayList에 마커 추가
-            // 위도/경도 값이 0부터 시작하는게 아니라서 가장 왼쪽/하단 값을 알아야 한다.
-            // 가장 왼쪽/하단 값이 20/10 이라고 한다면 이 값을 빼고 나눠야 0번부터 저장하는게 유효해진다
-
-            int sectorX = (int) ((infos[i].getLng() - FAR_WEST) / SECTOR_WIDTH);
-            int sectorY = (int) ((infos[i].getLat() - FAR_SOUTH) / SECTOR_HEIGHT);
-            markersBySector[sectorY][sectorX].add(marker);
-
-            filteredMarkers.add(marker);
+            /*
+            if(infos[i].getLng() > FAR_WEST && infos[i].getLat() > FAR_SOUTH) {
+                int sectorX = (int) ((infos[i].getLng() - FAR_WEST) / SECTOR_WIDTH);
+                int sectorY = (int) ((infos[i].getLat() - FAR_SOUTH) / SECTOR_HEIGHT);
+                markersBySector[sectorY][sectorX].add(marker);
+            }
+             */
         }
     }
 
-    private void ParseChargerStatusInfoData(String jsonStr) {
-
-        //new StationInfoParser(getContext()).Parse(jsonStr, stationInfoHashMap);
-
-        ChargerStatusInfoParser parser = new ChargerStatusInfoParser(getContext());
-        parser.Parse(parser.getJsonString(), stationInfoHashMap);
+    private void parseChargerStatusInfoData(String jsonStr) {
+        chargerStatusInfoParser.Parse(jsonStr, stationInfoHashMap);
     }
 
-    private void checkAroundMarkers(boolean visible) {
+    private void parseFilteredStationInfoData(String jsonStr) {
+        ArrayList<String> list = filteredStationInfoParser.Parse(jsonStr);
+
+        for (int i = 0; i < list.size(); i++) {
+            String id = list.get(i);
+            if (stationInfoHashMap.containsKey(id)) {
+                StationInfo info = stationInfoHashMap.get(id);
+                Marker marker = createFilteredMarker(info.getLat(), info.getLng(), info.getUsableChargerCount());
+                marker.setTag(info.getStatId());
+
+                filteredMarkers.add(marker);
+            }
+        }
+    }
+
+    private void createMarkers() {
+        StationInfo[] infos = new StationInfo[stationInfoHashMap.values().size()];
+        stationInfoHashMap.values().toArray(infos);
+
+        for (int i = 0; i < infos.length; i++) {
+            Marker marker = createMarker(infos[i].getLat(), infos[i].getLng(), infos[i].getUsableChargerCount(), true);
+            marker.setTag(infos[i].getStatId());
+        }
+    }
+
+    private void setAroundMarkersVisibility(boolean visibility) {
+        if (!showFiltered && zoom > MIN_MARKER_VISIBLE_ZOOM) {
+            if (0 <= curSectorX && curSectorX < markersBySector.length && 0 <= curSectorY && curSectorY < markersBySector[0].length) {
+                for (int y = -1; y <= 1; y++) {
+                    for (int x = -1; x <= 1; x++) {
+                        int sectorX = curSectorX + x;
+                        int sectorY = curSectorY + y;
+
+                        if (0 <= sectorX && sectorX < markersBySector.length && 0 <= sectorY && sectorY < markersBySector[0].length) {
+                            ArrayList<Marker> markers = markersBySector[sectorY][sectorX];
+                            for (int i = 0; i < markers.size(); i++) {
+                                LatLng latlng = markers.get(i).getPosition();
+                                if (lat - SECTOR_WIDTH / 2 < latlng.latitude && latlng.latitude < lat + SECTOR_WIDTH / 2
+                                        && lng - SECTOR_HEIGHT / 2 < latlng.longitude && latlng.longitude < lng + SECTOR_HEIGHT / 2)
+                                    markers.get(i).setVisible(visibility);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void checkAroundMarkers() {
         // 카메라 위치에 따라 마커 활성화/비활성화
         // 현재 위치한 구역의 주변 구역들을 검사해서 해당 마커가 화면 범위 내에 있는지 밖에 있는지 계산하여 마커 활성화/비활성화 결정
         if (!showFiltered && zoom > MIN_MARKER_VISIBLE_ZOOM) {
@@ -774,7 +809,7 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
                                 LatLng latlng = markers.get(i).getPosition();
                                 if (lat - SECTOR_WIDTH / 2 < latlng.latitude && latlng.latitude < lat + SECTOR_WIDTH / 2
                                         && lng - SECTOR_HEIGHT / 2 < latlng.longitude && latlng.longitude < lng + SECTOR_HEIGHT / 2)
-                                    markers.get(i).setVisible(visible);
+                                    markers.get(i).setVisible(true);
                                 else {
                                     markers.get(i).setVisible(false);
                                 }
@@ -823,56 +858,92 @@ public class HomeFragment extends Fragment implements OnMapReadyCallback {
     }
 
     private void GetStationInfo() {
-        RequestQueue queue = Volley.newRequestQueue(getContext());
-        StringRequest request = new StringRequest(Request.Method.GET, GET_STATIONINFO_URL, new Response.Listener<String>() {
+        Map<String, String> map = new HashMap<>();
+        map.put("email", "qq@naver.com");
+        map.put("lat", Double.toString(lat));
+        map.put("lng", Double.toString(lng));
+        MapRequest stationInfoRequest = new MapRequest(Request.Method.POST, GET_STATIONINFO_URL, map, new Response.Listener<String>() {
+
             @Override
             public void onResponse(String response) {
-                Log.i("ev-sherpa", "GetStationInfo: " + response);
+                parseStationInfoData(response);
+                Log.i("ev-sherpa", response);
             }
         }, new Response.ErrorListener() {
+
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getContext(), "fail to get station info", Toast.LENGTH_SHORT).show();
+                Log.e("ev-sherpa", error.toString());
             }
         });
 
-        queue.add(request);
+        RequestQueue queue = Volley.newRequestQueue(getActivity());
+        queue.add(stationInfoRequest);
+
+        Toast.makeText(getContext(), "Get Station Info", Toast.LENGTH_SHORT).show();
     }
 
     private void GetChargerStatusInfo() {
-        RequestQueue queue = Volley.newRequestQueue(getContext());
-        StringRequest request = new StringRequest(Request.Method.GET, GET_CHARGERSTATUSINFO_URL, new Response.Listener<String>() {
+        Map<String, String> map = new HashMap<>();
+        map.put("email", "qq@naver.com");
+        MapRequest stationInfoRequest = new MapRequest(Request.Method.POST, GET_CHARGERSTATUSINFO_URL, map, new Response.Listener<String>() {
+
             @Override
             public void onResponse(String response) {
-                Log.i("ev-sherpa", "GetChargerStatusInfo: " + response);
+                parseChargerStatusInfoData(response);
+                Log.i("ev-sherpa", response);
             }
         }, new Response.ErrorListener() {
+
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getContext(), "fail to get station info", Toast.LENGTH_SHORT).show();
-                Log.e("ev-sherpa", error.getMessage());
+                Log.e("ev-sherpa", error.toString());
             }
         });
 
-        queue.add(request);
+        RequestQueue queue = Volley.newRequestQueue(getActivity());
+        queue.add(stationInfoRequest);
+
+        Toast.makeText(getContext(), "Get Charger Status Info", Toast.LENGTH_SHORT).show();
     }
 
     private void GetFilteredStationList() {
-        RequestQueue queue = Volley.newRequestQueue(getContext());
-        StringRequest request = new StringRequest(Request.Method.GET, GET_FILTEREDSTATIONLIST_URL, new Response.Listener<String>() {
+        Map<String, String> map = new HashMap<>();
+        map.put("email", "qq@naver.com");
+        map.put("lat", Double.toString(lat));
+        map.put("lng", Double.toString(lng));
+        MapRequest stationInfoRequest = new MapRequest(Request.Method.POST, GET_FILTEREDSTATIONLIST_URL, map, new Response.Listener<String>() {
+
             @Override
             public void onResponse(String response) {
-                Log.i("ev-sherpa", "GetFilteredStationList: " + response);
-
                 showFiltered = true;
+
+                parseFilteredStationInfoData(response);
+                moveToCurLocationBtn.performClick();
+
+                Log.i("ev-sherpa", response);
             }
         }, new Response.ErrorListener() {
+
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getContext(), "fail to get filtered station list", Toast.LENGTH_SHORT).show();
+                Log.e("ev-sherpa", error.toString());
             }
         });
 
-        queue.add(request);
+        RequestQueue queue = Volley.newRequestQueue(getActivity());
+        queue.add(stationInfoRequest);
+
+        Toast.makeText(getContext(), "Get Filtered Station Info", Toast.LENGTH_SHORT).show();
+    }
+
+    private void findPathByKakaoMap(double endLat, double endLng) {
+
+        double startLat = mDeviceLocation.getLatitude();
+        double startLng = mDeviceLocation.getLongitude();
+
+        String url = "kakaomap://route?sp=" + startLat + "," + startLng + "&ep=" + endLat + "," + endLng + "&by=CAR";
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+        startActivity(intent);
     }
 }

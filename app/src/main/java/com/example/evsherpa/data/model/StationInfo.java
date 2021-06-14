@@ -1,5 +1,7 @@
 package com.example.evsherpa.data.model;
 
+import android.util.Log;
+
 import java.util.HashMap;
 
 public class StationInfo {
@@ -42,11 +44,17 @@ public class StationInfo {
         this.statNm = statNm;
     }
 
-    public void addChargerInfo(ChargerInfo charger) { this.chargerInfoHashMap.put(charger.getId(), charger); }
+    public void addChargerInfo(ChargerInfo charger) {
+        this.chargerInfoHashMap.put(charger.getId(), charger);
+    }
 
-    public HashMap<Integer, ChargerInfo> getChargerInfoHashMap() { return chargerInfoHashMap; }
+    public HashMap<Integer, ChargerInfo> getChargerInfoHashMap() {
+        return chargerInfoHashMap;
+    }
 
-    public ChargerInfo getChargerInfo(int id) { return chargerInfoHashMap.get(id); }
+    public ChargerInfo getChargerInfo(int id) {
+        return chargerInfoHashMap.get(id);
+    }
 
     public String getAddr() {
         return addr;
@@ -118,5 +126,20 @@ public class StationInfo {
 
     public void setParkingFree(String parkingFree) {
         this.parkingFree = parkingFree;
+    }
+
+    public int getUsableChargerCount() {
+        int count = 0;
+
+        ChargerInfo[] chargerInfos = new ChargerInfo[chargerInfoHashMap.values().size()];
+        chargerInfoHashMap.values().toArray(chargerInfos);
+
+        for (int i = 0; i < chargerInfos.length; i++) {
+            if (chargerInfos[i].getStatus() == 2) count++;
+        }
+
+        Log.i("ev-sherpa", "usableCount:"+count);
+
+        return count;
     }
 }

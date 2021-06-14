@@ -16,16 +16,45 @@
         android:layout_height="match_parent"
         tools:context=".ui.home.HomeActivity" />
 
+    <!-- 필터링 -->
+    <ImageButton
+        android:id="@+id/btn_filtering"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:padding = "0dp"
+        android:layout_gravity="top|right"
+        android:layout_marginTop="50dp"
+        android:layout_marginRight="70dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/ic_filtering"
+        android:background="@color/fui_transparent"/>
+
+    <!-- 필터링 해제 -->
+    <ImageButton
+        android:id="@+id/btn_cancelShowFiltered"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:padding = "0dp"
+        android:layout_gravity="top|right"
+        android:layout_marginTop="50dp"
+        android:layout_marginRight="70dp"
+        android:visibility="invisible"
+        android:scaleType="fitXY"
+        android:src="@drawable/ic_back"
+        android:background="@color/fui_transparent"/>
+
     <!-- 현재 GPS 위치 -->
     <ImageButton
         android:id="@+id/btn_curLocation"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:padding = "0dp"
         android:layout_gravity="top|right"
         android:layout_marginTop="50dp"
         android:layout_marginRight="15dp"
-        android:src="@drawable/common_google_signin_btn_icon_dark_normal"/>
+        android:scaleType="fitXY"
+        android:src="@drawable/ic_curlocation"
+        android:background="@color/fui_transparent"/>
 
     <!-- 줌 디버깅 -->
     <TextView
@@ -72,7 +101,6 @@
         android:layout_height="match_parent"
         android:layout_gravity="top"
         android:background="@color/white"
-        android:visibility="invisible"
         android:orientation="vertical" >
 
         <LinearLayout
@@ -89,25 +117,40 @@
                 android:id="@+id/image_busi"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
+                android:visibility="invisible"
                 android:src="@drawable/common_google_signin_btn_icon_light_normal"/>
 
             <!-- 충전소 이름 -->
             <TextView
                 android:id="@+id/text_stationName"
-                android:layout_width="290dp"
+                android:layout_width="210dp"
                 android:layout_height="50dp"
                 android:layout_marginLeft="10dp"
                 android:text="hi hello"
-                android:gravity="center"
-                android:textSize="27dp"/>
+                android:paddingLeft="5dp"
+                android:gravity="center_vertical|left"
+                android:textSize="17dp"/>
 
+            <!-- 길찾기 버튼 -->
+            <Button
+                android:id="@+id/btn_searchPath"
+                android:layout_width="70dp"
+                android:layout_height="50dp"
+                android:layout_marginLeft="10dp"
+                android:layout_gravity="center"
+                android:text="길찾기"
+                android:textSize="12dp"/>
+
+            <!-- 뒤로 가기 버튼 -->
             <ImageButton
                 android:id="@+id/btn_close_page_stationInfo"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_marginLeft="10dp"
                 android:layout_gravity="center"
-                android:src="@drawable/common_google_signin_btn_icon_dark_normal"/>
+                android:scaleType="fitXY"
+                android:src="@drawable/ic_back"
+                android:background="@color/fui_transparent"/>
 
         </LinearLayout>
 
@@ -223,7 +266,7 @@
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_marginLeft="20dp"
-                    android:src="@drawable/common_google_signin_btn_icon_light_normal"
+                    android:src="@drawable/ic_combo"
                     android:tintMode="multiply"
                     app:tint="@color/gray_700" />
 
@@ -231,7 +274,8 @@
                     android:id="@+id/image_demo1"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:src="@drawable/common_google_signin_btn_icon_light_normal"
+                    android:layout_marginLeft="10dp"
+                    android:src="@drawable/ic_demo"
                     android:tintMode="multiply"
                     app:tint="@color/gray_700" />
 
@@ -239,7 +283,8 @@
                     android:id="@+id/image_ac1"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:src="@drawable/common_google_signin_btn_icon_light_normal"
+                    android:layout_marginLeft="10dp"
+                    android:src="@drawable/ic_ac"
                     android:tintMode="multiply"
                     app:tint="@color/gray_700" />
 
@@ -247,7 +292,8 @@
                     android:id="@+id/image_slowCharge1"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:src="@drawable/common_google_signin_btn_icon_light_normal"
+                    android:layout_marginLeft="10dp"
+                    android:src="@drawable/ic_slow"
                     android:tintMode="multiply"
                     app:tint="@color/gray_700" />
 
@@ -273,15 +319,17 @@
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_marginLeft="20dp"
-                    android:src="@drawable/common_google_signin_btn_icon_light_normal"
+                    android:src="@drawable/ic_combo"
                     android:tintMode="multiply"
-                    app:tint="@color/gray_700" />
+                    app:tint="@color/gray_700"
+                    android:background="@color/white"/>
 
                 <ImageView
                     android:id="@+id/image_demo2"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:src="@drawable/common_google_signin_btn_icon_light_normal"
+                    android:layout_marginLeft="10dp"
+                    android:src="@drawable/ic_demo"
                     android:tintMode="multiply"
                     app:tint="@color/gray_700" />
 
@@ -289,7 +337,8 @@
                     android:id="@+id/image_ac2"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:src="@drawable/common_google_signin_btn_icon_light_normal"
+                    android:layout_marginLeft="10dp"
+                    android:src="@drawable/ic_ac"
                     android:tintMode="multiply"
                     app:tint="@color/gray_700" />
 
@@ -297,7 +346,8 @@
                     android:id="@+id/image_slowCharge2"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:src="@drawable/common_google_signin_btn_icon_light_normal"
+                    android:layout_marginLeft="10dp"
+                    android:src="@drawable/ic_slow"
                     android:tintMode="multiply"
                     app:tint="@color/gray_700" />
 
@@ -323,7 +373,7 @@
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_marginLeft="20dp"
-                    android:src="@drawable/common_google_signin_btn_icon_light_normal"
+                    android:src="@drawable/ic_combo"
                     android:tintMode="multiply"
                     app:tint="@color/gray_700" />
 
@@ -331,7 +381,8 @@
                     android:id="@+id/image_demo3"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:src="@drawable/common_google_signin_btn_icon_light_normal"
+                    android:layout_marginLeft="10dp"
+                    android:src="@drawable/ic_demo"
                     android:tintMode="multiply"
                     app:tint="@color/gray_700" />
 
@@ -339,7 +390,8 @@
                     android:id="@+id/image_ac3"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:src="@drawable/common_google_signin_btn_icon_light_normal"
+                    android:layout_marginLeft="10dp"
+                    android:src="@drawable/ic_ac"
                     android:tintMode="multiply"
                     app:tint="@color/gray_700" />
 
@@ -347,7 +399,8 @@
                     android:id="@+id/image_slowCharge3"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:src="@drawable/common_google_signin_btn_icon_light_normal"
+                    android:layout_marginLeft="10dp"
+                    android:src="@drawable/ic_slow"
                     android:tintMode="multiply"
                     app:tint="@color/gray_700" />
 
@@ -373,7 +426,7 @@
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_marginLeft="20dp"
-                    android:src="@drawable/common_google_signin_btn_icon_light_normal"
+                    android:src="@drawable/ic_combo"
                     android:tintMode="multiply"
                     app:tint="@color/gray_700" />
 
@@ -381,7 +434,8 @@
                     android:id="@+id/image_demo4"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:src="@drawable/common_google_signin_btn_icon_light_normal"
+                    android:layout_marginLeft="10dp"
+                    android:src="@drawable/ic_demo"
                     android:tintMode="multiply"
                     app:tint="@color/gray_700" />
 
@@ -389,7 +443,8 @@
                     android:id="@+id/image_ac4"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:src="@drawable/common_google_signin_btn_icon_light_normal"
+                    android:layout_marginLeft="10dp"
+                    android:src="@drawable/ic_ac"
                     android:tintMode="multiply"
                     app:tint="@color/gray_700" />
 
@@ -397,7 +452,8 @@
                     android:id="@+id/image_slowCharge4"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:src="@drawable/common_google_signin_btn_icon_light_normal"
+                    android:layout_marginLeft="10dp"
+                    android:src="@drawable/ic_slow"
                     android:tintMode="multiply"
                     app:tint="@color/gray_700" />
 
@@ -486,16 +542,5 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/text_home" />
         -->
-
-    <ImageButton
-        android:id="@+id/btn_cancelShowFiltered"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding = "0dp"
-        android:layout_gravity="top|right"
-        android:layout_marginTop="50dp"
-        android:layout_marginRight="15dp"
-        android:visibility="invisible"
-        android:src="@drawable/common_google_signin_btn_icon_dark_normal"/>
 
 </FrameLayout>

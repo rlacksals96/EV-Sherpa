@@ -45,6 +45,14 @@ public class ChargerStatusInfoParser {
     public void Parse(String jsonStr, HashMap<String, StationInfo> stationInfoHashMap) {
 
         try {
+            /*
+            jsonStr = jsonStr.replace("\\","");
+            jsonStr = jsonStr.replace("]\"","]");
+            jsonStr = jsonStr.replace("\"[","[");
+
+            Log.i("ev-sherpa", jsonStr);
+             */
+
             JSONObject jsonObject = new JSONObject(jsonStr);
             JSONArray jsonArray = jsonObject.getJSONArray("item");
 

@@ -47,6 +47,14 @@ public class StationInfoParser {
         HashMap<String, StationInfo> stationInfoHashMap = null;
 
         try {
+            /*
+            jsonStr = jsonStr.replace("\\","");
+            jsonStr = jsonStr.replace("]\"","]");
+            jsonStr = jsonStr.replace("\"[","[");
+
+            Log.i("ev-sherpa", jsonStr);
+             */
+
             JSONObject jsonObject = new JSONObject(jsonStr);
             JSONArray jsonArray = jsonObject.getJSONArray("item");
 

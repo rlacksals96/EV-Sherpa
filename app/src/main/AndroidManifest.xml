@@ -50,6 +50,11 @@
             android:theme="@style/Theme.EVSherpa.NoActionBar" />
 
         <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyAzL4CVsM26rVx4j1EvTVtqF-Xlq2nwWnE"
+            />
+
+        <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
         <meta-data
