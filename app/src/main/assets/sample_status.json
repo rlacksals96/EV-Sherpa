@@ -1,0 +1,81 @@
+{
+  "item": [
+    {
+      "chgerId": "01",
+      "statId": "ME000001",
+      "stat": 2,
+      "statUpdDt": 20210602140933,
+      "busiId": "ME"
+    },
+    {
+      "chgerId": "02",
+      "statId": "ME000001",
+      "stat": 2,
+      "statUpdDt": 20210602140933,
+      "busiId": "ME"
+    },
+    {
+      "chgerId": "01",
+      "statId": "ME000002",
+      "stat": 2,
+      "statUpdDt": 20210602140717,
+      "busiId": "ME"
+    },
+    {
+      "chgerId": "01",
+      "statId": "ME000003",
+      "stat": 3,
+      "statUpdDt": 20210602140718,
+      "busiId": "ME"
+    },
+    {
+      "chgerId": "01",
+      "statId": "ME000004",
+      "stat": 3,
+      "statUpdDt": 20210602140942,
+      "busiId": "ME"
+    },
+    {
+      "chgerId": "01",
+      "statId": "ME000005",
+      "stat": 3,
+      "statUpdDt": 20210602140758,
+      "busiId": "ME"
+    },
+    {
+      "chgerId": "01",
+      "statId": "ME000006",
+      "stat": 3,
+      "statUpdDt": 20210602140625,
+      "busiId": "ME"
+    },
+    {
+      "chgerId": "01",
+      "statId": "ME000007",
+      "stat": 3,
+      "statUpdDt": 20210602141007,
+      "busiId": "EV"
+    },
+    {
+      "chgerId": "01",
+      "statId": "ME000008",
+      "stat": 2,
+      "statUpdDt": 20210602140706,
+      "busiId": "EV"
+    },
+    {
+      "chgerId": "01",
+      "statId": "ME000010",
+      "stat": 3,
+      "statUpdDt": 20210602140708,
+      "busiId": "EV"
+    },
+    {
+      "chgerId": "01",
+      "statId": "ME000011",
+      "stat": 2,
+      "statUpdDt": 20210602141009,
+      "busiId": "EV"
+    }
+  ]
+}

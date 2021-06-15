@@ -1,10 +1,14 @@
 package com.example.evsherpa.data.model;
 
+import android.util.Log;
+
+import java.util.HashMap;
+
 public class StationInfo {
     private String statId;
     private String statNm;
-    private int chgerId;
-    private int chgerType;
+    private HashMap<Integer, ChargerInfo> chargerInfoHashMap = new HashMap<Integer, ChargerInfo>();
+    //private ArrayList<ChargerInfo> chgers = new ArrayList<ChargerInfo>();
     private String addr;
     private float lat;
     private float lng;
@@ -40,20 +44,16 @@ public class StationInfo {
         this.statNm = statNm;
     }
 
-    public int getChgerId() {
-        return chgerId;
+    public void addChargerInfo(ChargerInfo charger) {
+        this.chargerInfoHashMap.put(charger.getId(), charger);
     }
 
-    public void setChgerId(int chgerId) {
-        this.chgerId = chgerId;
+    public HashMap<Integer, ChargerInfo> getChargerInfoHashMap() {
+        return chargerInfoHashMap;
     }
 
-    public int getChgerType() {
-        return chgerType;
-    }
-
-    public void setChgerType(int chgerType) {
-        this.chgerType = chgerType;
+    public ChargerInfo getChargerInfo(int id) {
+        return chargerInfoHashMap.get(id);
     }
 
     public String getAddr() {
@@ -126,5 +126,20 @@ public class StationInfo {
 
     public void setParkingFree(String parkingFree) {
         this.parkingFree = parkingFree;
+    }
+
+    public int getUsableChargerCount() {
+        int count = 0;
+
+        ChargerInfo[] chargerInfos = new ChargerInfo[chargerInfoHashMap.values().size()];
+        chargerInfoHashMap.values().toArray(chargerInfos);
+
+        for (int i = 0; i < chargerInfos.length; i++) {
+            if (chargerInfos[i].getStatus() == 2) count++;
+        }
+
+        Log.i("ev-sherpa", "usableCount:"+count);
+
+        return count;
     }
 }
